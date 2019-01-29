@@ -27,11 +27,11 @@ namespace net
 class Buffer : public copyable
 {
 public:
-    static const size_t kCheapPrepend = 8;
-    static const size_t kInitialSize = 1024;
+    static const size_t kCheapPrepend;
+    static const size_t kInitialSize;
 
     explicit Buffer(size_t initial_size = kInitialSize) :
-        data_(kCheapPrepend + initial_size),
+        buffer_(kCheapPrepend + initial_size),
         read_index_(kCheapPrepend),
         write_index_(kCheapPrepend)
     {
@@ -52,12 +52,12 @@ public:
 
     size_t WritableBytes() const
     {
-        return data_.size() - write_index_;
+        return buffer_.size() - write_index_;
     }
 
     void Swap(Buffer& other)
     {
-        data_.swap(other.data_);
+        buffer_.swap(other.buffer_);
         std::swap(read_index_, other.read_index_);
         std::swap(write_index_, other.write_index_);
     }
@@ -221,9 +221,76 @@ public:
         assert(WritableBytes() >= size);
     }
 
+    // from network endian
+    // return host endian
+
+    int8_t ReadInt8()
+    {
+        int8_t result = PeakInt8();
+        RetrieveInt8();
+        return result;
+    }
+
+    int16_t ReadInt16()
+    {
+        int16_t result = PeakInt16();
+        RetrieveInt16();
+        return result;
+    }
+
+    int32_t ReadInt32()
+    {
+        int32_t result = PeakInt32();
+        RetrieveInt32();
+        return result;
+    }
+
+    int64_t ReadInt64()
+    {
+        int64_t result = PeakInt64();
+        RetrieveInt64();
+        return result;
+    }
+
+    int8_t PeakInt8() const
+    {
+        assert(ReadableBytes() >= sizeof(int8_t));
+        int8_t be8 = *BeginRead();
+        return be8;
+    }
+
+    int16_t PeakInt16() const
+    {
+        assert(ReadableBytes() >= sizeof(int16_t));
+        int16_t be16 = 0;
+        ::memcpy(&be16, BeginRead(), sizeof(be16));
+        return sockets::NetworkToHost16(be16);
+    }
+
+    int32_t PeakInt32() const
+    {
+        assert(ReadableBytes() >= sizeof(int32_t));
+        int32_t be32 = 0;
+        ::memcpy(&be32, BeginRead(), sizeof(be32));
+        return sockets::NetworkToHost32(be32);
+    }
+
+    int64_t PeakInt64() const
+    {
+        assert(ReadableBytes() >= sizeof(int64_t));
+        int64_t be64 = 0;
+        ::memcpy(&be64, BeginRead(), sizeof(be64));
+        return sockets::NetworkToHost64(be64);
+    }
+
     const char* BeginWrite() const
     {
         return Begin() + write_index_;
+    }
+
+    std::string ToString() const
+    {
+        return std::string(BeginRead(), ReadableBytes());
     }
 
     char* BeginWrite()
@@ -231,38 +298,72 @@ public:
         return Begin() + write_index_;
     }
 
+    void Prepend(const void* data, size_t size)
+    {
+        assert(size <= PrependableBytes());
+        read_index_ -= size;
+        const char* d = static_cast<const char*>(data);
+        std::copy(d, d + size, Begin() + read_index_);
+    }
+
+    void Shrink(size_t reserve)
+    {
+        // FIXME: use vector::shrink_to_fit()
+        Buffer other;
+        other.EnsureWritableBytes(ReadableBytes()+reserve);
+        other.Append(ToString());
+        Swap(other);
+    }
+
+    size_t InternalCapacity() const
+    {
+        return buffer_.capacity();
+    }
+
+    /// Read data directly into buffer.
+    ///
+    /// It may implement with readv(2)
+    /// @return result of read(2), @c errno is saved
+    ssize_t ReadFd(int fd, int* saved_errno);
+
 private:
 
     char* Begin()
     {
-        return data_.data();
+        return buffer_.data();
     }
 
     const char* Begin() const
     {
-        return data_.data();
+        return buffer_.data();
     }
 
     void MakeSpace(size_t size)
     {
         if (WritableBytes() + PrependableBytes() < size + kCheapPrepend)
         {
-            // FIXME: move readable bytes to front
-            data_.resize(write_index_ + size);
+            //FIXME: move readable bytes to front
+            buffer_.resize(write_index_ + size);
         }
         else
         {
-            assert(kCheapPrepend < read_index_);
-            size_t readable = ReadableBytes();
-            std::copy(Begin() + read_index_, Begin() + write_index_, Begin() + kCheapPrepend);
-            read_index_ = kCheapPrepend;
-            write_index_ = read_index_ + readable;
-            assert(readable == ReadableBytes());
+            // move readable bytes to front, make room inside buffer
+            Transfer();
         }
     }
 
+    void Transfer()
+    {
+        assert(read_index_ > kCheapPrepend);
+        size_t readable = ReadableBytes();
+        std::copy(Begin() + read_index_, Begin() + write_index_, Begin() + kCheapPrepend);
+        read_index_ = kCheapPrepend;
+        write_index_ = read_index_ + readable;
+        assert(readable == ReadableBytes());
+    }
+
 private:
-    std::vector<char> data_;
+    std::vector<char> buffer_;
     size_t read_index_;
     size_t write_index_;
 

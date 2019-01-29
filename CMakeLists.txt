@@ -52,6 +52,7 @@ set(SOURCE_FILES
         blaze/concurrent/CountDownLatch.cc
         blaze/log/AsyncLogging.cc
         blaze/net/Buffer.cc
+        blaze/net/SocketsOps.cc
         )
 
 add_library(blaze STATIC ${SOURCE_FILES})
@@ -69,6 +70,10 @@ target_link_libraries(LogFile_test blaze)
 add_executable(LogStream_unittest blaze/log/tests/LogStream_unittest.cc)
 target_link_libraries(LogStream_unittest blaze boost_unit_test_framework)
 add_test(NAME LogStream_unittest COMMAND LogStream_unittest)
+
+add_executable(Buffer_unittest blaze/net/tests/Buffer_unittest.cc)
+target_link_libraries(Buffer_unittest blaze boost_unit_test_framework)
+add_test(NAME Buffer_unittest COMMAND Buffer_unittest)
 
 add_executable(Singleton_test blaze/utils/tests/Singleton_test.cc)
 target_link_libraries(Singleton_test blaze boost_unit_test_framework)
