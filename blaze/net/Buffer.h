@@ -202,7 +202,7 @@ public:
 
     void HasWritten(size_t size)
     {
-        assert(size < WritableBytes());
+        assert(size <= WritableBytes());
         write_index_ += size;
     }
 
@@ -226,40 +226,40 @@ public:
 
     int8_t ReadInt8()
     {
-        int8_t result = PeakInt8();
+        int8_t result = PeekInt8();
         RetrieveInt8();
         return result;
     }
 
     int16_t ReadInt16()
     {
-        int16_t result = PeakInt16();
+        int16_t result = PeekInt16();
         RetrieveInt16();
         return result;
     }
 
     int32_t ReadInt32()
     {
-        int32_t result = PeakInt32();
+        int32_t result = PeekInt32();
         RetrieveInt32();
         return result;
     }
 
     int64_t ReadInt64()
     {
-        int64_t result = PeakInt64();
+        int64_t result = PeekInt64();
         RetrieveInt64();
         return result;
     }
 
-    int8_t PeakInt8() const
+    int8_t PeekInt8() const
     {
         assert(ReadableBytes() >= sizeof(int8_t));
         int8_t be8 = *BeginRead();
         return be8;
     }
 
-    int16_t PeakInt16() const
+    int16_t PeekInt16() const
     {
         assert(ReadableBytes() >= sizeof(int16_t));
         int16_t be16 = 0;
@@ -267,7 +267,7 @@ public:
         return sockets::NetworkToHost16(be16);
     }
 
-    int32_t PeakInt32() const
+    int32_t PeekInt32() const
     {
         assert(ReadableBytes() >= sizeof(int32_t));
         int32_t be32 = 0;
@@ -275,7 +275,7 @@ public:
         return sockets::NetworkToHost32(be32);
     }
 
-    int64_t PeakInt64() const
+    int64_t PeekInt64() const
     {
         assert(ReadableBytes() >= sizeof(int64_t));
         int64_t be64 = 0;
