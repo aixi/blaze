@@ -84,10 +84,11 @@ inline To implicit_cast(const From& from)
 //    if (dynamic_cast<Subclass2>(foo)) HandleASubclass2Object(foo);
 // You should design the code some other way not to need this.
 
-template<typename To, typename From>     // use like this: down_cast<T*>(foo);
-inline To down_cast(From* f)                     // so we only accept pointers
+// use like this: down_cast<T*>(foo);
+template<typename To, typename From>   // so we only accept pointers
+inline To down_cast(From* f)
 {
-    // Ensures that To is a sub-type of From *.  This tests is here only
+    // Ensures that To is a sub-type of From*.  This tests is here only
     // for compile-time type checking, and has no overhead in an
     // optimized build at run-time, as it will be optimized away
     // completely.
@@ -105,7 +106,7 @@ inline To down_cast(From* f)                     // so we only accept pointers
 // avoid (void) n;
 
 template <typename T>
-void UnusedVariable(const T &) {}
+void UnusedVariable(const T&) {}
 
 
 #endif //BLAZE_TYPES_H

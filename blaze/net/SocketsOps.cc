@@ -43,35 +43,10 @@ void setNonBlockingAndCloseOnExec(int sockfd)
 
 } // anonymous namespace
 
-const struct sockaddr* sockets::sockaddr_cast(const struct sockaddr_in* addr)
-{
-    return static_cast<const struct sockaddr*>(implicit_cast<const void*>(addr));
-}
-
-const struct sockaddr* sockets::sockaddr_cast(const struct sockaddr_in6* addr)
-{
-    return static_cast<const struct sockaddr*>(implicit_cast<const void*>(addr));
-
-}
-
-struct sockaddr* sockets::sockaddr_cast(struct sockaddr_in6* addr)
-{
-    return static_cast<struct sockaddr*>(implicit_cast<void*>(addr));
-
-}
-
-const struct sockaddr_in* sockets::sockaddr_in_cast(const struct sockaddr* addr)
-{
-    return static_cast<const struct sockaddr_in*>(implicit_cast<const void*>(addr));
-}
-
-const struct sockaddr_in6* sockets::sockaddr_in6_cast(const struct sockaddr* addr)
-{
-    return static_cast<const struct sockaddr_in6*>(implicit_cast<const void*>(addr));
-}
 
 int sockets::createNonBlockingOrDie(sa_family_t family)
 {
+    // return socket fd
 #if VALGRIND
     int sockfd = ::socket(family, SOCK_STREAM, IPPROTO_TCP);
     if (sockfd < 0)
@@ -94,6 +69,7 @@ int sockets::bindOrDie(int sockfd, const struct sockaddr* addr)
     int ret = ::bind(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
     if (ret < 0)
     {
+        // FIXME: check errno EACCES ? EADDRINUSE ?
         LOG_SYSERR << "sockets::bindOrDie";
     }
     return ret;
@@ -102,6 +78,8 @@ int sockets::bindOrDie(int sockfd, const struct sockaddr* addr)
 int sockets::listenOrDie(int sockfd)
 {
     int ret = ::listen(sockfd, SOMAXCONN);
+    // 'echo 1000 >/proc/sys/net/core/somaxconn' to change SOMAXCONN, default 128
+    // exceed backlog will trigger client errno ECONNREFUSED
     if (ret < 0)
     {
         LOG_SYSERR << "sockets::listenOrDie";
@@ -155,7 +133,29 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
 
 int sockets::connect(int sockfd, const struct sockaddr* addr)
 {
+    // return 0 if success, -1 if fail
+    // FIXME: check errno, ECONNREFUSED ? ETIMEDOUT ?
     return ::connect(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
+}
+
+
+void sockets::close(int sockfd)
+{
+    // only ref count minus 1, if fork a child process it owns this socket it will not close
+    if (::close(sockfd) < 0)
+    {
+        LOG_SYSERR << "sockets::close";
+    }
+}
+
+void sockets::shutdownWrite(int sockfd)
+{
+    // shall not write on this socket fd
+    // OS will send all data in kernel's output buffer before the socket fd has been actually closed
+    if (::shutdown(sockfd, SHUT_WR) < 0)
+    {
+        LOG_SYSERR << "sockets::shutdownWrite";
+    }
 }
 
 ssize_t sockets::read(int sockfd, void* buf, size_t count)
@@ -173,20 +173,31 @@ ssize_t sockets::write(int sockfd, const void* buf, size_t count)
     return ::write(sockfd, buf, count);
 }
 
-void sockets::close(int sockfd)
+const struct sockaddr* sockets::sockaddr_cast(const struct sockaddr_in* addr)
 {
-    if (::close(sockfd) < 0)
-    {
-        LOG_SYSERR << "sockets::close";
-    }
+    return static_cast<const struct sockaddr*>(implicit_cast<const void*>(addr));
 }
 
-void sockets::shutdownWrite(int sockfd)
+const struct sockaddr* sockets::sockaddr_cast(const struct sockaddr_in6* addr)
 {
-    if (::shutdown(sockfd, SHUT_WR) < 0)
-    {
-        LOG_SYSERR << "sockets::shutdownWrite";
-    }
+    return static_cast<const struct sockaddr*>(implicit_cast<const void*>(addr));
+
+}
+
+struct sockaddr* sockets::sockaddr_cast(struct sockaddr_in6* addr)
+{
+    return static_cast<struct sockaddr*>(implicit_cast<void*>(addr));
+
+}
+
+const struct sockaddr_in* sockets::sockaddr_in_cast(const struct sockaddr* addr)
+{
+    return static_cast<const struct sockaddr_in*>(implicit_cast<const void*>(addr));
+}
+
+const struct sockaddr_in6* sockets::sockaddr_in6_cast(const struct sockaddr* addr)
+{
+    return static_cast<const struct sockaddr_in6*>(implicit_cast<const void*>(addr));
 }
 
 void sockets::toIpPort(char* buf, size_t size, const struct sockaddr* addr)
@@ -219,6 +230,7 @@ void sockets::fromIpPort(const char* ip, uint16_t port, struct sockaddr_in* addr
 {
     addr->sin_family = AF_INET;
     addr->sin_port = sockets::HostToNetwork16(port);
+    // inet_pton return 1 if success
     if (::inet_pton(AF_INET, ip, &addr->sin_addr) <= 0)
     {
         LOG_SYSERR << "sockets::fromIpPort";
@@ -293,5 +305,23 @@ bool sockets::isSelfConnect(int sockfd)
     else
     {
         return false;
+    }
+}
+
+sockets::ByteOrder GetByteOrder()
+{
+    union
+    {
+        short value;
+        char bytes[sizeof(value)];
+    } test;
+    test.value = 0x0102;
+    if (test.bytes[0] == 1 && test.bytes[1] == 2)
+    {
+        return sockets::ByteOrder::kBigEndian;
+    }
+    else
+    {
+        return sockets::ByteOrder::kLittleEndian;
     }
 }

@@ -130,8 +130,23 @@ BOOST_AUTO_TEST_CASE(testBufferReadInt)
 
     BOOST_CHECK_EQUAL(buf.ReadableBytes(), 4);
     BOOST_CHECK_EQUAL(buf.PeekInt8(), 'H');
-//    int top16 = buf.PeekInt16();
-    // TODO
+    int top16 = buf.PeekInt16();
+    BOOST_CHECK_EQUAL(top16, ('H' << 8) + 'T');
+    BOOST_CHECK_EQUAL(buf.PeekInt32(), (top16 << 16) + ('T' << 8) + 'P');
+
+    BOOST_CHECK_EQUAL(buf.ReadInt8(), 'H');
+    BOOST_CHECK_EQUAL(buf.ReadInt16(), ('T' << 8) + 'T');
+    BOOST_CHECK_EQUAL(buf.ReadInt8(), 'P');
+    BOOST_CHECK_EQUAL(buf.ReadableBytes(), 0);
+    BOOST_CHECK_EQUAL(buf.WritableBytes(), Buffer::kInitialSize);
+
+    buf.AppendInt8(-1);
+    buf.AppendInt16(-2);
+    buf.AppendInt32(-3);
+    BOOST_CHECK_EQUAL(buf.ReadableBytes(), 7);
+    BOOST_CHECK_EQUAL(buf.ReadInt8(), -1);
+    BOOST_CHECK_EQUAL(buf.ReadInt16(), -2);
+    BOOST_CHECK_EQUAL(buf.ReadInt32(), -3);
 }
 
 BOOST_AUTO_TEST_CASE(testBufferFindEOL)

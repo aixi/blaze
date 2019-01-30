@@ -14,6 +14,7 @@
 #include <string>
 #include <blaze/net/Endian.h>
 #include <blaze/utils/copyable.h>
+#include <blaze/utils/Types.h>
 
 
 namespace blaze
