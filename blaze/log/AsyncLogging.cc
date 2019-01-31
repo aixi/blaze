@@ -2,6 +2,8 @@
 // Created by xi on 19-1-22.
 //
 
+#include <unistd.h>
+
 #include <blaze/log/AsyncLogging.h>
 #include <blaze/log/LogFile.h>
 #include <blaze/utils/Timestamp.h>
@@ -16,7 +18,6 @@ AsyncLogging::AsyncLogging(const std::string &basename, off_t roll_size, int flu
     running_(false),
     basename_(basename),
     roll_size_(roll_size),
-    thread_(&AsyncLogging::ThreadFunc, this),
     latch_(1),
     mutex_(),
     cond_(),
@@ -52,19 +53,42 @@ void AsyncLogging::Append(const char* logline, int len)
     }
 }
 
+AsyncLogging::~AsyncLogging()
+{
+    if (running_)
+    {
+        Stop();
+    }
+}
+
+void AsyncLogging::Start()
+{
+    running_ = true;
+    thread_.reset(new std::thread(&AsyncLogging::ThreadFunc, this));
+    latch_.Wait();
+}
+
+void AsyncLogging::Stop()
+{
+    running_ = false;
+    cond_.notify_one();
+    thread_->join();
+}
+
 void AsyncLogging::ThreadFunc()
 {
     assert(running_);
     latch_.CountDown();
     LogFile output(basename_, roll_size_, false);
-    BufferPtr new_buffer1 = std::make_unique<Buffer>();
-    BufferPtr new_buffer2 = std::make_unique<Buffer>();
+    BufferPtr new_buffer1(new Buffer);
+    BufferPtr new_buffer2(new Buffer);
     new_buffer1->bzero();
     new_buffer2->bzero();
     BufferVector buffers_to_write;
     buffers_to_write.reserve(16);
     while (running_)
     {
+        // FIXME: write log too fast all buffers has been used
         assert(new_buffer1 && new_buffer1->Size() == 0);
         assert(new_buffer2 && new_buffer2->Size() == 0);
         assert(buffers_to_write.empty());
@@ -97,7 +121,7 @@ void AsyncLogging::ThreadFunc()
             buffers_to_write.erase(buffers_to_write.begin() + 2, buffers_to_write.end());
         }
 
-        for (auto& buffer : buffers_to_write)
+        for (const auto& buffer : buffers_to_write)
         {
             // FIXME: use unbuffered stdio FILE ? or use ::writev
             output.Append(buffer->Data(), buffer->Size());
@@ -114,7 +138,7 @@ void AsyncLogging::ThreadFunc()
             assert(!buffers_to_write.empty());
             new_buffer1 = std::move(buffers_to_write.back());
             buffers_to_write.pop_back();
-            new_buffer1.reset();
+            new_buffer1->Reset();
         }
 
         if (!new_buffer2)
@@ -122,7 +146,7 @@ void AsyncLogging::ThreadFunc()
             assert(!buffers_to_write.empty());
             new_buffer2 = std::move(buffers_to_write.back());
             buffers_to_write.pop_back();
-            new_buffer2.reset();
+            new_buffer2->Reset();
         }
 
         buffers_to_write.clear();

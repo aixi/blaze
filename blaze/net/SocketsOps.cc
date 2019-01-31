@@ -108,6 +108,9 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
             case EINTR:
             case EPROTO: // ???
             case EPERM:
+            // how to handle file descriptor exhaustion ?
+            // set soft limit, hard limit
+            // https://www.cnblogs.com/niocai/archive/2012/04/01/2428128.html
             case EMFILE: // maximum number of opened file descriptor per process ?
                 // expect error
                 errno = saved_errno;

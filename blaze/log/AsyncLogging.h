@@ -46,13 +46,13 @@ private:
     std::atomic<bool> running_;
     std::string basename_;
     off_t roll_size_;
-    std::thread thread_;
     blaze::CountDownLatch latch_;
     std::mutex mutex_;
     std::condition_variable cond_;
     BufferPtr current_buffer_;
     BufferPtr next_buffer_;
     BufferVector buffers_;
+    std::unique_ptr<std::thread> thread_;
 };
 
 }

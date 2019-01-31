@@ -76,8 +76,7 @@ target_link_libraries(Buffer_unittest blaze boost_unit_test_framework)
 add_test(NAME Buffer_unittest COMMAND Buffer_unittest)
 
 add_executable(Singleton_test blaze/utils/tests/Singleton_test.cc)
-target_link_libraries(Singleton_test blaze boost_unit_test_framework)
-add_test(NAME Singleton_test COMMAND Singleton_test)
+target_link_libraries(Singleton_test blaze)
 
 add_executable(Timestamp_test blaze/utils/tests/Timestamp_test.cc)
 target_link_libraries(Timestamp_test blaze)
