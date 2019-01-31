@@ -55,7 +55,9 @@ set(SOURCE_FILES
         blaze/net/SocketsOps.cc
         blaze/net/InetAddress.cc
         blaze/net/Socket.cc
-        )
+        blaze/net/Channel.cc
+        blaze/net/PollPoller.cc
+        blaze/net/EventLoop.cc)
 
 add_library(blaze STATIC ${SOURCE_FILES})
 target_link_libraries(blaze pthread)
