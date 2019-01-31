@@ -49,16 +49,16 @@ struct sockaddr* sockaddr_cast(struct sockaddr_in6* addr);
 const struct sockaddr_in* sockaddr_in_cast(const struct sockaddr* addr);
 const struct sockaddr_in6* sockaddr_in6_cast(const struct sockaddr* addr);
 
-struct sockaddr_in6 getLocalAddr(int sockfd);
-struct sockaddr_in6 getPeerAddr(int sockfd);
+struct sockaddr_in6 GetLocalAddr(int sockfd);
+struct sockaddr_in6 GetPeerAddr(int sockfd);
 
-void toIpPort(char* /*out*/ buf, size_t size, const struct sockaddr* addr);
-void toIp(char* /*out*/ buf, size_t size, const struct sockaddr* addr);
-void fromIpPort(const char* ip, uint16_t port, struct sockaddr_in* /*out*/ addr);
-void fromIpPort(const char* ip, uint16_t port, struct sockaddr_in6* /*out*/ addr);
+void ToIpPort(char* /*out*/ buf, size_t size, const struct sockaddr* addr);
+void ToIp(char* /*out*/ buf, size_t size, const struct sockaddr* addr);
+void FromIpPort(const char* ip, uint16_t port, struct sockaddr_in* /*out*/ addr);
+void FromIpPort(const char* ip, uint16_t port, struct sockaddr_in6* /*out*/ addr);
 
-int getSocketError(int sockfd);
-bool isSelfConnect(int sockfd);
+int GetSocketError(int sockfd);
+bool IsSelfConnect(int sockfd);
 
 ByteOrder GetByteOrder();
 

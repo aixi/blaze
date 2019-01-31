@@ -1,0 +1,142 @@
+//
+// Created by xi on 19-1-31.
+//
+
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <stdio.h> // snprintf
+
+#include <blaze/log/Logging.h>
+#include <blaze/net/InetAddress.h>
+#include <blaze/net/SocketsOps.h>
+
+#include <blaze/net/Socket.h>
+
+
+namespace blaze
+{
+namespace net
+{
+
+Socket::Socket(Socket&& rhs) noexcept :
+    sockfd_(rhs.sockfd_)
+{
+    rhs.sockfd_ = -1;
+}
+
+Socket::~Socket()
+{
+    if (sockfd_ >= 0)
+    {
+        sockets::close(sockfd_);
+    }
+}
+
+bool Socket::GetTcpInfo(struct tcp_info* info) const
+{
+    socklen_t len = sizeof(*info);
+    bzero(&info, len);
+    return ::getsockopt(sockfd_, SOL_TCP, TCP_INFO, info, &len) == 0;
+}
+
+bool Socket::GetTcpInfoString(char* buf, int len) const
+{
+    struct tcp_info tcpi;
+    bool ok = GetTcpInfo(&tcpi);
+    if (ok)
+    {
+        snprintf(buf, len, "unrecovered=%u "
+                           "rto=%u ato=%u snd_mss=%u rcv_mss=%u "
+                           "lost=%u retrans=%u rtt=%u rttvar=%u "
+                           "sshthresh=%u cwnd=%u total_retrans=%u",
+                           tcpi.tcpi_retransmits,      // Number of unrecovered [RTO] timeouts
+                           tcpi.tcpi_rto,              // Retransmit timeout in usec
+                           tcpi.tcpi_ato,              // Predicted tick of soft clock in usec
+                           tcpi.tcpi_snd_mss,
+                           tcpi.tcpi_rcv_mss,
+                           tcpi.tcpi_lost,             // Lost packets
+                           tcpi.tcpi_retrans,          // Retransmitted packets out
+                           tcpi.tcpi_rtt,              // Smoothed round trip time in usec
+                           tcpi.tcpi_rttvar,           // Medium deviation
+                           tcpi.tcpi_snd_ssthresh,
+                           tcpi.tcpi_snd_cwnd,
+                           tcpi.tcpi_total_retrans);   // Total retransmits for entire connection
+    }
+    return ok;
+}
+
+void Socket::bindAddress(const InetAddress& local_addr)
+{
+    sockets::bindOrDie(sockfd_, local_addr.GetSockAddr());
+}
+
+void Socket::listen()
+{
+    sockets::listenOrDie(sockfd_);
+}
+
+int Socket::accept(InetAddress* peer_addr)
+{
+    struct sockaddr_in6 addr6;
+    bzero(&addr6, sizeof(addr6));
+    int connfd = sockets::accept(sockfd_, &addr6);
+    if (connfd >= 0)
+    {
+        peer_addr->SetSockAddrIn6(addr6);
+    }
+    return connfd;
+}
+
+void Socket::shutdownWrite()
+{
+    sockets::shutdownWrite(sockfd_);
+}
+
+void Socket::SetTcpNoDelay(bool on)
+{
+    int optval = on ? 1 : 0;
+    int ret = ::setsockopt(sockfd_, IPPROTO_TCP, TCP_NODELAY, &optval,
+                           static_cast<socklen_t>(sizeof(optval)));
+    UnusedVariable(ret);
+    // FIXME: check ret errno
+}
+
+void Socket::SetReuseAddr(bool on)
+{
+    int optval = on ? 1 : 0;
+    int ret = ::setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, &optval,
+                           static_cast<socklen_t>(sizeof(optval)));
+    UnusedVariable(ret);
+    // FIXME: check ret errno
+
+}
+
+void Socket::SetReusePort(bool on)
+{
+#ifdef SO_REUSEPORT
+    int optval = on ? 1 : 0;
+    int ret = ::setsockopt(sockfd_, SOL_SOCKET, SO_REUSEPORT, &optval,
+                           static_cast<socklen_t>(sizeof(optval)));
+    if (ret < 0 && on)
+    {
+        LOG_SYSERR << "SO_REUSEPORT failed";
+    }
+#else
+    if (on)
+    {
+        LOG_SYSERR << "SO_REUSEPORT is not supported";
+    }
+#endif
+}
+
+void Socket::SetKeepAlive(bool on)
+{
+    int optval = on ? 1 : 0;
+    int ret = ::setsockopt(sockfd_, SOL_SOCKET, SO_KEEPALIVE, &optval,
+                           static_cast<socklen_t>(sizeof(optval)));
+    UnusedVariable(ret);
+    // FIXME: check ret errno
+}
+
+}
+}

@@ -8,7 +8,7 @@
 namespace blaze
 {
 
-// Any derived class of copyable should be a value type.
+// Any derived class of copyable should be value type.
 
 class copyable
 {

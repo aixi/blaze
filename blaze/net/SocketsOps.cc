@@ -203,9 +203,9 @@ const struct sockaddr_in6* sockets::sockaddr_in6_cast(const struct sockaddr* add
     return static_cast<const struct sockaddr_in6*>(implicit_cast<const void*>(addr));
 }
 
-void sockets::toIpPort(char* buf, size_t size, const struct sockaddr* addr)
+void sockets::ToIpPort(char* buf, size_t size, const struct sockaddr* addr)
 {
-    toIp(buf, size, addr);
+    ToIp(buf, size, addr);
     size_t end = ::strlen(buf);
     const struct sockaddr_in* addr4 = sockaddr_in_cast(addr);
     uint16_t port = sockets::NetworkToHost16(addr4->sin_port);
@@ -213,7 +213,7 @@ void sockets::toIpPort(char* buf, size_t size, const struct sockaddr* addr)
     snprintf(buf + end, size - end, ":%u", port);
 }
 
-void sockets::toIp(char* buf, size_t size, const struct sockaddr* addr)
+void sockets::ToIp(char* buf, size_t size, const struct sockaddr* addr)
 {
     if (addr->sa_family == AF_INET)
     {
@@ -229,28 +229,28 @@ void sockets::toIp(char* buf, size_t size, const struct sockaddr* addr)
     }
 }
 
-void sockets::fromIpPort(const char* ip, uint16_t port, struct sockaddr_in* addr)
+void sockets::FromIpPort(const char* ip, uint16_t port, struct sockaddr_in* addr)
 {
     addr->sin_family = AF_INET;
     addr->sin_port = sockets::HostToNetwork16(port);
     // inet_pton return 1 if success
     if (::inet_pton(AF_INET, ip, &addr->sin_addr) <= 0)
     {
-        LOG_SYSERR << "sockets::fromIpPort";
+        LOG_SYSERR << "sockets::FromIpPort";
     }
 }
 
-void sockets::fromIpPort(const char* ip, uint16_t port, struct sockaddr_in6* addr)
+void sockets::FromIpPort(const char* ip, uint16_t port, struct sockaddr_in6* addr)
 {
     addr->sin6_family = AF_INET6;
     addr->sin6_port = sockets::HostToNetwork16(port);
     if (::inet_pton(AF_INET6, ip, &addr->sin6_addr) <= 0)
     {
-        LOG_SYSERR << "sockets::fromIpPort";
+        LOG_SYSERR << "sockets::FromIpPort";
     }
 }
 
-int sockets::getSocketError(int sockfd)
+int sockets::GetSocketError(int sockfd)
 {
     int optval;
     socklen_t optlen = static_cast<socklen_t>(sizeof(optval));
@@ -264,34 +264,34 @@ int sockets::getSocketError(int sockfd)
     }
 }
 
-struct sockaddr_in6 sockets::getLocalAddr(int sockfd)
+struct sockaddr_in6 sockets::GetLocalAddr(int sockfd)
 {
     struct sockaddr_in6 local_addr;
     bzero(&local_addr, sizeof(local_addr));
     socklen_t addr_len = static_cast<socklen_t>(sizeof(local_addr));
     if (::getsockname(sockfd, sockaddr_cast(&local_addr), &addr_len) < 0)
     {
-        LOG_SYSERR << "sockets::getLocalAddr";
+        LOG_SYSERR << "sockets::GetLocalAddr";
     }
     return local_addr;
 }
 
-struct sockaddr_in6 sockets::getPeerAddr(int sockfd)
+struct sockaddr_in6 sockets::GetPeerAddr(int sockfd)
 {
     struct sockaddr_in6 peer_addr;
     bzero(&peer_addr, sizeof(peer_addr));
     socklen_t addr_len = static_cast<socklen_t>(sizeof(peer_addr));
     if (::getpeername(sockfd, sockaddr_cast(&peer_addr), &addr_len) < 0)
     {
-        LOG_SYSERR << "sockets::getPeerAddr";
+        LOG_SYSERR << "sockets::GetPeerAddr";
     }
     return peer_addr;
 }
 
-bool sockets::isSelfConnect(int sockfd)
+bool sockets::IsSelfConnect(int sockfd)
 {
-    struct sockaddr_in6 local_addr = getLocalAddr(sockfd);
-    struct sockaddr_in6 peer_addr = getPeerAddr(sockfd);
+    struct sockaddr_in6 local_addr = GetLocalAddr(sockfd);
+    struct sockaddr_in6 peer_addr = GetPeerAddr(sockfd);
     if (local_addr.sin6_family == AF_INET)
     {
         const struct sockaddr_in* laddr4 = reinterpret_cast<struct sockaddr_in*>(&local_addr);

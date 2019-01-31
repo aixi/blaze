@@ -53,6 +53,8 @@ set(SOURCE_FILES
         blaze/log/AsyncLogging.cc
         blaze/net/Buffer.cc
         blaze/net/SocketsOps.cc
+        blaze/net/InetAddress.cc
+        blaze/net/Socket.cc
         )
 
 add_library(blaze STATIC ${SOURCE_FILES})
