@@ -3,8 +3,11 @@
 //
 
 #include <blaze/log/Logging.h>
-#include <blaze/net/PollPoller.h>
+
+#include <blaze/net/Poller.h>
+#include <blaze/net/poller/PollPoller.h>
 #include <blaze/net/Channel.h>
+
 #include <blaze/net/EventLoop.h>
 
 namespace
@@ -25,7 +28,7 @@ EventLoop::EventLoop() :
     looping_(false),
     quit_(false),
     thread_id_(std::this_thread::get_id()),
-    poller_(new PollPoller(this))
+    poller_(Poller::NewDefaultPoller(this))
 {
     LOG_TRACE << "EventLoop created " << this << " in thread " << thread_id_;
     if (t_loop_in_this_thread)

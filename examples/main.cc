@@ -17,7 +17,7 @@ EventLoop* g_loop;
 void Timeout()
 {
     printf("Timeout\n");
-    //g_loop->Quit();
+    g_loop->Quit();
 }
 
 int main()

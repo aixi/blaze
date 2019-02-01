@@ -16,7 +16,7 @@ namespace net
 {
 
 class Channel;
-class PollPoller;
+class Poller;
 
 class EventLoop : public noncopyable
 {
@@ -55,7 +55,7 @@ private:
     bool looping_;
     bool quit_;
     const std::thread::id thread_id_;
-    std::unique_ptr<PollPoller> poller_;
+    std::unique_ptr<Poller> poller_;
 
     using ChannelList = std::vector<Channel*>;
     ChannelList active_channels;
