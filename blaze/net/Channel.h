@@ -28,19 +28,19 @@ public:
 
     void HandleEvent();
 
-    void SetReadCallback(const EventCallback& cb)
+    void SetReadCallback(EventCallback cb)
     {
-        read_callback_ = cb;
+        read_callback_ = std::move(cb);
     }
 
-    void SetWriteCallback(const EventCallback& cb)
+    void SetWriteCallback(EventCallback cb)
     {
-        write_callback_ = cb;
+        write_callback_ = std::move(cb);
     }
 
-    void SetErrorCallback(const EventCallback& cb)
+    void SetErrorCallback(EventCallback cb)
     {
-        error_callback_ = cb;
+        error_callback_ = std::move(cb);
     }
 
     int fd() const

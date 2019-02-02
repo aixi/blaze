@@ -10,7 +10,7 @@ set(CXX_FLAGS
         -g
         -Wall
         -Wextra
-        -Werror
+        #-Werror
         -Wconversion
         -Wno-unused-parameter
         -Wold-style-cast
@@ -59,7 +59,9 @@ set(SOURCE_FILES
         blaze/net/poller/PollPoller.cc
         blaze/net/EventLoop.cc
         blaze/net/Poller.cc
-        blaze/net/poller/DefaultPoller.cc)
+        blaze/net/poller/DefaultPoller.cc
+        blaze/net/TimerQueue.cc
+        blaze/net/Timer.cc)
 
 add_library(blaze STATIC ${SOURCE_FILES})
 target_link_libraries(blaze pthread)

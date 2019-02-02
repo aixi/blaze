@@ -26,7 +26,7 @@ class PollPoller : public Poller
 public:
     using ChannelList = std::vector<Channel*>;
 
-    PollPoller(EventLoop* loop);
+    explicit PollPoller(EventLoop* loop);
 
     ~PollPoller() override;
 

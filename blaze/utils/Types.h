@@ -5,6 +5,11 @@
 #ifndef BLAZE_TYPES_H
 #define BLAZE_TYPES_H
 
+#include <memory>
+
+namespace blaze
+{
+
 // Taken from google-protobuf stubs/common.h
 //
 // Protocol Buffers - Google's data interchange format
@@ -104,9 +109,35 @@ inline To down_cast(From* f)
 }
 
 // avoid (void) n;
-
 template <typename T>
 void UnusedVariable(const T&) {}
 
+template <typename T>
+inline T* get_pointer(const std::shared_ptr<T>& ptr)
+{
+    return ptr.get();
+}
+
+template <typename T>
+inline T* get_pointer(const std::unique_ptr<T>& ptr)
+{
+    return ptr.get();
+}
+
+// Adapted from google-protobuf stubs/common.h
+template<typename To, typename From>
+inline ::std::shared_ptr<To> down_pointer_cast(const ::std::shared_ptr<From>& f) {
+    if (false)
+    {
+        implicit_cast<From*, To*>(0);
+    }
+
+#ifndef NDEBUG
+    assert(f == NULL || dynamic_cast<To*>(get_pointer(f)) != NULL);
+#endif
+    return ::std::static_pointer_cast<To>(f);
+}
+
+} // namespace blaze
 
 #endif //BLAZE_TYPES_H

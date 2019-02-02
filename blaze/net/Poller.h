@@ -29,7 +29,7 @@ public:
 
     using ChannelList = std::vector<Channel*>;
 
-    Poller(EventLoop* loop);
+    explicit Poller(EventLoop* loop);
 
     virtual ~Poller();
 
