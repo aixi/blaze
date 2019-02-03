@@ -19,6 +19,9 @@ namespace net
 
 using TimerCallback = std::function<void()>;
 
+class TcpConnection;
+using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
+
 } // namespace net
 } // namespace blaze
 

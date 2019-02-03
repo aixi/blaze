@@ -10,7 +10,7 @@ set(CXX_FLAGS
         -g
         -Wall
         -Wextra
-        #-Werror
+        -Werror
         -Wconversion
         -Wno-unused-parameter
         -Wold-style-cast
@@ -61,7 +61,9 @@ set(SOURCE_FILES
         blaze/net/Poller.cc
         blaze/net/poller/DefaultPoller.cc
         blaze/net/TimerQueue.cc
-        blaze/net/Timer.cc)
+        blaze/net/Timer.cc
+        blaze/net/EventLoopThread.cc
+        blaze/net/Acceptor.cc)
 
 add_library(blaze STATIC ${SOURCE_FILES})
 target_link_libraries(blaze pthread)
@@ -100,3 +102,6 @@ target_link_libraries(Logging_test blaze)
 
 add_executable(AsyncLogging_test blaze/log/tests/AsyncLogging_test.cc)
 target_link_libraries(AsyncLogging_test blaze)
+
+add_executable(EventLoopThread_test blaze/net/tests/EventLoopThread_test.cc)
+target_link_libraries(EventLoopThread_test blaze)

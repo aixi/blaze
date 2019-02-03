@@ -44,7 +44,7 @@ void setNonBlockingAndCloseOnExec(int sockfd)
 } // anonymous namespace
 
 
-int sockets::createNonBlockingOrDie(sa_family_t family)
+int sockets::CreateNonBlockingOrDie(sa_family_t family)
 {
     // return socket fd
 #if VALGRIND

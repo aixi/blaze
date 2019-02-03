@@ -81,7 +81,7 @@ void EventLoop::Loop()
     while (!quit_)
     {
         active_channels.clear();
-        poll_return_time_ = poller_->Poll(-1, &active_channels);
+        poll_return_time_ = poller_->Poll(kPollTimeMs, &active_channels);
         ++iteration_;
         event_handling_ = true;
         for (Channel* channel : active_channels)

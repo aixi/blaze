@@ -23,7 +23,7 @@ enum class ByteOrder
 // create non-blocking socket file descriptor
 // abort if any error
 
-int createNonBlockingOrDie(sa_family_t family);
+int CreateNonBlockingOrDie(sa_family_t family);
 
 int bindOrDie(int sockfd, const struct sockaddr* addr);
 int listenOrDie(int sockfd);

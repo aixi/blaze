@@ -21,7 +21,7 @@ class InetAddress; // forward declare
 
 // RAII handle of socket file descriptor
 // It close the sockfd when destructs
-// It's thread safe, all operation are delegated to OS
+// It's thread safe, all operations delegate to OS
 
 class Socket : public noncopyable
 {
