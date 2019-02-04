@@ -6,6 +6,8 @@
 #define BLAZE_CHANNEL_H
 
 #include <functional>
+#include <memory>
+#include <blaze/utils/Timestamp.h>
 #include <blaze/utils/noncopyable.h>
 
 namespace blaze
@@ -26,7 +28,14 @@ public:
 
     Channel(EventLoop* loop, int fd);
 
+    ~Channel();
+
     void HandleEvent();
+
+    // Tie this channel object to its owner object managed by shared_ptr
+    // prevent the owner object being destroyed in HandleEvent()
+    // std::shared_ptr<void> could handle all type like void*
+    void Tie(const std::shared_ptr<void>& obj);
 
     void SetReadCallback(EventCallback cb)
     {
@@ -36,6 +45,11 @@ public:
     void SetWriteCallback(EventCallback cb)
     {
         write_callback_ = std::move(cb);
+    }
+
+    void SetCloseCallback(EventCallback cb)
+    {
+        close_callback_ = std::move(cb);
     }
 
     void SetErrorCallback(EventCallback cb)
@@ -73,26 +87,21 @@ public:
         return loop_;
     }
 
-    bool IsNoneEvent() const
-    {
-        return events_ == kNoneEvent;
-    };
-
     void EnableReading()
     {
         events_ |= kReadEvent;
         Update();
     }
 
-    void EnableWriting()
-    {
-        events_ |= kWriteEvent;
-        Update();
-    }
-
     void DisableReading()
     {
         events_ &= ~kReadEvent;
+        Update();
+    }
+
+    void EnableWriting()
+    {
+        events_ |= kWriteEvent;
         Update();
     }
 
@@ -108,11 +117,27 @@ public:
         Update();
     }
 
+    bool IsReading() const
+    {
+        return events_ & kReadEvent;
+    }
 
+    bool IsWriting() const
+    {
+        return events_ & kWriteEvent;
+    }
+
+    bool IsNoneEvent() const
+    {
+        return events_ == kNoneEvent;
+    };
+
+    void Remove();
 
 private:
 
     void Update();
+    void HandleEventWithGuard();
 
 private:
 
@@ -126,8 +151,15 @@ private:
     int revents_; // set by ::poll
     int index_; // used by poller
 
+    bool is_in_loop_;
+    bool tied_;
+    bool event_handling_;
+
+    std::weak_ptr<void> tie_;
+
     EventCallback read_callback_;
     EventCallback write_callback_;
+    EventCallback close_callback_;
     EventCallback error_callback_;
 
 };

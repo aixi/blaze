@@ -73,7 +73,7 @@ target_link_libraries(blaze pthread)
 add_executable(FileUtil_test blaze/utils/tests/FileUtil_test.cc)
 target_link_libraries(FileUtil_test blaze)
 
-add_executable(blaze_simple examples/main.cc)
+add_executable(blaze_simple examples/simple.cc)
 target_link_libraries(blaze_simple blaze)
 
 add_executable(LogFile_test blaze/log/tests/LogFile_test.cc)

@@ -34,7 +34,7 @@ public:
 
     void UpdateChannel(Channel* channel) override;
 
-    // void RemoveChannel(Channel* channel) override;
+    void RemoveChannel(Channel* channel) override;
 
 private:
 

@@ -44,7 +44,6 @@ public:
 private:
     void HandleRead();
 
-
 private:
     EventLoop* loop_;
     Socket listen_socket_;

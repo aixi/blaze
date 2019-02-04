@@ -39,10 +39,10 @@ TcpConnection::~TcpConnection()
 {
     LOG_DEBUG << "TcpConnection::dtor[" << name_ << "] at" << this
               << " fd=" << channel_->fd()
-              << " state=" << StateToString();
+              << " state=" << StateToCStr();
 }
 
-void TcpConnection::ConnectEstablished()
+void TcpConnection::ConnectionEstablished()
 {
     loop_->AssertInLoopThread();
     assert(state_ == ConnState::kConnecting);
@@ -50,14 +50,59 @@ void TcpConnection::ConnectEstablished()
     connection_callback_(shared_from_this());
 }
 
+void TcpConnection::ConnectionDestroyed()
+{
+    loop_->AssertInLoopThread();
+    assert(state_ == ConnState::kConnected);
+    SetState(ConnState::kDisconnected);
+    channel_->DisableAll();
+    connection_callback_(shared_from_this()); // ????
+    channel_->Remove();
+}
+
 void TcpConnection::HandleRead()
 {
     int saved_errno;
-    input_buffer_.ReadFd(channel_->fd(), &saved_errno);
-    message_callback_(shared_from_this(), &input_buffer_, Timestamp::Now());
+    ssize_t n = input_buffer_.ReadFd(channel_->fd(), &saved_errno);
+    if (n > 0)
+    {
+        message_callback_(shared_from_this(), &input_buffer_, Timestamp::Now());
+    }
+    else if (n == 0)
+    {
+        HandleClose();
+    }
+    else
+    {
+        errno = saved_errno;
+        LOG_SYSERR << "TcpConnection::HandleRead";
+        HandleError();
+    }
 }
 
-const char* TcpConnection::StateToString() const
+void TcpConnection::HandleWrite()
+{
+    // TODO
+}
+
+void TcpConnection::HandleClose()
+{
+    loop_->AssertInLoopThread();
+    LOG_TRACE << "TcpConnection::HandleClose state = " << StateToCStr();
+    assert(state_ == ConnState::kConnected);
+    // we don't close fd, leave it to dtor, so we can find leaks easily
+    channel_->DisableAll();
+    close_callback_(shared_from_this());
+}
+
+void TcpConnection::HandleError()
+{
+    int err = sockets::GetSocketError(channel_->fd());
+    LOG_ERROR << "TcpConnection::HandleError [" << name_.c_str()
+              << "] - SO_ERROR=" << err << " " << strerror_tl(err);
+}
+
+const char* TcpConnection::StateToCStr() const
 {
     switch (state_)
     {

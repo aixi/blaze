@@ -3,7 +3,7 @@
 //
 #include <stdio.h>
 #include <vector>
-#include <blaze/logging/Timestamp.h>
+#include <blaze/utils/Timestamp.h>
 
 using namespace blaze;
 

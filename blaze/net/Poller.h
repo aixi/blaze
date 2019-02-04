@@ -43,8 +43,7 @@ public:
 
     // Must be called in loop thread
     // When Channel object destructs, unregister it from Poller
-    // TODO
-    // virtual void RemoveChannel(Channel* channel) = 0;
+     virtual void RemoveChannel(Channel* channel) = 0;
 
     virtual bool HasChannel(Channel* channel) const;
 

@@ -40,6 +40,10 @@ public:
 
     void UpdateChannel(Channel* channel);
 
+    void RemoveChannel(Channel* channel);
+
+    bool HasChannel(Channel* channel);
+
     void RunInLoop(Task task);
 
     void QueueInLoop(Task task);

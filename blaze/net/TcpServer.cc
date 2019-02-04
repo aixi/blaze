@@ -35,7 +35,9 @@ TcpServer::~TcpServer()
 void TcpServer::Start()
 {
     assert(!acceptor_->Listening());
+    // NOTE: lambda expression can NOT capture data member acceptor_
     loop_->RunInLoop(std::bind(&Acceptor::Listen, get_pointer(acceptor_)));
+
 }
 
 void TcpServer::NewConnection(int connfd, const InetAddress& peer_addr)
@@ -53,7 +55,19 @@ void TcpServer::NewConnection(int connfd, const InetAddress& peer_addr)
     connections_[conn_name] = conn;
     conn->SetConnectionCallback(connection_callback_);
     conn->SetMessageCallback(message_callback_);
-    conn->ConnectEstablished();
+    conn->SetCloseCallback(std::bind(&TcpServer::RemoveConnection, this, _1));
+    conn->ConnectionEstablished();
+}
+
+void TcpServer::RemoveConnection(const TcpConnectionPtr& conn)
+{
+    loop_->AssertInLoopThread();
+    LOG_INFO << "TcpServer::RemoveConnection [" << name_
+             << "] - connection " << conn->Name();
+    size_t n = connections_.erase(conn->Name());
+    assert(n == 1);
+    UnusedVariable(n);
+    loop_->QueueInLoop([conn]{conn->ConnectionDestroyed();});
 }
 
 }

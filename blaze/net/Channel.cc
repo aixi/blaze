@@ -23,19 +23,67 @@ Channel::Channel(EventLoop* loop, int fd) :
     fd_(fd),
     events_(0),
     revents_(0),
-    index_(-1)
+    index_(-1),
+    is_in_loop_(false),
+    tied_(false),
+    event_handling_(false)
 {}
 
-void Channel::Update()
+Channel::~Channel()
 {
-    loop_->UpdateChannel(this);
+    assert(!event_handling_);
+    assert(!is_in_loop_);
+    if (loop_->IsInLoopThread())
+    {
+        assert(!loop_->HasChannel(this));
+    }
 }
 
 void Channel::HandleEvent()
 {
+    std::shared_ptr<void> guard;
+    if (tied_)
+    {
+        guard = tie_.lock();
+        if (guard)
+        {
+            HandleEventWithGuard();
+        }
+    }
+    else
+    {
+        HandleEventWithGuard();
+    }
+}
+
+void Channel::Update()
+{
+
+    loop_->UpdateChannel(this);
+    is_in_loop_ = true;
+}
+
+void Channel::Remove()
+{
+    assert(IsNoneEvent());
+    loop_->RemoveChannel(this);
+    is_in_loop_ = false;
+}
+
+void Channel::HandleEventWithGuard()
+{
+    event_handling_ = true;
     if (revents_ & POLLNVAL)
     {
         LOG_WARN << "Channel::HandleEvent() POLLNVAL";
+    }
+    if ((revents_ & POLLHUP) && !(revents_ & POLLIN))
+    {
+        LOG_WARN << "Channel::HandleEvent() POLLHUP";
+        if (close_callback_)
+        {
+            close_callback_();
+        }
     }
     if (revents_ & (POLLERR | POLLNVAL))
     {
@@ -58,6 +106,13 @@ void Channel::HandleEvent()
             write_callback_();
         }
     }
+    event_handling_ = false;
+}
+
+void Channel::Tie(const std::shared_ptr<void>& obj)
+{
+    tie_ = obj;
+    tied_ = true;
 }
 
 } // namespace net

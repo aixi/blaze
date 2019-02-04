@@ -48,6 +48,8 @@ private:
     // Not thread safe, but in loop
     void NewConnection(int connfd, const InetAddress& peer_addr);
 
+    void RemoveConnection(const TcpConnectionPtr& conn);
+
 private:
     EventLoop* loop_;
     const std::string name_;

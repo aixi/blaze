@@ -25,21 +25,21 @@ EventLoop* g_loop;
 //    g_loop->Loop();
 //}
 
-void Timeout(int sequence)
-{
-    printf("Timeout\n");
-    //g_loop->Quit();
-}
-
-void Functor()
-{
-    printf("Functor\n");
-    for (int i = 0; i < 10; ++i)
-    {
-        g_loop->RunInLoop([i](){Timeout(i);});
-    }
-    //g_loop->Quit();
-}
+//void Timeout(int sequence)
+//{
+//    printf("Timeout\n");
+//    //g_loop->Quit();
+//}
+//
+//void Functor()
+//{
+//    printf("Functor\n");
+//    for (int i = 0; i < 10; ++i)
+//    {
+//        g_loop->RunInLoop([i](){Timeout(i);});
+//    }
+//    //g_loop->Quit();
+//}
 
 //void NewConnection(int sockfd, const InetAddress& peer_addr)
 //{

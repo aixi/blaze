@@ -88,6 +88,39 @@ void PollPoller::UpdateChannel(Channel* channel)
     }
 }
 
+void PollPoller::RemoveChannel(Channel* channel)
+{
+    AssertInLoopThread();
+    LOG_TRACE << "fd = " << channel->fd();
+    assert(channels_.find(channel->fd()) != channels_.end());
+    assert(channels_[channel->fd()] == channel);
+    assert(channel->IsNoneEvent());
+    int idx = channel->index();
+    assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
+    const struct pollfd& pfd = pollfds_[idx];
+    assert(pfd.fd == -channel->fd() - 1 && pfd.events == channel->events());
+    UnusedVariable(pfd);
+    size_t n = channels_.erase(channel->fd()); //  return number of elements removed.
+    assert(n == 1);
+    UnusedVariable(n);
+    if (implicit_cast<size_t>(idx) == pollfds_.size() - 1)
+    {
+        pollfds_.pop_back();
+    }
+    else
+    {
+        // exchange target and back elements, then pop_back, complexity O(1)
+        int fd_at_back = pollfds_.back().fd;
+        std::iter_swap(pollfds_.begin() + idx, pollfds_.end() - 1);
+        if (fd_at_back < 0)
+        {
+            fd_at_back = -fd_at_back - 1;
+        }
+        channels_[fd_at_back]->set_index(idx);
+        pollfds_.pop_back();
+    }
+}
+
 void PollPoller::FillActiveChannels(int event_nums, ChannelList* active_channels) const
 {
     for (auto pfd = pollfds_.begin(); pfd != pollfds_.end() && event_nums > 0; ++pfd)

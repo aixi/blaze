@@ -51,7 +51,19 @@ public:
         message_callback_ = cb;
     }
 
-    void ConnectEstablished();
+    // internal use only
+    void SetCloseCallback(const CloseCallback& cb)
+    {
+        close_callback_ = cb;
+    }
+
+    // called when TcpServer accepts a new connection
+    // should be called only once
+    void ConnectionEstablished();
+
+    // called when TcpServer has removed me from its connectionMap
+    // shall be called only once
+    void ConnectionDestroyed();
 
     bool Connected() const
     {
@@ -73,11 +85,14 @@ public:
         return peer_addr_;
     }
 
+
+
 private:
     enum class ConnState
     {
         kConnecting,
-        kConnected
+        kConnected,
+        kDisconnected
     };
 
     void SetState(ConnState state)
@@ -86,8 +101,11 @@ private:
     }
 
     void HandleRead();
+    void HandleWrite();
+    void HandleClose();
+    void HandleError();
 
-    const char* StateToString() const;
+    const char* StateToCStr() const;
 
 private:
     EventLoop* loop_;
@@ -100,6 +118,7 @@ private:
     InetAddress peer_addr_;
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
+    CloseCallback close_callback_;
     Buffer input_buffer_;
 };
 

@@ -116,6 +116,32 @@ void EventLoop::Wakeup()
     }
 }
 
+void EventLoop::UpdateChannel(Channel* channel)
+{
+    assert(channel->OwnerLoop() == this);
+    AssertInLoopThread();
+    poller_->UpdateChannel(channel);
+}
+
+void EventLoop::RemoveChannel(Channel* channel)
+{
+    assert(channel->OwnerLoop() == this);
+    AssertInLoopThread();
+    if (event_handling_)
+    {
+        assert(current_active_channel_ == channel ||
+               std::find(active_channels.begin(), active_channels.end(), channel) == active_channels.end());
+    }
+    poller_->RemoveChannel(channel);
+}
+
+bool EventLoop::HasChannel(Channel* channel)
+{
+    assert(channel->OwnerLoop() == this);
+    AssertInLoopThread();
+    return poller_->HasChannel(channel);
+}
+
 void EventLoop::HandleRead()
 {
     uint64_t one = 1;
@@ -124,13 +150,6 @@ void EventLoop::HandleRead()
     {
         LOG_ERROR << "EventLoop::HandleRead() reads " << n << " bytes instead of 8";
     }
-}
-
-void EventLoop::UpdateChannel(Channel* channel)
-{
-    assert(channel->OwnerLoop() == this);
-    AssertInLoopThread();
-    poller_->UpdateChannel(channel);
 }
 
 void EventLoop::RunInLoop(Task task)
