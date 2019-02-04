@@ -63,11 +63,21 @@ public:
 
     // called when TcpServer has removed me from its connectionMap
     // shall be called only once
+    // NOTE: someone may call ConnectionDestroyed() before HandleClose()
     void ConnectionDestroyed();
+
+    void Send(const std::string& message);
+
+    void Shutdown();
 
     bool Connected() const
     {
         return ConnState::kConnected == state_;
+    }
+
+    bool Disconnected() const
+    {
+        return ConnState::kDisconnected == state_;
     }
 
     const std::string& Name() const
@@ -92,6 +102,7 @@ private:
     {
         kConnecting,
         kConnected,
+        kDisconnecting,
         kDisconnected
     };
 
@@ -104,6 +115,9 @@ private:
     void HandleWrite();
     void HandleClose();
     void HandleError();
+
+    void SendInLoop(const std::string& message);
+    void ShutDownInLoop();
 
     const char* StateToCStr() const;
 
@@ -120,6 +134,7 @@ private:
     MessageCallback message_callback_;
     CloseCallback close_callback_;
     Buffer input_buffer_;
+    Buffer output_buffer_;
 };
 
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;

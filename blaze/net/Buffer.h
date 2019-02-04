@@ -325,7 +325,7 @@ public:
     ///
     /// It may implement with readv(2)
     /// @return result of read(2), @c errno is saved
-    ssize_t ReadFd(int fd, int* saved_errno);
+    ssize_t Readfd(int fd, int* saved_errno);
 
 private:
 

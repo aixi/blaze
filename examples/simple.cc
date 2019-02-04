@@ -57,14 +57,20 @@ EventLoop* g_loop;
 
 void OnConnection(const TcpConnectionPtr& conn)
 {
+    std::string message("test Send");
+    std::string message2("test Send2");
     if (conn->Connected())
     {
         printf("OnConnection(): new connection [%s] from %s\n",
                conn->Name().c_str(), conn->PeerAddress().ToIpPort().c_str());
+        conn->Send(message);
+        conn->Send(message2);
+        conn->Shutdown();
     }
     else
     {
         printf("OnConnection(): connections [%s] is down\n", conn->Name().c_str());
+
     }
 }
 

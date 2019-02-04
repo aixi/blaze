@@ -14,7 +14,7 @@ const char Buffer::kCRLF[] = "\r\n";
 const size_t Buffer::kCheapPrepend = 8;
 const size_t Buffer::kInitialSize = 1024;
 
-ssize_t Buffer::ReadFd(int fd, int* saved_errno)
+ssize_t Buffer::Readfd(int fd, int* saved_errno)
 {
     char extra_buf[65536]; // 64KB
     struct iovec vec[2];
