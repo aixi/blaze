@@ -1,7 +1,7 @@
 //
 // Created by xi on 19-1-31.
 //
-
+#include <signal.h>
 #include <sys/eventfd.h>
 
 #include <blaze/log/Logging.h>
@@ -30,6 +30,22 @@ int CreateEventfd()
     }
     return fd;
 }
+
+
+// namespace level object will be created before main
+#pragma clang diagnostic ignored "-Wold-style-cast"
+class IgnoreSigPipe
+{
+public:
+    IgnoreSigPipe()
+    {
+        ::signal(SIGPIPE, SIG_IGN);
+        LOG_TRACE << "Ignore SIGPIPE";
+    }
+};
+#pragma clang diagnostic error "-Wold-style-cast"
+
+IgnoreSigPipe ignoreSigPipe;
 
 } // anonymous namespace
 
