@@ -5,8 +5,11 @@
 #include <blaze/net/EventLoopThread.h>
 #include <blaze/log/Logging.h>
 #include <blaze/net/SocketsOps.h>
+#include <blaze/net/Buffer.h>
 #include <blaze/net/InetAddress.h>
 #include <blaze/net/Acceptor.h>
+#include <blaze/net/TcpConnection.h>
+#include <blaze/net/TcpServer.h>
 #include <blaze/net/Callbacks.h>
 #include <iostream>
 #include <functional>
@@ -38,18 +41,38 @@ void Functor()
     //g_loop->Quit();
 }
 
-void NewConnection(int sockfd, const InetAddress& peer_addr)
+//void NewConnection(int sockfd, const InetAddress& peer_addr)
+//{
+//    printf("NewConnection(): accept a new connection from %s\n", peer_addr.ToIpPort().c_str());
+//    ::write(sockfd, "How are you?\n", 13);
+//    blaze::net::sockets::close(sockfd);
+//}
+//
+//void NewConnection2(int sockfd, const InetAddress& peer_addr)
+//{
+//    printf("NewConnection(): accept a new connection from %s\n", peer_addr.ToIpPort().c_str());
+//    ::write(sockfd, "How are you2?\n", 13);
+//    blaze::net::sockets::close(sockfd);
+//}
+
+void OnConnection(const TcpConnectionPtr& conn)
 {
-    printf("NewConnection(): accept a new connection from %s\n", peer_addr.ToIpPort().c_str());
-    ::write(sockfd, "How are you?\n", 13);
-    blaze::net::sockets::close(sockfd);
+    if (conn->Connected())
+    {
+        printf("OnConnection(): new connection [%s] from %s\n",
+               conn->Name().c_str(), conn->PeerAddress().ToIpPort().c_str());
+    }
+    else
+    {
+        printf("OnConnection(): connections [%s] is down\n", conn->Name().c_str());
+    }
 }
 
-void NewConnection2(int sockfd, const InetAddress& peer_addr)
+void OnMessage(const TcpConnectionPtr& conn, Buffer* buffer, Timestamp when)
 {
-    printf("NewConnection(): accept a new connection from %s\n", peer_addr.ToIpPort().c_str());
-    ::write(sockfd, "How are you2?\n", 13);
-    blaze::net::sockets::close(sockfd);
+    std::string_view msg = buffer->RetrieveAllAsString();
+    printf("OnMessage(): received %zd bytes from connection [%s]\n",
+            msg.size(), msg.data());
 }
 
 int main()
@@ -94,5 +117,13 @@ int main()
 //    acceptor2.SetNewConnectionCallback(NewConnection2);
 //    acceptor2.Listen();
 //    loop.Loop();
+    printf("main(): pid=%d\n", ::getpid());
+    InetAddress listen_addr(9981);
+    EventLoop loop;
+    TcpServer server(&loop, listen_addr, "test_server");
+    server.SetConnectionCallback(OnConnection);
+    server.SetMessageCallback(OnMessage);
+    server.Start();
+    loop.Loop();
     return 0;
 }

@@ -63,7 +63,9 @@ set(SOURCE_FILES
         blaze/net/TimerQueue.cc
         blaze/net/Timer.cc
         blaze/net/EventLoopThread.cc
-        blaze/net/Acceptor.cc)
+        blaze/net/Acceptor.cc
+        blaze/net/TcpConnection.cc
+        blaze/net/TcpServer.cc)
 
 add_library(blaze STATIC ${SOURCE_FILES})
 target_link_libraries(blaze pthread)

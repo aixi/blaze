@@ -6,6 +6,7 @@
 #define BLAZE_CALLBACKS_H
 
 #include <functional>
+#include <blaze/utils/Timestamp.h>
 
 namespace blaze
 {
@@ -17,10 +18,20 @@ using std::placeholders::_3;
 namespace net
 {
 
-using TimerCallback = std::function<void()>;
-
+class Buffer;
 class TcpConnection;
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
+using TimerCallback = std::function<void ()>;
+using ConnectionCallback = std::function<void (const TcpConnectionPtr&)>;
+using CloseCallback = std::function<void (const TcpConnectionPtr&)>;
+using WriteCompleteCallback = std::function<void (const TcpConnectionPtr&)>;
+using HighWaterMarkCallback = std::function<void (const TcpConnectionPtr&, size_t)>;
+
+using MessageCallback = std::function<void (const TcpConnectionPtr&, Buffer*, Timestamp)>;
+
+void DefaultConnection(const TcpConnectionPtr& conn);
+
+void DefaultMessageCallback(const TcpConnectionPtr& conn, Buffer* buffer, Timestamp receive_time);
 
 } // namespace net
 } // namespace blaze

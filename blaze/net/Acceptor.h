@@ -34,6 +34,11 @@ public:
         new_connection_callback_ = cb;
     }
 
+    bool Listening() const
+    {
+        return listening_;
+    }
+
     void Listen();
 
 private:
