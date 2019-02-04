@@ -29,12 +29,12 @@ std::string Timestamp::ToString() const
     return buf;
 }
 
-std::string Timestamp::ToFormatedString(bool show_microseconds) const
+std::string Timestamp::ToFormattedString(bool show_microseconds) const
 {
     char buf[64] = {0};
     time_t seconds = static_cast<time_t>(micro_seconds_since_epoch_ / kMicroSecondsPerSecond);
     struct tm tm_time;
-    gmtime_r(&seconds, &tm_time);
+    localtime_r(&seconds, &tm_time);
     if (show_microseconds)
     {
         int microseconds = static_cast<int>(micro_seconds_since_epoch_ % kMicroSecondsPerSecond);

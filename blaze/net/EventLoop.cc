@@ -61,7 +61,8 @@ EventLoop::EventLoop() :
     {
         t_loop_in_this_thread = this;
     }
-    wakeup_channel_->SetReadCallback([this](){HandleRead();});
+    // FIXME: where is the Timestamp receive_time parameter ?
+    wakeup_channel_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
     wakeup_channel_->EnableReading();
 }
 
@@ -87,7 +88,7 @@ void EventLoop::Loop()
         for (Channel* channel : active_channels)
         {
             current_active_channel_ = channel;
-            current_active_channel_->HandleEvent();
+            current_active_channel_->HandleEvent(poll_return_time_);
         }
         current_active_channel_ = nullptr;
         event_handling_ = false;

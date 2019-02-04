@@ -29,7 +29,7 @@ using HighWaterMarkCallback = std::function<void (const TcpConnectionPtr&, size_
 
 using MessageCallback = std::function<void (const TcpConnectionPtr&, Buffer*, Timestamp)>;
 
-void DefaultConnection(const TcpConnectionPtr& conn);
+void DefaultConnectionCallback(const TcpConnectionPtr& conn);
 
 void DefaultMessageCallback(const TcpConnectionPtr& conn, Buffer* buffer, Timestamp receive_time);
 

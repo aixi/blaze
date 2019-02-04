@@ -24,20 +24,21 @@ class EventLoop;
 class Channel : public noncopyable
 {
 public:
-    using EventCallback = std::function<void()>;
+    using EventCallback = std::function<void ()>;
+    using ReadEventCallback = std::function<void (Timestamp)>;
 
     Channel(EventLoop* loop, int fd);
 
     ~Channel();
 
-    void HandleEvent();
+    void HandleEvent(Timestamp when);
 
     // Tie this channel object to its owner object managed by shared_ptr
-    // prevent the owner object being destroyed in HandleEvent()
-    // std::shared_ptr<void> could handle all type like void*
+    // prevent the owner object being destroyed in HandleEvent(Timestamp when)
+    // std::shared_ptr<void> could hold all types like void*
     void Tie(const std::shared_ptr<void>& obj);
 
-    void SetReadCallback(EventCallback cb)
+    void SetReadCallback(ReadEventCallback cb)
     {
         read_callback_ = std::move(cb);
     }
@@ -137,7 +138,7 @@ public:
 private:
 
     void Update();
-    void HandleEventWithGuard();
+    void HandleEventWithGuard(Timestamp when);
 
 private:
 
@@ -157,7 +158,7 @@ private:
 
     std::weak_ptr<void> tie_;
 
-    EventCallback read_callback_;
+    ReadEventCallback read_callback_;
     EventCallback write_callback_;
     EventCallback close_callback_;
     EventCallback error_callback_;

@@ -39,7 +39,7 @@ Channel::~Channel()
     }
 }
 
-void Channel::HandleEvent()
+void Channel::HandleEvent(Timestamp when)
 {
     std::shared_ptr<void> guard;
     if (tied_)
@@ -47,12 +47,12 @@ void Channel::HandleEvent()
         guard = tie_.lock();
         if (guard)
         {
-            HandleEventWithGuard();
+            HandleEventWithGuard(when);
         }
     }
     else
     {
-        HandleEventWithGuard();
+        HandleEventWithGuard(when);
     }
 }
 
@@ -70,7 +70,7 @@ void Channel::Remove()
     is_in_loop_ = false;
 }
 
-void Channel::HandleEventWithGuard()
+void Channel::HandleEventWithGuard(Timestamp when)
 {
     event_handling_ = true;
     if (revents_ & POLLNVAL)
@@ -96,7 +96,7 @@ void Channel::HandleEventWithGuard()
     {
         if (read_callback_)
         {
-            read_callback_();
+            read_callback_(when);
         }
     }
     if (revents_ & POLLOUT)

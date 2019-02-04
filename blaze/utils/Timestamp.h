@@ -45,7 +45,7 @@ public:
 
     std::string ToString() const;
 
-    std::string ToFormatedString(bool show_microseconds = true) const;
+    std::string ToFormattedString(bool show_microseconds = true) const;
 
     // internal usage
 

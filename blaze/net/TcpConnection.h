@@ -100,7 +100,7 @@ private:
         state_ = state;
     }
 
-    void HandleRead();
+    void HandleRead(Timestamp when);
     void HandleWrite();
     void HandleClose();
     void HandleError();

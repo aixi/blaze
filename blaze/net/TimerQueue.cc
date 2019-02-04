@@ -82,7 +82,8 @@ TimerQueue::TimerQueue(EventLoop* loop) :
     calling_expired_timers_(false),
     timers_()
 {
-    timerfd_channel_.SetReadCallback([this](){HandleRead();});
+    // FIXME: where is the Timestamp receive_time parameter ?
+    timerfd_channel_.SetReadCallback(std::bind(&TimerQueue::HandleRead, this));
     // Always reading the timerfd, disarm it with timerfd_settime
     timerfd_channel_.EnableReading();
 }

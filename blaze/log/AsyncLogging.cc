@@ -115,7 +115,7 @@ void AsyncLogging::ThreadFunc()
         {
             char buf[256];
             snprintf(buf, sizeof(buf), "Dropped log message at %s, %zd larger buffers",
-                Timestamp::Now().ToFormatedString().c_str(), buffers_to_write.size() - 2);
+                     Timestamp::Now().ToFormattedString().c_str(), buffers_to_write.size() - 2);
             fputs(buf, stderr);
             output.Append(buf, static_cast<int>(strlen(buf)));
             buffers_to_write.erase(buffers_to_write.begin() + 2, buffers_to_write.end());
