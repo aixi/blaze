@@ -62,14 +62,14 @@ void OnConnection(const TcpConnectionPtr& conn)
     if (conn->Connected())
     {
         printf("OnConnection(): new connection [%s] from %s\n",
-               conn->Name().c_str(), conn->PeerAddress().ToIpPort().c_str());
+               conn->GetName().c_str(), conn->PeerAddress().ToIpPort().c_str());
         conn->Send(message);
         conn->Send(message2);
         conn->Shutdown();
     }
     else
     {
-        printf("OnConnection(): connections [%s] is down\n", conn->Name().c_str());
+        printf("OnConnection(): connections [%s] is down\n", conn->GetName().c_str());
 
     }
 }

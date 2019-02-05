@@ -7,6 +7,7 @@
 
 #include <string_view>
 #include <memory>
+#include <any>
 
 #include <blaze/net/InetAddress.h>
 #include <blaze/net/Callbacks.h>
@@ -57,6 +58,48 @@ public:
         close_callback_ = cb;
     }
 
+    void SetHighwaterMarkCallback(const HighWaterMarkCallback& cb, size_t highwater_mark)
+    {
+        highwater_mark_callback_ = cb;
+        highwater_mark_ = highwater_mark;
+    }
+
+    void SetWriteCompleteCallback(const WriteCompleteCallback& cb)
+    {
+        write_complete_callback_ = cb;
+    }
+
+    // Nagle's algorithm
+    void SetTcpNoDelay(bool on);
+
+    void SetKeepAlive(bool on);
+
+    void StartRead();
+    void StopRead();
+    bool IsReading() const // NOT thread safe, may race with Start/StopReadInLoop
+    {
+        return reading_;
+    }
+
+    bool GetTcpInfo(struct tcp_info* tcpi) const;
+
+    std::string GetTcpInfoString() const;
+
+    void SetContext(const std::any& context)
+    {
+        context_ = context;
+    }
+
+    const std::any& GetContext() const
+    {
+        return context_;
+    }
+
+    std::any& GetContext()
+    {
+        return context_;
+    }
+
     // called when TcpServer accepts a new connection
     // should be called only once
     void ConnectionEstablished();
@@ -66,7 +109,11 @@ public:
     // NOTE: someone may call ConnectionDestroyed() before HandleClose()
     void ConnectionDestroyed();
 
-    void Send(const std::string& message);
+    void Send(const void* data, size_t len);
+
+    void Send(const std::string_view& message);
+
+    void Send(Buffer* buf);
 
     void Shutdown();
 
@@ -80,7 +127,12 @@ public:
         return ConnState::kDisconnected == state_;
     }
 
-    const std::string& Name() const
+    EventLoop* GetLoop() const
+    {
+        return loop_;
+    }
+
+    const std::string& GetName() const
     {
         return name_;
     }
@@ -95,7 +147,17 @@ public:
         return peer_addr_;
     }
 
+    // advance interface
 
+    Buffer* GetInputBuffer()
+    {
+        return &input_buffer_;
+    }
+
+    Buffer* GetOutputBuffer()
+    {
+        return &output_buffer_;
+    }
 
 private:
     enum class ConnState
@@ -106,24 +168,30 @@ private:
         kDisconnected
     };
 
-    void SetState(ConnState state)
-    {
-        state_ = state;
-    }
-
     void HandleRead(Timestamp when);
     void HandleWrite();
     void HandleClose();
     void HandleError();
 
-    void SendInLoop(const std::string& message);
+    void SendInLoop(const std::string_view& message);
+    void SendInLoop(const void* data, size_t len);
     void ShutDownInLoop();
+
+    void StartReadInLoop();
+    void StopReadInLoop();
+
+    void SetState(ConnState state)
+    {
+        state_ = state;
+    }
 
     const char* StateToCStr() const;
 
 private:
     EventLoop* loop_;
     const std::string name_;
+    size_t highwater_mark_;
+    bool reading_;
     ConnState state_; // FiXME: use atomic variable
     // Do not expose Channel.h Socket.h in public header
     std::unique_ptr<Socket> socket_;
@@ -133,8 +201,11 @@ private:
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
     CloseCallback close_callback_;
+    HighWaterMarkCallback highwater_mark_callback_;
+    WriteCompleteCallback write_complete_callback_;
     Buffer input_buffer_;
-    Buffer output_buffer_;
+    Buffer output_buffer_; // FIXME: use std::list<Buffer> and ::writev()
+    std::any context_;
 };
 
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;

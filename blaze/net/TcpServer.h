@@ -44,20 +44,30 @@ public:
         message_callback_ = cb;
     }
 
+    // NOT thread safe
+    void SetWriteCompleteCallback(const WriteCompleteCallback& cb)
+    {
+        write_complete_callback_ = cb;
+    }
+
 private:
     // Not thread safe, but in loop
     void NewConnection(int connfd, const InetAddress& peer_addr);
-
+    // Thread safe
     void RemoveConnection(const TcpConnectionPtr& conn);
+    // Not thread safe, but in loop thread
+    void RemoveConnectionInLoop(const TcpConnectionPtr& conn);
 
 private:
     EventLoop* loop_;
     const std::string name_;
+    const std::string ip_port_;
     std::unique_ptr<Acceptor> acceptor_; // avoid exposing Acceptor.h in public header
     bool started_;
     int next_conn_id_;
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
+    WriteCompleteCallback write_complete_callback_;
     using ConnectionMap = std::map<std::string, TcpConnectionPtr>;
     ConnectionMap connections_;
 };
