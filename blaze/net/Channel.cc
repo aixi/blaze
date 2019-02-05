@@ -2,6 +2,7 @@
 // Created by xi on 19-1-31.
 //
 
+#include <sstream>
 #include <poll.h>
 
 #include <blaze/net/EventLoop.h>
@@ -113,6 +114,38 @@ void Channel::Tie(const std::shared_ptr<void>& obj)
 {
     tie_ = obj;
     tied_ = true;
+}
+
+std::string Channel::REventToString() const
+{
+    return EventsToString(fd_, revents_);
+}
+
+std::string Channel::EventToString() const
+{
+    return EventsToString(fd_, events_);
+}
+
+std::string Channel::EventsToString(int fd, int ev) const
+{
+    std::ostringstream oss;
+    oss << fd << ": ";
+    if (ev & POLLIN)
+        oss << "IN ";
+    if (ev & POLLPRI)
+        oss << "PRI ";
+    if (ev & POLLOUT)
+        oss << "OUT ";
+    if (ev & POLLHUP)
+        oss << "HUP ";
+    if (ev & POLLRDHUP)
+        oss << "RDHUP ";
+    if (ev & POLLERR)
+        oss << "ERR ";
+    if (ev & POLLNVAL)
+        oss << "NVAL ";
+
+    return oss.str();
 }
 
 } // namespace net

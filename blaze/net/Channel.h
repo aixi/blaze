@@ -133,12 +133,18 @@ public:
         return events_ == kNoneEvent;
     };
 
+    // for debug
+    std::string EventToString() const;
+    std::string REventToString() const;
+
     void Remove();
 
 private:
 
     void Update();
     void HandleEventWithGuard(Timestamp when);
+    std::string EventsToString(int fd, int ev) const;
+
 
 private:
 

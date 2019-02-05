@@ -25,7 +25,7 @@ class TimerQueue : public noncopyable
 {
 public:
 
-    TimerQueue(EventLoop* loop);
+    explicit TimerQueue(EventLoop* loop);
 
     ~TimerQueue();
 
