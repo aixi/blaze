@@ -107,7 +107,7 @@ public:
         return std::this_thread::get_id() == thread_id_;
     }
 
-    bool EventHandling const
+    bool EventHandling() const
     {
         return event_handling_;
     };

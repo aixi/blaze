@@ -132,7 +132,7 @@ public:
         return loop_;
     }
 
-    const std::string& GetName() const
+    const std::string& name() const
     {
         return name_;
     }

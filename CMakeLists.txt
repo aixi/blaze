@@ -66,7 +66,8 @@ set(SOURCE_FILES
         blaze/net/Acceptor.cc
         blaze/net/TcpConnection.cc
         blaze/net/TcpServer.cc
-        blaze/net/poller/EPollPoller.cc)
+        blaze/net/poller/EPollPoller.cc
+        blaze/net/EventLoopThreadPool.cc)
 
 add_library(blaze STATIC ${SOURCE_FILES})
 target_link_libraries(blaze pthread)

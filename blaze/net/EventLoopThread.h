@@ -9,6 +9,7 @@
 #include <condition_variable>
 #include <thread>
 #include <functional>
+#include <string_view>
 
 #include <blaze/utils/noncopyable.h>
 
@@ -26,11 +27,17 @@ public:
     using ThreadInitCallback = std::function<void(EventLoop*)>;
 
     explicit EventLoopThread(const ThreadInitCallback& cb = ThreadInitCallback(),
-                             const std::string& name = std::string());
+                             const std::string_view& name = std::string());
 
     ~EventLoopThread();
 
     EventLoop* StartLoop();
+
+    const std::string name() const
+    {
+        return name_;
+    }
+
 
 private:
 
@@ -42,6 +49,7 @@ private:
     bool exiting_;
     ThreadInitCallback callback_;
     std::unique_ptr<std::thread> thread_;
+    std::string name_;
     std::mutex mutex_;
     std::condition_variable cond_;
 };

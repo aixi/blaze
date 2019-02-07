@@ -20,17 +20,59 @@ namespace net
 class EventLoop;
 class Acceptor;
 class InetAddress;
+class EventLoopThreadPool;
 
 class TcpServer : public noncopyable
 {
 public:
-    TcpServer(EventLoop* loop, const InetAddress& listen_addr, std::string_view name);
+    using ThreadInitCallback = std::function<void (EventLoop*)>;
+
+    TcpServer(EventLoop* loop, const InetAddress& listen_addr, const std::string_view& name);
 
     ~TcpServer(); // forced out-of-line dtor, for std::unique_ptr member
+
+    /// Set the number of threads for handling input.
+    ///
+    /// Always accepts new connection in loop's thread.
+    /// Must be called before Start()
+    /// @param threads_num
+    /// - 0 means all I/O in loop's thread, no thread will created.
+    ///   this is the default value.
+    /// - 1 means all I/O in another thread.
+    /// - N means a thread pool with N threads, new connections
+    ///   are assigned on a round-robin basis.
+
+    void SetThreadNum(int threads_num);
 
     // It's harmless to call it multiple times
     // Thread safe
     void Start();
+
+    const std::string& IpPort() const
+    {
+        return ip_port_;
+    }
+
+    const std::string& name() const
+    {
+        return name_;
+    }
+
+    EventLoop* GetLoop() const
+    {
+        return loop_;
+    }
+
+    // valid after calling Start()
+    std::shared_ptr<EventLoopThreadPool> ThreadPool()
+    {
+        return thread_pool_;
+    }
+
+    void SetThreadInitCallback(const ThreadInitCallback& cb)
+    {
+        thread_init_callback_ = cb;
+    }
 
     // NOT thread safe
     void SetConnectionCallback(const ConnectionCallback& cb)
@@ -59,15 +101,18 @@ private:
     void RemoveConnectionInLoop(const TcpConnectionPtr& conn);
 
 private:
-    EventLoop* loop_;
+    EventLoop* loop_; // the acceptor loop
     const std::string name_;
     const std::string ip_port_;
     std::unique_ptr<Acceptor> acceptor_; // avoid exposing Acceptor.h in public header
-    bool started_;
-    int next_conn_id_;
+    int next_conn_id_; // always in thread loop
+    std::atomic<int> started_;
+    std::shared_ptr<EventLoopThreadPool> thread_pool_;
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
     WriteCompleteCallback write_complete_callback_;
+    ThreadInitCallback thread_init_callback_;
+
     using ConnectionMap = std::map<std::string, TcpConnectionPtr>;
     ConnectionMap connections_;
 };

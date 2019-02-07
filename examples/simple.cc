@@ -61,15 +61,13 @@ void OnConnection(const TcpConnectionPtr& conn)
     std::string message2("test Send2");
     if (conn->Connected())
     {
-        printf("OnConnection(): new connection [%s] from %s\n",
-               conn->GetName().c_str(), conn->PeerAddress().ToIpPort().c_str());
-        conn->Send(message);
-        conn->Send(message2);
-        conn->Shutdown();
+        printf("OnConnection(): new connection [%s] from %s, at thread id: %zu\n",
+               conn->name().c_str(), conn->PeerAddress().ToIpPort().c_str(),
+               std::hash<std::thread::id>()(std::this_thread::get_id()));
     }
     else
     {
-        printf("OnConnection(): connections [%s] is down\n", conn->GetName().c_str());
+        printf("OnConnection(): connections [%s] is down\n", conn->name().c_str());
 
     }
 }
@@ -77,8 +75,8 @@ void OnConnection(const TcpConnectionPtr& conn)
 void OnMessage(const TcpConnectionPtr& conn, Buffer* buffer, Timestamp receive_time)
 {
     std::string_view msg = buffer->RetrieveAllAsString();
-    printf("OnMessage(): received %zd bytes from connection [%s] at %s\n",
-            msg.size(), msg.data(), receive_time.ToFormattedString().c_str());
+    printf("OnMessage(): received %zd bytes from connection [%s]: %s at %s\n",
+            msg.size(), conn->name().c_str(), msg.data(), receive_time.ToFormattedString().c_str());
 }
 
 int main()
@@ -129,6 +127,7 @@ int main()
     TcpServer server(&loop, listen_addr, "test_server");
     server.SetConnectionCallback(OnConnection);
     server.SetMessageCallback(OnMessage);
+    server.SetThreadNum(8);
     server.Start();
     loop.Loop();
     return 0;

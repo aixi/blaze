@@ -14,11 +14,12 @@ namespace blaze
 namespace net
 {
 
-EventLoopThread::EventLoopThread(const ThreadInitCallback& cb, const std::string& name) :
+EventLoopThread::EventLoopThread(const ThreadInitCallback& cb, const std::string_view& name) :
     loop_(nullptr),
     exiting_(false),
     callback_(cb),
-    thread_(nullptr)
+    thread_(nullptr),
+    name_(name)
 {}
 
 EventLoopThread::~EventLoopThread()
