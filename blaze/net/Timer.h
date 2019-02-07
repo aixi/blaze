@@ -25,14 +25,16 @@ public:
         timer_callback_(std::move(cb)),
         expiration_(when),
         interval_(interval),
-        repeat_(interval_ > 0),
-        sequence_(s_created_num_.fetch_add(1, std::memory_order_relaxed))
+        repeat_(interval_ > 0.0),
+        sequence_(s_created_nums_.fetch_add(1, std::memory_order_relaxed))
     {}
 
     void Run() const
     {
         timer_callback_();
     }
+
+    void Restart(Timestamp now);
 
     Timestamp expiration() const
     {
@@ -51,7 +53,7 @@ public:
 
     static int64_t CreatedNumber()
     {
-        return s_created_num_.load(std::memory_order_relaxed);
+        return s_created_nums_.load(std::memory_order_relaxed);
     }
 
 private:
@@ -62,7 +64,7 @@ private:
     const bool repeat_;
     const int64_t sequence_;
 
-    static std::atomic<int64_t> s_created_num_;
+    static std::atomic<int64_t> s_created_nums_;
 };
 
 } // namespace net

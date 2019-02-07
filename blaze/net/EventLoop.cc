@@ -7,7 +7,6 @@
 #include <blaze/log/Logging.h>
 
 #include <blaze/net/Poller.h>
-#include <blaze/net/poller/PollPoller.h>
 #include <blaze/net/Channel.h>
 #include <blaze/net/TimerQueue.h>
 #include <blaze/net/SocketsOps.h>
@@ -185,12 +184,18 @@ void EventLoop::QueueInLoop(Task task)
 {
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        tasks_.emplace_back(std::move(task));
+        pending_tasks_.emplace_back(std::move(task));
     }
     if (!IsInLoopThread() || calling_pending_tasks_)
     {
         Wakeup();
     }
+}
+
+size_t EventLoop::PendingTasksSize() const
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    return pending_tasks_.size();
 }
 
 void EventLoop::DoPendingTasks()
@@ -199,13 +204,35 @@ void EventLoop::DoPendingTasks()
     calling_pending_tasks_ = true;
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        tasks.swap(tasks_);
+        tasks.swap(pending_tasks_);
     }
     for (const Task& task : tasks)
     {
         task();
     }
     calling_pending_tasks_ = false;
+}
+
+TimerId EventLoop::RunAt(Timestamp when, TimerCallback cb)
+{
+    return timer_queue_->AddTimer(std::move(cb), when, 0.0);
+}
+
+TimerId EventLoop::RunAfter(double delay, TimerCallback cb)
+{
+    Timestamp when(AddTime(Timestamp::Now(), delay));
+    return RunAt(when, std::move(cb));
+}
+
+TimerId EventLoop::RunEvery(double interval, TimerCallback cb)
+{
+    Timestamp when(AddTime(Timestamp::Now(), interval));
+    return timer_queue_->AddTimer(std::move(cb), when, interval);
+}
+
+void EventLoop::CancelTimer(TimerId timerid)
+{
+    return timer_queue_->CancelTimer(timerid);
 }
 
 void EventLoop::AbortNotInLoopThread()

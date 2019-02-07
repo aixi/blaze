@@ -41,6 +41,11 @@ public:
         return Timestamp();
     }
 
+    bool IsValid() const
+    {
+        return micro_seconds_since_epoch_ > 0;
+    }
+
     // default copy ctor / assignment dtor are OK
 
     std::string ToString() const;

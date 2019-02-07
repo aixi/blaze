@@ -8,9 +8,14 @@
 #include <thread>
 #include <mutex>
 #include <vector>
+#include <any>
+#include <atomic>
 #include <functional>
+
 #include <blaze/utils/Timestamp.h>
 #include <blaze/utils/noncopyable.h>
+#include <blaze/net/Callbacks.h>
+#include <blaze/net/TimerId.h>
 
 namespace blaze
 {
@@ -36,7 +41,37 @@ public:
 
     void Quit();
 
+    Timestamp PollReturnTime() const
+    {
+        return poll_return_time_;
+    }
+
+    int64_t iteration() const
+    {
+        return iteration_;
+    }
+
+    void RunInLoop(Task task);
+
+    void QueueInLoop(Task task);
+
     void Wakeup();
+
+    size_t PendingTasksSize() const;
+
+    // safe to call from other thread
+    TimerId RunAt(Timestamp when, TimerCallback cb);
+
+    // Run callback after @c delay seconds
+    // safe to call from other thread
+    TimerId RunAfter(double delay, TimerCallback cb);
+
+    // Run callback every @c delay seconds
+    // safe to call from other thread
+    TimerId RunEvery(double interval, TimerCallback cb);
+
+    // safe to call from other thread
+    void CancelTimer(TimerId timerid);
 
     void UpdateChannel(Channel* channel);
 
@@ -44,9 +79,20 @@ public:
 
     bool HasChannel(Channel* channel);
 
-    void RunInLoop(Task task);
+    void SetContext(const std::any& context)
+    {
+        context_ = context;
+    }
 
-    void QueueInLoop(Task task);
+    const std::any& GetContext() const
+    {
+        return context_;
+    }
+
+    std::any& GetContext()
+    {
+        return context_;
+    }
 
     void AssertInLoopThread()
     {
@@ -61,6 +107,11 @@ public:
         return std::this_thread::get_id() == thread_id_;
     }
 
+    bool EventHandling const
+    {
+        return event_handling_;
+    };
+
     static EventLoop* GetEventLoopOfCurrentThread();
 
 private:
@@ -73,7 +124,7 @@ private:
 
     int64_t iteration_;
     bool looping_;
-    bool quit_;
+    std::atomic<bool> quit_;
     bool calling_pending_tasks_;
     bool event_handling_;
     const std::thread::id thread_id_;
@@ -81,15 +132,13 @@ private:
     std::unique_ptr<TimerQueue> timer_queue_;
     int wakeupfd_;
     std::unique_ptr<Channel> wakeup_channel_;
+    Channel* current_active_channel_;
+    Timestamp poll_return_time_;
     using ChannelList = std::vector<Channel*>;
     ChannelList active_channels;
     mutable std::mutex mutex_;
-    std::vector<Task> tasks_; // @GuardedBy mutex_;
-
-    Channel* current_active_channel_;
-
-    Timestamp poll_return_time_;
-
+    std::vector<Task> pending_tasks_; // @GuardedBy mutex_;
+    std::any context_;
 };
 
 } // namespace net
