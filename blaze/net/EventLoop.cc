@@ -33,7 +33,7 @@ int CreateEventfd()
 
 
 // namespace level object will be created before main
-#pragma clang diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 class IgnoreSigPipe
 {
 public:
@@ -43,7 +43,7 @@ public:
         LOG_TRACE << "Ignore SIGPIPE";
     }
 };
-#pragma clang diagnostic error "-Wold-style-cast"
+#pragma GCC diagnostic error "-Wold-style-cast"
 
 IgnoreSigPipe ignoreSigPipe;
 

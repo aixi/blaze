@@ -55,8 +55,8 @@ size_t ConvertHex(char buf[], uintptr_t value)
     return p - buf;
 }
 
-//template explicit instantiation
-//https://stackoverflow.com/questions/2351148/explicit-instantiation-when-is-it-used
+// explicit template instantiation
+// https://stackoverflow.com/questions/2351148/explicit-instantiation-when-is-it-used
 template class FixedBuffer<kSmallBuffer>;
 template class FixedBuffer<kLargeBuffer>;
 

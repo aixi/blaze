@@ -12,10 +12,10 @@
 
 // INADDR_ANY use old style (type) value casting
 
-#pragma clang diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 static const in_addr_t kInAddrAny = INADDR_ANY;
 static const in_addr_t kInAddrLoopback = INADDR_LOOPBACK;
-#pragma clang diagnostic error "-Wold-style-cast"
+#pragma GCC diagnostic error "-Wold-style-cast"
 
 //     /* Structure describing an Internet socket address.  */
 //     struct sockaddr_in {

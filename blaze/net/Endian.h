@@ -17,9 +17,9 @@ namespace net
 namespace sockets
 {
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wconversion"
-#pragma clang diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 
 inline uint64_t HostToNetwork64(uint64_t x)
 {
@@ -51,7 +51,7 @@ inline uint16_t NetworkToHost16(uint16_t x)
     return be16toh(x);
 }
 
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 } // namespace sockets
 
