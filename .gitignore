@@ -93,5 +93,17 @@ fabric.properties
 /.idea/
 .idea
 
-#Linux executable files
-nereus
+# Linux executable files
+
+# Python:
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+dist
+build
+target
+.idea
+.classpath
+.project
+.settings
