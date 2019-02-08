@@ -133,7 +133,7 @@ void TcpConnection::Send(const std::string_view& message)
             // FIXME: shared_from_this() ?
             // FIXME: avoid copy message
             void (TcpConnection::*fp)(const std::string_view& message) = &TcpConnection::SendInLoop;
-            loop_->RunInLoop(std::bind(fp, shared_from_this(), std::string(message)));
+            loop_->RunInLoop(std::bind(fp, this, std::string(message)));
         }
     }
 }
@@ -151,7 +151,7 @@ void TcpConnection::Send(Buffer* buffer)
             // FIXME: shared_from_this() ?
             // FIXME: avoid copy message
             void (TcpConnection::*fp)(const std::string_view& message) = &TcpConnection::SendInLoop;
-            loop_->RunInLoop(std::bind(fp, shared_from_this(), buffer->RetrieveAllAsString()));
+            loop_->RunInLoop(std::bind(fp, this, buffer->RetrieveAllAsString()));
         }
     }
 }
@@ -242,6 +242,30 @@ void TcpConnection::ShutDownInLoop()
     if (!channel_->IsWriting())
     {
         socket_->shutdownWrite();
+    }
+}
+
+void TcpConnection::ForceClose()
+{
+    // FIXME: use CAS for std::atomic<State>
+    if (state_ == State::kConnected || state_ == State::kDisconnecting)
+    {
+        SetState(State::kDisconnecting);
+        loop_->QueueInLoop(std::bind(&TcpConnection::ForceCloseInLoop, shared_from_this()));
+    }
+}
+
+void TcpConnection::ForceCloseWithDelay(double seconds)
+{
+    // TODO: need WeakCallback
+}
+
+void TcpConnection::ForceCloseInLoop()
+{
+    loop_->AssertInLoopThread();
+    if (state_ == State::kConnected || state_ == State::kDisconnecting)
+    {
+        HandleClose();
     }
 }
 

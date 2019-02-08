@@ -117,6 +117,10 @@ public:
 
     void Shutdown();
 
+    void ForceClose();
+
+    void ForceCloseWithDelay(double seconds);
+
     bool connected() const
     {
         return State::kConnected == state_;
@@ -176,6 +180,8 @@ private:
     void SendInLoop(const std::string_view& message);
     void SendInLoop(const void* data, size_t len);
     void ShutDownInLoop();
+
+    void ForceCloseInLoop();
 
     void StartReadInLoop();
     void StopReadInLoop();

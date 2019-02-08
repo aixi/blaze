@@ -20,7 +20,7 @@ namespace net
 class EventLoop;
 class Channel;
 
-class Connector : noncopyable, public std::enable_shared_from_this<Connector>
+class Connector : public noncopyable, public std::enable_shared_from_this<Connector>
 {
 public:
     using NewConnectionCallback = std::function<void (int sockfd)>;
@@ -39,6 +39,11 @@ public:
     void Restart(); // Shall be called in loop thread
 
     void Stop(); // can be called in any thread
+
+    const InetAddress& ServerAddress() const
+    {
+        return server_addr_;
+    }
 
 private:
     enum class State

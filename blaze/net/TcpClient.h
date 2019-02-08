@@ -98,7 +98,7 @@ private:
     // always in loop thread
     int next_conn_id_;
     mutable std::mutex mutex_;
-    TcpConnectionPtr connection_;
+    TcpConnectionPtr connection_; // @GuardedBy(mutex_)
 };
 
 }

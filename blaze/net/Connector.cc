@@ -34,6 +34,8 @@ Connector::~Connector()
 {
     LOG_DEBUG << "Dtor[ " << this << "]";
     assert(!channel_);
+    // FIXME: what if connector object destructs, before timer alarm
+    // FIXME: CancelTimer()
 }
 
 void Connector::Start()
