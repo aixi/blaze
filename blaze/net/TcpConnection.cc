@@ -39,7 +39,7 @@ TcpConnection::TcpConnection(EventLoop* loop,
     name_(name),
     highwater_mark_(64 * 1024 * 1024), // 64 MiB
     reading_(true),
-    state_(ConnState::kConnecting),
+    state_(State::kConnecting),
     socket_(new Socket(connfd)),
     channel_(new Channel(loop_, connfd)),
     local_addr_(local_addr),
@@ -59,7 +59,7 @@ TcpConnection::~TcpConnection()
     LOG_DEBUG << "TcpConnection::dtor[" << name_ << "] at" << this
               << " fd=" << channel_->fd()
               << " state=" << StateToCStr();
-    assert(state_ == ConnState::kDisconnected);
+    assert(state_ == State::kDisconnected);
 }
 
 void TcpConnection::SetTcpNoDelay(bool on)
@@ -122,7 +122,7 @@ void TcpConnection::Send(const void* data, size_t len)
 
 void TcpConnection::Send(const std::string_view& message)
 {
-    if (state_ == ConnState::kConnected)
+    if (state_ == State::kConnected)
     {
         if (loop_->IsInLoopThread())
         {
@@ -140,7 +140,7 @@ void TcpConnection::Send(const std::string_view& message)
 
 void TcpConnection::Send(Buffer* buffer)
 {
-    if (state_ == ConnState::kConnected)
+    if (state_ == State::kConnected)
     {
         if (loop_->IsInLoopThread())
         {
@@ -168,7 +168,7 @@ void TcpConnection::SendInLoop(const void* data, size_t len)
     ssize_t has_written = 0;
     size_t remaining = len;
     bool fault_error = false;
-    if (state_ == ConnState::kDisconnected)
+    if (state_ == State::kDisconnected)
     {
         LOG_WARN << "disconnected, give up writing";
     }
@@ -228,9 +228,9 @@ void TcpConnection::SendInLoop(const void* data, size_t len)
 void TcpConnection::Shutdown()
 {
     // FIXME: use compare_and_swap
-    if (state_ == ConnState::kDisconnected)
+    if (state_ == State::kDisconnected)
     {
-        SetState(ConnState::kDisconnecting);
+        SetState(State::kDisconnecting);
         // FIXME: shared_from_this() ?
         loop_->RunInLoop(std::bind(&TcpConnection::ShutDownInLoop, this));
     }
@@ -248,8 +248,8 @@ void TcpConnection::ShutDownInLoop()
 void TcpConnection::ConnectionEstablished()
 {
     loop_->AssertInLoopThread();
-    assert(state_ == ConnState::kConnecting);
-    SetState(ConnState::kConnected);
+    assert(state_ == State::kConnecting);
+    SetState(State::kConnected);
     channel_->Tie(shared_from_this());
     channel_->EnableReading();
     connection_callback_(shared_from_this());
@@ -258,9 +258,9 @@ void TcpConnection::ConnectionEstablished()
 void TcpConnection::ConnectionDestroyed()
 {
     loop_->AssertInLoopThread();
-    if (state_ == ConnState::kConnected)
+    if (state_ == State::kConnected)
     {
-        SetState(ConnState::kDisconnected);
+        SetState(State::kDisconnected);
         channel_->DisableAll();
         connection_callback_(shared_from_this());
     }
@@ -309,7 +309,7 @@ void TcpConnection::HandleWrite()
                 {
                     loop_->QueueInLoop(std::bind(write_complete_callback_, shared_from_this()));
                 }
-                if (state_ == ConnState::kDisconnecting)
+                if (state_ == State::kDisconnecting)
                 {
                     ShutDownInLoop();
                 }
@@ -334,9 +334,9 @@ void TcpConnection::HandleClose()
 {
     loop_->AssertInLoopThread();
     LOG_TRACE << "TcpConnection::HandleClose state = " << StateToCStr();
-    assert(state_ == ConnState::kConnected || state_ == ConnState::kDisconnecting);
+    assert(state_ == State::kConnected || state_ == State::kDisconnecting);
     // we don't close fd, leave it to dtor, so we can find leaks easily
-    SetState(ConnState::kDisconnected);
+    SetState(State::kDisconnected);
     channel_->DisableAll();
     TcpConnectionPtr guard_this(shared_from_this());
     connection_callback_(guard_this);
@@ -354,13 +354,13 @@ const char* TcpConnection::StateToCStr() const
 {
     switch (state_)
     {
-        case ConnState::kConnecting:
+        case State::kConnecting:
             return "kConnecting";
-        case ConnState::kConnected:
+        case State::kConnected:
             return "kConnected";
-        case ConnState::kDisconnecting:
+        case State::kDisconnecting:
             return "kDisconnecting";
-        case ConnState::kDisconnected:
+        case State::kDisconnected:
             return "kDisconnected";
         default:
             return "unknown state";

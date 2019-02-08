@@ -30,7 +30,7 @@ public:
         sockfd_(sockfd)
     {}
 
-    //Socket(Socket&& rhs) noexcept;
+    Socket(Socket&& rhs) noexcept;
 
     ~Socket();
 

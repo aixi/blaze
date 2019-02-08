@@ -119,12 +119,12 @@ public:
 
     bool connected() const
     {
-        return ConnState::kConnected == state_;
+        return State::kConnected == state_;
     }
 
     bool disconnected() const
     {
-        return ConnState::kDisconnected == state_;
+        return State::kDisconnected == state_;
     }
 
     EventLoop* GetLoop() const
@@ -160,7 +160,7 @@ public:
     }
 
 private:
-    enum class ConnState
+    enum class State
     {
         kConnecting,
         kConnected,
@@ -180,7 +180,7 @@ private:
     void StartReadInLoop();
     void StopReadInLoop();
 
-    void SetState(ConnState state)
+    void SetState(State state)
     {
         state_ = state;
     }
@@ -192,7 +192,7 @@ private:
     const std::string name_;
     size_t highwater_mark_;
     bool reading_;
-    ConnState state_; // FiXME: use atomic variable
+    State state_; // FiXME: use atomic variable
     // Do not expose Channel.h Socket.h in public header
     std::unique_ptr<Socket> socket_;
     std::unique_ptr<Channel> channel_;
