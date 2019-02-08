@@ -36,7 +36,7 @@ EventLoopThread::~EventLoopThread()
 EventLoop* EventLoopThread::StartLoop()
 {
     assert(!thread_);
-    thread_.reset(new std::thread([this](){ThreadFunc();}));
+    thread_.reset(new std::thread([this]{ThreadFunc();}));
     EventLoop* loop = nullptr;
     {
         std::unique_lock<std::mutex> lock(mutex_);

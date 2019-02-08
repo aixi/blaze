@@ -106,7 +106,7 @@ private:
     //if program crush, how to save last log line
     //using cookie_ to save in core dump file
     void (*cookie_)();
-    //must be outline function for cookies
+    //must be out-line function for cookies
     static void CookieStart();
     static void CookieEnd();
 

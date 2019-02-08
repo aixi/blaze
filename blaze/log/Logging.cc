@@ -9,7 +9,8 @@
 #include <blaze/utils/Types.h>
 #include <blaze/log/Logging.h>
 
-using namespace blaze;
+namespace blaze
+{
 
 thread_local char t_errnobuf[512];
 
@@ -24,7 +25,16 @@ const char* strerror_tl(int saved_errno)
 
 Logger::LogLevel InitLogLevel()
 {
-    return Logger::LogLevel::kInfo;
+    if (::getenv("BLAZE_LOG_TRACE"))
+    {
+        return Logger::LogLevel::kTrace;
+    } else if (::getenv("BLAZE_LOG_DEBUG"))
+    {
+        return Logger::LogLevel::kDebug;
+    } else
+    {
+        return Logger::LogLevel::kInfo;
+    }
 }
 
 Logger::LogLevel g_logLevel = InitLogLevel();
@@ -82,7 +92,11 @@ inline LogStream& operator<<(LogStream& s, const Logger::SourceFile& v)
 Logger::OutputFunc g_output = DefaultOutput;
 Logger::FlushFunc g_flush = DefaultFlush;
 
-Logger::Impl::Impl(LogLevel level, int old_errno, const Logger::SourceFile &file, int line) :
+}
+
+using namespace blaze;
+
+Logger::Impl::Impl(LogLevel level, int old_errno, const Logger::SourceFile& file, int line) :
     time_(Timestamp::Now()),
     stream_(),
     level_(level),
@@ -101,7 +115,6 @@ void Logger::Impl::FormatTime()
 {
     int64_t microseconds_since_epoch = time_.MicrosecondsSinceEpoch();
     time_t seconds = static_cast<time_t>(microseconds_since_epoch / Timestamp::kMicroSecondsPerSecond);
-    //int microseconds = static_cast<int>(microseconds_since_epoch % Timestamp::kMicroSecondsPerSecond);
     if (seconds != t_last_seconds)
     {
         t_last_seconds = seconds;
@@ -129,7 +142,7 @@ Logger::Logger(Logger::SourceFile file, int line, LogLevel level) :
     impl_(level, 0, file, line)
 {}
 
-Logger::Logger(Logger::SourceFile file, int line, LogLevel level, const char *func) :
+Logger::Logger(Logger::SourceFile file, int line, LogLevel level, const char* func) :
     impl_(level, 0, file, line)
 {
     impl_.stream_ << func << ' ';

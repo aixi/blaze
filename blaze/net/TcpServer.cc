@@ -18,7 +18,7 @@ namespace net
 {
 
 TcpServer::TcpServer(EventLoop* loop, const InetAddress& listen_addr, const std::string_view& name) :
-    loop_(loop),
+    loop_(CHECK_NOTNULL(loop)),
     name_(name),
     ip_port_(listen_addr.ToIpPort()),
     acceptor_(new Acceptor(loop_, listen_addr)),
@@ -96,7 +96,7 @@ void TcpServer::RemoveConnectionInLoop(const blaze::net::TcpConnectionPtr& conn)
     size_t n = connections_.erase(conn->name());
     assert(n == 1);
     UnusedVariable(n);
-    loop_->QueueInLoop([conn]{conn->ConnectionDestroyed();});
+    conn->GetLoop()->QueueInLoop(std::bind(&TcpConnection::ConnectionDestroyed, conn));
 }
 
 }

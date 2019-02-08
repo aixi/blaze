@@ -59,16 +59,15 @@ void Channel::HandleEvent(Timestamp when)
 
 void Channel::Update()
 {
-
-    loop_->UpdateChannel(this);
     is_in_loop_ = true;
+    loop_->UpdateChannel(this);
 }
 
 void Channel::Remove()
 {
     assert(IsNoneEvent());
-    loop_->RemoveChannel(this);
     is_in_loop_ = false;
+    loop_->RemoveChannel(this);
 }
 
 void Channel::HandleEventWithGuard(Timestamp when)

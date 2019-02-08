@@ -7,7 +7,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(CXX_FLAGS
-        -g
         -Wall
         -Wextra
         -Werror
@@ -35,7 +34,7 @@ endif()
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 set(CMAKE_CXX_COMPILER "clang++")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 include_directories("${PROJECT_SOURCE_DIR}")
@@ -67,7 +66,9 @@ set(SOURCE_FILES
         blaze/net/TcpConnection.cc
         blaze/net/TcpServer.cc
         blaze/net/poller/EPollPoller.cc
-        blaze/net/EventLoopThreadPool.cc)
+        blaze/net/EventLoopThreadPool.cc
+        blaze/net/Connector.cc
+        blaze/net/TcpClient.cc)
 
 add_library(blaze STATIC ${SOURCE_FILES})
 target_link_libraries(blaze pthread)
@@ -85,7 +86,7 @@ add_executable(LogStream_unittest blaze/log/tests/LogStream_unittest.cc)
 target_link_libraries(LogStream_unittest blaze boost_unit_test_framework)
 add_test(NAME LogStream_unittest COMMAND LogStream_unittest)
 
-add_executable(Buffer_unittest blaze/net/tests/Buffer_unittest.cc)
+add_executable(Buffer_unittest blaze/net/tests/Buffer_unittest.cc blaze/net/tests/EchoServer_test.cc blaze/net/tests/Channel_test.cc)
 target_link_libraries(Buffer_unittest blaze boost_unit_test_framework)
 add_test(NAME Buffer_unittest COMMAND Buffer_unittest)
 
@@ -109,3 +110,12 @@ target_link_libraries(AsyncLogging_test blaze)
 
 add_executable(EventLoopThread_test blaze/net/tests/EventLoopThread_test.cc)
 target_link_libraries(EventLoopThread_test blaze)
+
+add_executable(EchoServer_test blaze/net/tests/EchoServer_test.cc)
+target_link_libraries(EchoServer_test blaze)
+
+add_executable(EventLoopThreadPool_test blaze/net/tests/EventLoopThreadPool_unittest.cc)
+target_link_libraries(EventLoopThreadPool_test blaze)
+
+add_executable(Channel_test blaze/net/tests/Channel_test.cc)
+target_link_libraries(Channel_test blaze)

@@ -18,9 +18,9 @@ namespace net
 
 void DefaultConnectionCallback(const TcpConnectionPtr& conn)
 {
-    LOG_TRACE << conn->LocalAddress().ToIpPort() << " ->"
-              << conn->PeerAddress().ToIpPort() << " is "
-              << (conn->Connected() ? "up" : "down");
+    LOG_TRACE << conn->GetLocalAddress().ToIpPort() << " ->"
+              << conn->GetPeerAddress().ToIpPort() << " is "
+              << (conn->connected() ? "up" : "down");
     // Do not call conn->ForceClose(), some users only want to register message callback only
 }
 
@@ -35,7 +35,7 @@ TcpConnection::TcpConnection(EventLoop* loop,
                              int connfd,
                              const InetAddress& local_addr,
                              const InetAddress& peer_addr) :
-    loop_(loop),
+    loop_(CHECK_NOTNULL(loop)),
     name_(name),
     highwater_mark_(64 * 1024 * 1024), // 64 MiB
     reading_(true),
@@ -59,6 +59,7 @@ TcpConnection::~TcpConnection()
     LOG_DEBUG << "TcpConnection::dtor[" << name_ << "] at" << this
               << " fd=" << channel_->fd()
               << " state=" << StateToCStr();
+    assert(state_ == ConnState::kDisconnected);
 }
 
 void TcpConnection::SetTcpNoDelay(bool on)
@@ -129,9 +130,10 @@ void TcpConnection::Send(const std::string_view& message)
         }
         else
         {
-            // FIXME: shared_from_this()
+            // FIXME: shared_from_this() ?
             // FIXME: avoid copy message
-            loop_->RunInLoop([this, &message]{SendInLoop(std::string(message));});
+            void (TcpConnection::*fp)(const std::string_view& message) = &TcpConnection::SendInLoop;
+            loop_->RunInLoop(std::bind(fp, shared_from_this(), std::string(message)));
         }
     }
 }
@@ -146,9 +148,10 @@ void TcpConnection::Send(Buffer* buffer)
         }
         else
         {
-            // FIXME: shared_from_this()
+            // FIXME: shared_from_this() ?
             // FIXME: avoid copy message
-            loop_->RunInLoop([this, buffer]{SendInLoop(buffer->RetrieveAllAsString());});
+            void (TcpConnection::*fp)(const std::string_view& message) = &TcpConnection::SendInLoop;
+            loop_->RunInLoop(std::bind(fp, shared_from_this(), buffer->RetrieveAllAsString()));
         }
     }
 }
@@ -229,7 +232,7 @@ void TcpConnection::Shutdown()
     {
         SetState(ConnState::kDisconnecting);
         // FIXME: shared_from_this() ?
-        loop_->RunInLoop([this]{ShutDownInLoop();});
+        loop_->RunInLoop(std::bind(&TcpConnection::ShutDownInLoop, this));
     }
 }
 

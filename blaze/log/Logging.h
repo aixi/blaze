@@ -8,7 +8,8 @@
 #include <blaze/log/LogStream.h>
 #include <blaze/utils/Timestamp.h>
 
-
+namespace blaze
+{
 
 const char* strerror_tl(int saved_errno);
 
@@ -16,7 +17,7 @@ void DefaultOutput(const char* msg, int len);
 
 // NOTE: enum class can not implicitly cast to integer type
 
-template <typename E>
+template<typename E>
 constexpr std::underlying_type_t<E> ToUType(E enumerator) noexcept
 {
     return static_cast<std::underlying_type_t<E>>(enumerator);
@@ -43,11 +44,11 @@ public:
     {
     public:
         template<int SIZE>
-        inline SourceFile(const char(&arr)[SIZE]) :
+        inline SourceFile(const char(& arr)[SIZE]) :
             data_(arr),
             size_(SIZE - 1)
         {
-            const char *slash = strchr(data_, '/'); // gcc builtin function
+            const char* slash = strchr(data_, '/'); // gcc builtin function
             if (slash)
             {
                 data_ = slash + 1;
@@ -55,10 +56,10 @@ public:
             }
         }
 
-        explicit SourceFile(const char *filename) :
+        explicit SourceFile(const char* filename) :
             data_(filename)
         {
-            const char *slash = strchr(data_, '/'); // gcc builtin function
+            const char* slash = strchr(data_, '/'); // gcc builtin function
             if (slash)
             {
                 data_ = slash + 1;
@@ -66,7 +67,7 @@ public:
             }
         }
 
-        const char *data_;
+        const char* data_;
         int size_;
     };
 
@@ -74,7 +75,7 @@ public:
 
     Logger(SourceFile file, int line, LogLevel level);
 
-    Logger(SourceFile file, int line, LogLevel level, const char *func);
+    Logger(SourceFile file, int line, LogLevel level, const char* func);
 
     Logger(SourceFile file, int line, bool to_abort);
 
@@ -89,7 +90,7 @@ public:
 
     static void SetLogLevel(LogLevel level);
 
-    using OutputFunc = void (*)(const char *msg, int len);
+    using OutputFunc = void (*)(const char* msg, int len);
     using FlushFunc = void (*)();
 
     static void SetOutput(OutputFunc out);
@@ -103,7 +104,7 @@ private:
     public:
         using LogLevel = Logger::LogLevel;
 
-        Impl(LogLevel level, int old_errno, const SourceFile &file, int line);
+        Impl(LogLevel level, int old_errno, const SourceFile& file, int line);
 
         void FormatTime();
 
@@ -134,23 +135,26 @@ inline Logger::LogLevel Logger::logLevel()
 #undef LOG_ERROR
 #undef LOG_FATAL
 #undef LOG_SYSERR
+#undef LOG_SYSFATAL
 
-#define LOG_TRACE if (Logger::logLevel() <= Logger::LogLevel::kTrace) \
-    Logger(__FILE__, __LINE__, Logger::LogLevel::kTrace, __func__).Stream()
+#define LOG_TRACE if (blaze::Logger::logLevel() <= blaze::Logger::LogLevel::kTrace) \
+    blaze::Logger(__FILE__, __LINE__, blaze::Logger::LogLevel::kTrace, __func__).Stream()
 
-#define LOG_DEBUG if (Logger::logLevel() <= Logger::LogLevel::kDebug) \
-    Logger(__FILE__, __LINE__, Logger::LogLevel::kDebug, __func__).Stream()
+#define LOG_DEBUG if (blaze::Logger::logLevel() <= blaze::Logger::LogLevel::kDebug) \
+    blaze::Logger(__FILE__, __LINE__, blaze::Logger::LogLevel::kDebug, __func__).Stream()
 
-#define LOG_INFO if (Logger::logLevel() <= Logger::LogLevel::kInfo) \
-    Logger(__FILE__, __LINE__).Stream()
+#define LOG_INFO if (blaze::Logger::logLevel() <= blaze::Logger::LogLevel::kInfo) \
+    blaze::Logger(__FILE__, __LINE__).Stream()
 
-#define LOG_WARN Logger(__FILE__, __LINE__, Logger::LogLevel::kWarn).Stream()
+#define LOG_WARN blaze::Logger(__FILE__, __LINE__, blaze::Logger::LogLevel::kWarn).Stream()
 
-#define LOG_ERROR Logger(__FILE__, __LINE__, Logger::LogLevel::kError).Stream()
+#define LOG_ERROR blaze::Logger(__FILE__, __LINE__, blaze::Logger::LogLevel::kError).Stream()
 
-#define LOG_FATAL Logger(__FILE__, __LINE__, Logger::LogLevel::kFatal).Stream()
+#define LOG_FATAL blaze::Logger(__FILE__, __LINE__, blaze::Logger::LogLevel::kFatal).Stream()
 
-#define LOG_SYSERR Logger(__FILE__, __LINE__, false).Stream()
+#define LOG_SYSERR blaze::Logger(__FILE__, __LINE__, false).Stream()
+
+#define LOG_SYSFATAL blaze::Logger(__FILE__, __LINE__, true).Stream()
 
 // Taken from glog/log.h
 
@@ -158,13 +162,15 @@ inline Logger::LogLevel Logger::logLevel()
     CheckNotNull(__FILE__, __LINE__, "'" #val "' Must be non NULL", (val))
 
 template<typename T>
-T *CheckNotNull(Logger::SourceFile file, int line, const char *names, T *ptr)
+T* CheckNotNull(blaze::Logger::SourceFile file, int line, const char* names, T* ptr)
 {
     if (!ptr)
     {
-        Logger(file, line, Logger::LogLevel::kFatal).Stream() << names;
+        blaze::Logger(file, line, Logger::LogLevel::kFatal).Stream() << names;
     }
     return ptr;
 }
+
+} // namespace blaze
 
 #endif //BLAZE_LOGGING_H

@@ -117,12 +117,12 @@ public:
 
     void Shutdown();
 
-    bool Connected() const
+    bool connected() const
     {
         return ConnState::kConnected == state_;
     }
 
-    bool Disconnected() const
+    bool disconnected() const
     {
         return ConnState::kDisconnected == state_;
     }
@@ -137,12 +137,12 @@ public:
         return name_;
     }
 
-    const InetAddress& LocalAddress() const
+    const InetAddress& GetLocalAddress() const
     {
         return local_addr_;
     }
 
-    const InetAddress& PeerAddress() const
+    const InetAddress& GetPeerAddress() const
     {
         return peer_addr_;
     }

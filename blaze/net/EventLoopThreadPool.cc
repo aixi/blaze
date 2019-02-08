@@ -34,7 +34,7 @@ void EventLoopThreadPool::Start(const ThreadInitCallback& cb)
         char buf[name_.size() + 32];
         snprintf(buf, sizeof(buf), "%s%d", name_.c_str(), i);
         EventLoopThread* t = new EventLoopThread(cb, buf);
-        threads_.emplace_back(std::unique_ptr<EventLoopThread>(t));
+        threads_.push_back(std::unique_ptr<EventLoopThread>(t));
         loops_.push_back(t->StartLoop());
     }
     if (threads_num_ == 0 && cb)
@@ -52,7 +52,8 @@ EventLoop* EventLoopThreadPool::GetNextLoop()
     {
         // FIXME: any non-trivial method ?
         // round-robin
-        loop = loops_[next_++];
+        loop = loops_[next_];
+        ++next_;
         if (implicit_cast<size_t>(next_) >= loops_.size())
         {
             next_ = 0;

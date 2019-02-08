@@ -18,24 +18,21 @@ namespace blaze
 namespace net
 {
 
-Socket::Socket(Socket&& rhs) noexcept :
-    sockfd_(rhs.sockfd_)
-{
-    rhs.sockfd_ = -1;
-}
+//Socket::Socket(Socket&& rhs) noexcept :
+//    sockfd_(rhs.sockfd_)
+//{
+//    rhs.sockfd_ = -1;
+//}
 
 Socket::~Socket()
 {
-    if (sockfd_ >= 0)
-    {
-        sockets::close(sockfd_);
-    }
+    sockets::close(sockfd_);
 }
 
 bool Socket::GetTcpInfo(struct tcp_info* info) const
 {
     socklen_t len = sizeof(*info);
-    bzero(&info, len);
+    bzero(info, len);
     return ::getsockopt(sockfd_, SOL_TCP, TCP_INFO, info, &len) == 0;
 }
 

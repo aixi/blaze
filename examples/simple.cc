@@ -57,12 +57,10 @@ EventLoop* g_loop;
 
 void OnConnection(const TcpConnectionPtr& conn)
 {
-    std::string message("test Send");
-    std::string message2("test Send2");
-    if (conn->Connected())
+    if (conn->connected())
     {
         printf("OnConnection(): new connection [%s] from %s, at thread id: %zu\n",
-               conn->name().c_str(), conn->PeerAddress().ToIpPort().c_str(),
+               conn->name().c_str(), conn->GetPeerAddress().ToIpPort().c_str(),
                std::hash<std::thread::id>()(std::this_thread::get_id()));
     }
     else
@@ -127,7 +125,7 @@ int main()
     TcpServer server(&loop, listen_addr, "test_server");
     server.SetConnectionCallback(OnConnection);
     server.SetMessageCallback(OnMessage);
-    server.SetThreadNum(8);
+    //server.SetThreadNum(8);
     server.Start();
     loop.Loop();
     return 0;

@@ -64,10 +64,10 @@ public:
     }
 
     // valid after calling Start()
-    std::shared_ptr<EventLoopThreadPool> ThreadPool()
-    {
-        return thread_pool_;
-    }
+//    std::shared_ptr<EventLoopThreadPool> ThreadPool()
+//    {
+//        return thread_pool_;
+//    }
 
     void SetThreadInitCallback(const ThreadInitCallback& cb)
     {

@@ -1,6 +1,7 @@
 //
 // Created by xi on 19-1-31.
 //
+#include <unistd.h>
 #include <signal.h>
 #include <sys/eventfd.h>
 
@@ -83,7 +84,11 @@ EventLoop::EventLoop() :
 
 EventLoop::~EventLoop()
 {
-    assert(!looping_);
+    LOG_DEBUG << "EventLoop " << this << "of thread" << thread_id_
+              << " destructs in thread " << std::this_thread::get_id();
+    wakeup_channel_->DisableAll();
+    wakeup_channel_->Remove();
+    ::close(wakeupfd_);
     t_loop_in_this_thread = nullptr;
 }
 
