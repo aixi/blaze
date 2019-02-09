@@ -68,7 +68,8 @@ set(SOURCE_FILES
         blaze/net/poller/EPollPoller.cc
         blaze/net/EventLoopThreadPool.cc
         blaze/net/Connector.cc
-        blaze/net/TcpClient.cc blaze/utils/WeakCallback.h)
+        blaze/net/TcpClient.cc
+        blaze/concurrent/ThreadGuard.cc)
 
 add_library(blaze STATIC ${SOURCE_FILES})
 target_link_libraries(blaze pthread)

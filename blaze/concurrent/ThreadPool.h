@@ -77,6 +77,8 @@ private:
     bool running_;
 };
 
+// NOTE: the std::future cannot chain or register callback
+// using facebook's folly::future instead
 template <typename F, typename... Args>
 std::future<std::result_of_t<F(Args...)>> ThreadPool::Run(F&& f, Args&&... args)
 {
