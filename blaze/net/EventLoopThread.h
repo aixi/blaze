@@ -11,6 +11,7 @@
 #include <functional>
 #include <string_view>
 
+#include <blaze/concurrent/ThreadGuard.h>
 #include <blaze/utils/noncopyable.h>
 
 namespace blaze
@@ -48,7 +49,7 @@ private:
     EventLoop* loop_;
     bool exiting_;
     ThreadInitCallback callback_;
-    std::unique_ptr<std::thread> thread_;
+    std::unique_ptr<ThreadGuard> thread_;
     std::string name_;
     std::mutex mutex_;
     std::condition_variable cond_;

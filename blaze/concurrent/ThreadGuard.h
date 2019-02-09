@@ -21,18 +21,22 @@ public:
         detach
     };
 
-    ThreadGuard(std::thread&& thread, DtorAction action);
+    ThreadGuard(DtorAction action, std::thread&& thread);
 
     ~ThreadGuard();
 
-    std::thread& thread()
+    ThreadGuard(ThreadGuard&&) = default;
+
+    ThreadGuard& operator=(ThreadGuard&&) = default;
+
+    std::thread& get()
     {
         return thread_;
     }
 
 private:
-    std::thread thread_;
     DtorAction action_;
+    std::thread thread_;
 };
 
 }

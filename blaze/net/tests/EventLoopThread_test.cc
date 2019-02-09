@@ -24,7 +24,8 @@ void PrintThenQuit(EventLoop* loop)
 {
     Print(loop);
     loop->Quit();
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    // avoid std::terminate() without Exception
+    //std::this_thread::sleep_for(std::chrono::seconds(5));
 }
 
 int main()

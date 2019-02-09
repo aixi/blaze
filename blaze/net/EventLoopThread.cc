@@ -29,14 +29,16 @@ EventLoopThread::~EventLoopThread()
     {
         // still a chance to call nullptr loop_, if ThreadFunc exits just now
         loop_->Quit();
-        thread_->join();
+        // thread_->join();
     }
 }
 
 EventLoop* EventLoopThread::StartLoop()
 {
     assert(!thread_);
-    thread_.reset(new std::thread([this]{ThreadFunc();}));
+    //thread_.reset(new std::thread([this]{ThreadFunc();}));
+    thread_.reset(new ThreadGuard(ThreadGuard::DtorAction::detach, 
+                                 std::thread([this]{ThreadFunc();})));
     EventLoop* loop = nullptr;
     {
         std::unique_lock<std::mutex> lock(mutex_);

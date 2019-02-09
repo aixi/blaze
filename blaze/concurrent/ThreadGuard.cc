@@ -6,9 +6,9 @@
 
 using namespace blaze;
 
-ThreadGuard::ThreadGuard(std::thread&& thread, DtorAction action) :
-    thread_(std::move(thread)),
-    action_(action)
+ThreadGuard::ThreadGuard( DtorAction action, std::thread&& thread) :
+    action_(action),
+    thread_(std::move(thread))
 {}
 
 ThreadGuard::~ThreadGuard()
