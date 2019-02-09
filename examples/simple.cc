@@ -1,5 +1,6 @@
 #include <sys/timerfd.h>
 #include <unistd.h>
+
 #include <blaze/net/Channel.h>
 #include <blaze/net/EventLoop.h>
 #include <blaze/net/EventLoopThread.h>
@@ -76,6 +77,7 @@ void OnMessage(const TcpConnectionPtr& conn, Buffer* buffer, Timestamp receive_t
     printf("OnMessage(): received %zd bytes from connection [%s]: %s at %s\n",
             msg.size(), conn->name().c_str(), msg.data(), receive_time.ToFormattedString().c_str());
 }
+
 
 int main()
 {
