@@ -2,6 +2,7 @@
 // Created by xi on 19-2-4.
 //
 
+#include <blaze/utils/WeakCallback.h>
 #include <blaze/log/Logging.h>
 #include <blaze/net/SocketsOps.h>
 #include <blaze/net/EventLoop.h>
@@ -247,7 +248,7 @@ void TcpConnection::ShutDownInLoop()
 
 void TcpConnection::ForceClose()
 {
-    // FIXME: use CAS for std::atomic<State>
+    // FIXME: use compare and swap for std::atomic<State> state_
     if (state_ == State::kConnected || state_ == State::kDisconnecting)
     {
         SetState(State::kDisconnecting);
@@ -257,7 +258,14 @@ void TcpConnection::ForceClose()
 
 void TcpConnection::ForceCloseWithDelay(double seconds)
 {
-    // TODO: need WeakCallback
+    if (state_ == State::kConnected || state_ == State::kDisconnected)
+    {
+        SetState(State::kDisconnected);
+        loop_->RunAfter(seconds,
+                        MakeWeakCallback(shared_from_this(),
+                                         &TcpConnection::ForceClose));
+        // NOTE: note ForceCloseInLoop to avoid invalid TcpConnectionPtr
+    }
 }
 
 void TcpConnection::ForceCloseInLoop()
@@ -265,6 +273,7 @@ void TcpConnection::ForceCloseInLoop()
     loop_->AssertInLoopThread();
     if (state_ == State::kConnected || state_ == State::kDisconnecting)
     {
+        // because we receive 0 bytes in HandleRead()
         HandleClose();
     }
 }
