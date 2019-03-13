@@ -29,15 +29,15 @@ EventLoopThread::~EventLoopThread()
     {
         // still a chance to call nullptr loop_, if ThreadFunc exits just now
         loop_->Quit();
-        // thread_->join();
+        // thread_->join(); calling detach() join() of  unjoinable thread leads to UB
     }
 }
 
 EventLoop* EventLoopThread::StartLoop()
 {
     assert(!thread_);
-    //thread_.reset(new std::thread([this]{ThreadFunc();}));
-    thread_.reset(new ThreadGuard(ThreadGuard::DtorAction::detach, 
+    // if use DtorAction::join, may cause thread blocking
+    thread_.reset(new ThreadGuard(ThreadGuard::DtorAction::detach,
                                  std::thread([this]{ThreadFunc();})));
     EventLoop* loop = nullptr;
     {

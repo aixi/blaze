@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(blaze)
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
+    set(CMAKE_BUILD_TYPE "Release")
 endif()
 
 set(CXX_FLAGS
@@ -11,7 +11,6 @@ set(CXX_FLAGS
         -Wextra
         -Werror
         -Wconversion
-        -Wno-unused-parameter
         -Wold-style-cast
         -Wsequence-point
         -Woverloaded-virtual
@@ -21,10 +20,10 @@ set(CXX_FLAGS
         -Wwrite-strings
         -march=native
         -std=c++17
+        -Wno-unused-parameter
         -Wno-null-dereference
         -Wno-sign-conversion
         -Wno-unused-private-field
-        -Wthread-safety
         -fmodules)
 
 if(CMAKE_BUILD_BITS EQUAL 32)
@@ -87,7 +86,7 @@ add_executable(LogStream_unittest blaze/log/tests/LogStream_unittest.cc)
 target_link_libraries(LogStream_unittest blaze boost_unit_test_framework)
 add_test(NAME LogStream_unittest COMMAND LogStream_unittest)
 
-add_executable(Buffer_unittest blaze/net/tests/Buffer_unittest.cc blaze/net/tests/EchoServer_test.cc blaze/net/tests/Channel_test.cc)
+add_executable(Buffer_unittest blaze/net/tests/Buffer_unittest.cc)
 target_link_libraries(Buffer_unittest blaze boost_unit_test_framework)
 add_test(NAME Buffer_unittest COMMAND Buffer_unittest)
 
@@ -120,3 +119,13 @@ target_link_libraries(EventLoopThreadPool_test blaze)
 
 add_executable(Channel_test blaze/net/tests/Channel_test.cc)
 target_link_libraries(Channel_test blaze)
+
+add_executable(EventLoop_test blaze/net/tests/EventLoop_test.cc)
+target_link_libraries(EventLoop_test blaze)
+
+add_executable(InetAddress_unittest blaze/net/tests/InetAddress_unittest.cc)
+target_link_libraries(InetAddress_unittest blaze boost_unit_test_framework)
+add_test(NAME InetAddress_unittest COMMAND InetAddress_unittest)
+
+add_executable(TimerQueue_test blaze/net/tests/TimerQueue_test.cc)
+target_link_libraries(TimerQueue_test blaze)
