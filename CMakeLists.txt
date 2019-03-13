@@ -73,8 +73,8 @@ set(SOURCE_FILES
 add_library(blaze STATIC ${SOURCE_FILES})
 target_link_libraries(blaze pthread)
 
-add_executable(FileUtil_test blaze/utils/tests/FileUtil_test.cc)
-target_link_libraries(FileUtil_test blaze)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 add_executable(blaze_simple examples/simple.cc)
 target_link_libraries(blaze_simple blaze)
@@ -129,3 +129,12 @@ add_test(NAME InetAddress_unittest COMMAND InetAddress_unittest)
 
 add_executable(TimerQueue_test blaze/net/tests/TimerQueue_test.cc)
 target_link_libraries(TimerQueue_test blaze)
+
+add_executable(pingpong_client examples/pingpong/client.cc)
+target_link_libraries(pingpong_client blaze)
+
+add_executable(pingpong_server examples/pingpong/server.cc)
+target_link_libraries(pingpong_server blaze)
+
+#add_executable(pingpong_bench examples/pingpong/bench.cc)
+#target_link_libraries(pingpong_bench blaze)

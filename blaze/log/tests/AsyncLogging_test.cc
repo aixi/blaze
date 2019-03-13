@@ -21,7 +21,7 @@ void AsyncOutput(const char* msg, int len)
 
 void Bench(bool long_log)
 {
-    Logger::SetOutput(AsyncOutput);
+    blaze::Logger::SetOutput(AsyncOutput);
     int cnt = 0;
     const int kBatch = 1024;
     std::string empty(" ");
