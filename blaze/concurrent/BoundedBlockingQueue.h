@@ -31,7 +31,7 @@ public:
         {
             not_full_.wait(lock);
         }
-        assert(!queue_.size() < max_size_);
+        assert(queue_.size() < max_size_);
         queue_.push_back(x);
         not_empty_.notify_one();
     }
@@ -43,7 +43,7 @@ public:
         {
             not_full_.wait(lock);
         }
-        assert(!queue_.size() < max_size_);
+        assert(queue_.size() < max_size_);
         queue_.emplace_back(std::move(x));
         not_empty_.notify_one();
     }
