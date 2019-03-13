@@ -138,3 +138,6 @@ target_link_libraries(pingpong_server blaze)
 
 #add_executable(pingpong_bench examples/pingpong/bench.cc)
 #target_link_libraries(pingpong_bench blaze)
+
+add_executable(BlockingQueue_test blaze/concurrent/tests/BlockingQueue_test.cc)
+target_link_libraries(BlockingQueue_test blaze)

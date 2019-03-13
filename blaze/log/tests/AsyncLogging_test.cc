@@ -45,7 +45,7 @@ void Bench(bool long_log)
 
 int main(int argc, char* argv[])
 {
-    // https://www.cnblogs.com/niocai/archive/2012/04/01/2428128.html
+    // https://www.cnblogs.com/niocai/archive/201 2/04/01/2428128.html
     // set virtual memory to 2GB
     {
         size_t kOneGB = (2 << 30);
