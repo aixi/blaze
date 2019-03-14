@@ -40,6 +40,7 @@ size_t Convert(char buf[], T value)
     return p - buf;
 }
 
+// https://blog.csdn.net/cs_zhanyb/article/details/16973379
 size_t ConvertHex(char buf[], uintptr_t value)
 {
     uintptr_t i = value;
@@ -60,6 +61,7 @@ size_t ConvertHex(char buf[], uintptr_t value)
 template class FixedBuffer<kSmallBuffer>;
 template class FixedBuffer<kLargeBuffer>;
 
+// gdb support call a function when debugging
 template <int SIZE>
 const char* FixedBuffer<SIZE>::DebugString()
 {
@@ -174,7 +176,7 @@ LogStream& LogStream::operator<<(std::thread::id id)
     return *this;
 }
 
-//Fixme: replace this with Grisu3 by Florian Loitsch
+//FIXME: replace this with Grisu3 by Florian Loitsch
 LogStream& LogStream::operator<<(double x)
 {
     if (buffer_.Avail() > kMaxNumericSize)
@@ -193,7 +195,7 @@ Fmt::Fmt(const char* fmt, T val)
     assert(implicit_cast<size_t>(size_) < sizeof(buf_));
 }
 
-// explicit instantiations
+// explicit template instantiations
 template Fmt::Fmt(const char *fmt, char val);
 template Fmt::Fmt(const char *fmt, short val);
 template Fmt::Fmt(const char *fmt, unsigned short val);

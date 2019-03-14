@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <string.h> // memcpy
 #include <string>
-#include <thread> // std::thread::id
+#include <thread> // std::thread::id FIXME: using gettid() as thread id
 #include <blaze/utils/noncopyable.h>
 #include <blaze/utils/Types.h>
 
@@ -103,8 +103,9 @@ private:
         return data_ + sizeof(data_);
     }
 
-    //if program crush, how to save last log line
-    //using cookie_ to save in core dump file
+    // if program crush, how to save last log line
+    // using cookie_ to save in core dump file
+    // if no core dump file, use ulimit -c unlimited, the core dump files are large
     void (*cookie_)();
     //must be out-line function for cookies
     static void CookieStart();
@@ -141,7 +142,7 @@ public:
     Self& operator<<(long long x);
     Self& operator<<(unsigned long long x);
     Self& operator<<(double x);
-    Self& operator<<(std::thread::id id);
+    Self& operator<<(std::thread::id id); // NOTE:: sizeof(std::thread::id) == 8
     //Self& operator<<(long double x);
     //Self& operator<<(signed char x);
     //Self& operator<<(unsigned char x);
