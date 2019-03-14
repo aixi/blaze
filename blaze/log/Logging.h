@@ -38,7 +38,7 @@ public:
         NUM_LOG_LEVELS
     };
 
-    // compile time calculation of base of source file
+    // compile time calculation of base name of source file
 
     class SourceFile
     {
@@ -91,6 +91,7 @@ public:
     static void SetLogLevel(LogLevel level);
 
     using OutputFunc = void (*)(const char* msg, int len);
+
     using FlushFunc = void (*)();
 
     static void SetOutput(OutputFunc out);

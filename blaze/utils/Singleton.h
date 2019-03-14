@@ -20,8 +20,8 @@ namespace detail
 template <typename T>
 struct has_no_destroy
 {
-    // it could not detect inherited function
-
+    // it could not detect inherited member function
+    // https://stackoverflow.com/questions/1966362/sfinae-to-check-for-inherited-member-functions/6324965
     template <typename C>
     static char test(decltype(&C::no_destroy));
 
