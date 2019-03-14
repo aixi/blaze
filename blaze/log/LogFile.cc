@@ -105,7 +105,7 @@ std::string LogFile::GetLogFileName(const std::string& basename, time_t* now)
     char timebuf[32];
     struct tm tm_time;
     *now = ::time(nullptr);
-    gmtime_r(now, &tm_time);
+    localtime_r(now, &tm_time);
     strftime(timebuf, sizeof(timebuf), ".%Y%m%d-%H%M%S.", &tm_time);
     filename += timebuf;
     filename += ProcessInfo::HostName();
