@@ -22,10 +22,10 @@ public:
 
     void CountDown();
 
-    int GetCount();
+    int GetCount() const;
 
 private:
-    std::mutex mutex_;
+    mutable std::mutex mutex_;
     std::condition_variable cond_;
     int count_;
 };

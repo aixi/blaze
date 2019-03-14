@@ -54,7 +54,6 @@ public:
     size_t TaskSize() const;
 
     // Could block if max_tasks_size > 0
-
     template <typename F, typename... Args>
     std::future<std::result_of_t<F(Args...)>> Run(F &&f, Args &&... args);
 

@@ -7,12 +7,10 @@
 
 #include <thread>
 
-#include <blaze/utils/noncopyable.h>
-
 namespace blaze
 {
 
-class ThreadGuard : public noncopyable
+class ThreadGuard
 {
 public:
     enum class DtorAction
@@ -25,8 +23,12 @@ public:
 
     ~ThreadGuard();
 
-    ThreadGuard(ThreadGuard&&) = default;
+    // non-copyable
+    ThreadGuard(const ThreadGuard&) = delete;
+    ThreadGuard& operator=(const ThreadGuard&) = delete;
 
+    // movable
+    ThreadGuard(ThreadGuard&&) = default;
     ThreadGuard& operator=(ThreadGuard&&) = default;
 
     std::thread& get()
