@@ -77,24 +77,29 @@ private:
     TcpConnectionPtr connection_; // GuardedBy mutex_
 };
 
+
+
 int main(int argc, char* argv[])
 {
     LOG_INFO << "pid = " << getpid();
     if (argc > 2)
     {
-        //EventLoopThread loop_thread;
-        EventLoop loop;
+        EventLoopThread loop_thread;
         uint16_t port = static_cast<uint16_t>(atoi(argv[2]));
         InetAddress server_addr(argv[1], port);
-        ChatClient client(&loop, server_addr);
+        ChatClient client(loop_thread.StartLoop(), server_addr);
         client.Connect();
-//        std::string line;
-//        while (std::getline(std::cin, line))
-//        {
-//            client.Write(line);
-//        }
-        // client.Disconnect();
-        // std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::string line;
+        while (std::getline(std::cin, line))
+        {
+            if (line == std::string("quit"))
+            {
+                break;
+            }
+            client.Write(line);
+        }
+         client.Disconnect();
+         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     else
     {
