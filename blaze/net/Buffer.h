@@ -159,7 +159,7 @@ public:
         write_index_ = kCheapPrepend;
     }
 
-    void Append(std::string_view sv)
+    void Append(const std::string_view& sv)
     {
         Append(sv.data(), sv.size());
     }
@@ -289,14 +289,14 @@ public:
         return Begin() + write_index_;
     }
 
-    std::string ToString() const
-    {
-        return std::string(BeginRead(), ReadableBytes());
-    }
-
     char* BeginWrite()
     {
         return Begin() + write_index_;
+    }
+
+    std::string ToString() const
+    {
+        return std::string(BeginRead(), ReadableBytes());
     }
 
     void Prepend(const void* data, size_t size)
@@ -311,7 +311,7 @@ public:
     {
         // FIXME: use vector::shrink_to_fit()
         Buffer other;
-        other.EnsureWritableBytes(ReadableBytes()+reserve);
+        other.EnsureWritableBytes(ReadableBytes() + reserve);
         other.Append(ToString());
         Swap(other);
     }

@@ -16,7 +16,7 @@ const size_t Buffer::kInitialSize = 1024;
 
 ssize_t Buffer::Readfd(int fd, int* saved_errno)
 {
-    char extra_buf[65536]; // 64KB
+    char extra_buf[65536]; // 64KiB
     struct iovec vec[2];
     const size_t writable = WritableBytes();
     vec[0].iov_base = BeginWrite();
@@ -24,7 +24,7 @@ ssize_t Buffer::Readfd(int fd, int* saved_errno)
     vec[1].iov_base = extra_buf;
     vec[1].iov_len = sizeof(extra_buf);
 
-    // when there are enough writable bytes in Buffer, don't read into extra_buf
+    // when there are enough writable bytes in Buffer, don't read data into extra_buf
     // when extra_buf is used, use 128KB - 1 bytes at most
 
     const int iovcnt = (writable < sizeof(extra_buf)) ? 2 : 1;
