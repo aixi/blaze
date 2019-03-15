@@ -85,7 +85,8 @@ public:
         loop_(loop),
         thread_pool_(loop_, "pingpong-client"),
         session_count_(session_count),
-        timeout_(timeout)
+        timeout_(timeout),
+        num_connected_(0)
     {
         loop_->RunAfter(timeout_, [this]{ HandleTimeout();});
         if (thread_count > 1)
@@ -162,9 +163,9 @@ private:
     EventLoopThreadPool thread_pool_;
     int session_count_;
     int timeout_;
+    std::atomic<int32_t> num_connected_;
     std::vector<std::unique_ptr<Session>> sessions_;
     std::string message_;
-    std::atomic<int32_t> num_connected_;
 };
 
 void Session::OnConnection(const TcpConnectionPtr& conn)

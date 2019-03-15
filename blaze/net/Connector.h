@@ -17,8 +17,8 @@ namespace blaze
 namespace net
 {
 
-class EventLoop;
 class Channel;
+class EventLoop;
 
 class Connector : public noncopyable, public std::enable_shared_from_this<Connector>
 {
@@ -27,18 +27,18 @@ public:
 
     Connector(EventLoop* loop, const InetAddress& server_addr);
 
-    ~Connector();
+    ~Connector(); // channel_;
 
     void SetNewConnectionCallback(const NewConnectionCallback& cb)
     {
         new_connection_callback_ = cb;
     }
 
-    void Start(); // can be called in any thread
+    void Start();
 
-    void Restart(); // Shall be called in loop thread
+    void Restart();
 
-    void Stop(); // can be called in any thread
+    void Stop();
 
     const InetAddress& ServerAddress() const
     {
@@ -55,9 +55,9 @@ private:
     static const int kMaxRetryDelayMs;
     static const int kInitRetryDelayMs;
 
-    void SetState(State state)
+    void SetState(State s)
     {
-        state_ = state;
+        state_ = s;
     }
 
     void StartInLoop();
@@ -81,8 +81,8 @@ private:
 private:
     EventLoop* loop_;
     InetAddress server_addr_;
-    bool connect_;
-    State state_; // FIXME: use atomic variable
+    bool connect_; // atomic
+    State state_;
     int retry_delay_ms_;
     std::unique_ptr<Channel> channel_;
     NewConnectionCallback new_connection_callback_;

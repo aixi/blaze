@@ -1,16 +1,12 @@
 //
-// Created by xi on 19-2-7.
+// Created by xi on 19-3-15.
 //
 
 #ifndef BLAZE_TCPCLIENT_H
 #define BLAZE_TCPCLIENT_H
 
-#include <string_view>
 #include <mutex>
-#include <memory>
-
-#include <blaze/net/Callbacks.h>
-#include <blaze/utils/noncopyable.h>
+#include <blaze/net/TcpConnection.h>
 
 namespace blaze
 {
@@ -18,90 +14,70 @@ namespace net
 {
 
 class Connector;
-using ConnectorPtr = std::shared_ptr<Connector>;
-class EventLoop;
-class InetAddress;
+typedef std::shared_ptr<Connector> ConnectorPtr;
 
 class TcpClient : public noncopyable
 {
 public:
-    TcpClient(EventLoop* loop, const InetAddress& server_addr, const std::string_view& name);
-
-    ~TcpClient(); // force out-line dtor, for std::unique_ptr member
+    // TcpClient(EventLoop* loop);
+    // TcpClient(EventLoop* loop, const string& host, uint16_t port);
+    TcpClient(EventLoop* loop,
+              const InetAddress& serverAddr,
+              const std::string_view& nameArg);
+    ~TcpClient();  // force out-line dtor, for std::unique_ptr members.
 
     void Connect();
-
     void Disconnect();
-
     void Stop();
 
-    TcpConnectionPtr connection() const
+    TcpConnectionPtr Connection() const
     {
         std::lock_guard<std::mutex> lock(mutex_);
         return connection_;
     }
 
-    EventLoop* GetLoop() const
-    {
-        return loop_;
-    }
+    EventLoop* GetLoop() const { return loop_; }
+    bool Retry() const { return retry_; }
+    void EnableRetry() { retry_ = true; }
 
-    bool Retry() const
-    {
-        return retry_;
-    }
+    const std::string& name() const
+    { return name_; }
 
-    void EnableRetry()
-    {
-        retry_ = true;
-    }
-
-    const std::string& Name() const
-    {
-        return name_;
-    }
-
-    // Not thread safe
+    /// Set connection callback.
+    /// Not thread safe.
     void SetConnectionCallback(ConnectionCallback cb)
-    {
-        connection_callback_ = std::move(cb);
-    }
+    { connection_callback_ = std::move(cb); }
 
-    // Not thread safe
+    /// Set message callback.
+    /// Not thread safe.
     void SetMessageCallback(MessageCallback cb)
-    {
-        message_callback_ = std::move(cb);
-    }
+    { message_callback_ = std::move(cb); }
 
-    // Not thread safe
+    /// Set write complete callback.
+    /// Not thread safe.
     void SetWriteCompleteCallback(WriteCompleteCallback cb)
-    {
-        write_complete_callback_ = std::move(cb);
-    }
+    { write_complete_callback_ = std::move(cb); }
 
 private:
-    // Not thread safe, but in loop
+    /// Not thread safe, but in loop
     void NewConnection(int sockfd);
-
-    // Not thread safe, but in loop
+    /// Not thread safe, but in loop
     void RemoveConnection(const TcpConnectionPtr& conn);
 
-private:
     EventLoop* loop_;
-    ConnectorPtr connector_;
+    ConnectorPtr connector_; // avoid revealing Connector
     const std::string name_;
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
     WriteCompleteCallback write_complete_callback_;
-    bool retry_;
-    bool connect_;
+    bool retry_;   // atomic
+    bool connect_; // atomic
     // always in loop thread
     int next_conn_id_;
     mutable std::mutex mutex_;
-    TcpConnectionPtr connection_; // @GuardedBy(mutex_)
+    TcpConnectionPtr connection_; // GUARDED_BY(mutex_)
 };
 
-}
-}
-
+}  // namespace net
+} // namespace muduo
 #endif //BLAZE_TCPCLIENT_H

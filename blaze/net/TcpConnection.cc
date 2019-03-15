@@ -198,7 +198,7 @@ void TcpConnection::SendInLoop(const void* data, size_t len)
             if (errno != EWOULDBLOCK)
             {
                 LOG_SYSERR << "TcpConnection::SendInLoop";
-                if (errno == EPIPE || errno == ECONNRESET) // FIXME: any others
+                if (errno == EPIPE || errno == ECONNRESET) // FIXME: any others ?
                 {
                     fault_error = true;
                 }

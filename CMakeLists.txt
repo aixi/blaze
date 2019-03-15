@@ -125,17 +125,17 @@ target_link_libraries(Channel_test blaze)
 add_executable(EventLoop_test blaze/net/tests/EventLoop_test.cc)
 target_link_libraries(EventLoop_test blaze)
 
-add_executable(EchoClient_test blaze/net/tests/EchoClient_test.cc)
-target_link_libraries(EchoClient_test blaze)
-
-add_executable(TcpClient_reg1 blaze/net/tests/TcpClient_reg1.cc)
-target_link_libraries(TcpClient_reg1 blaze)
-
-add_executable(TcpClient_reg2 blaze/net/tests/TcpClient_reg1.cc)
-target_link_libraries(TcpClient_reg2 blaze)
-
-add_executable(TcpClient_reg3 blaze/net/tests/TcpClient_reg1.cc)
-target_link_libraries(TcpClient_reg3 blaze)
+#add_executable(EchoClient_test blaze/net/tests/EchoClient_test.cc)
+#target_link_libraries(EchoClient_test blaze)
+#
+#add_executable(TcpClient_reg1 blaze/net/tests/TcpClient_reg1.cc)
+#target_link_libraries(TcpClient_reg1 blaze)
+#
+#add_executable(TcpClient_reg2 blaze/net/tests/TcpClient_reg1.cc)
+#target_link_libraries(TcpClient_reg2 blaze)
+#
+#add_executable(TcpClient_reg3 blaze/net/tests/TcpClient_reg1.cc)
+#target_link_libraries(TcpClient_reg3 blaze)
 
 add_executable(InetAddress_unittest blaze/net/tests/InetAddress_unittest.cc)
 target_link_libraries(InetAddress_unittest blaze boost_unit_test_framework)
