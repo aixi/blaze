@@ -58,7 +58,7 @@ EventLoop* g_loop;
 
 void OnConnection(const TcpConnectionPtr& conn)
 {
-    if (conn->connected())
+    if (conn->Connected())
     {
         printf("OnConnection(): new connection [%s] from %s, at thread id: %zu\n",
                conn->name().c_str(), conn->GetPeerAddress().ToIpPort().c_str(),

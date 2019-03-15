@@ -117,7 +117,7 @@ public:
 private:
 
     void AbortNotInLoopThread();
-    void HandleRead(); // wakeup from IO Multiplexing
+    void HandleRead(); // wakeup from IO Multiplexing function
     void DoPendingTasks();
 
 private:

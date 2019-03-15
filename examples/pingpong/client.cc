@@ -169,7 +169,7 @@ private:
 
 void Session::OnConnection(const TcpConnectionPtr& conn)
 {
-    if (conn->connected())
+    if (conn->Connected())
     {
         conn->SetTcpNoDelay(true);
         conn->Send(owner_->message());

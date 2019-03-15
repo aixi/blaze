@@ -53,7 +53,7 @@ public:
         return ip_port_;
     }
 
-    const std::string& name() const
+    const std::string& Name() const
     {
         return name_;
     }

@@ -121,12 +121,12 @@ public:
 
     void ForceCloseWithDelay(double seconds);
 
-    bool connected() const
+    bool Connected() const
     {
         return State::kConnected == state_;
     }
 
-    bool disconnected() const
+    bool Disconnected() const
     {
         return State::kDisconnected == state_;
     }

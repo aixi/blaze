@@ -22,7 +22,6 @@ namespace
 using SA = struct sockaddr;
 
 #if VALGRIND || defined(NO_ACCEPT4)
-
 void setNonBlockingAndCloseOnExec(int sockfd)
 {
     // non-block
@@ -36,7 +35,6 @@ void setNonBlockingAndCloseOnExec(int sockfd)
     flags |= FD_CLOEXEC;
     ret = ::fcntl(sockfd, F_SETFD, flags);
     // FIXME: check ret
-    UnusedVariable(ret);
 }
 
 #endif
@@ -109,7 +107,7 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
             case EPROTO: // ???
             case EPERM:
             // how to handle file descriptor exhaustion ?
-            // set soft limit, hard limit
+            // set soft limit smaller than hard limit
             // https://www.cnblogs.com/niocai/archive/2012/04/01/2428128.html
             case EMFILE: // maximum number of opened file descriptor per process ?
                 // expect error

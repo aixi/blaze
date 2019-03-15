@@ -36,17 +36,17 @@ public:
 
     void Restart(Timestamp now);
 
-    Timestamp expiration() const
+    Timestamp Expiration() const
     {
         return expiration_;
     }
 
-    bool repeat() const
+    bool Repeat() const
     {
         return repeat_;
     }
 
-    int64_t sequence() const
+    int64_t Sequence() const
     {
         return sequence_;
     }

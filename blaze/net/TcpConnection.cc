@@ -21,7 +21,7 @@ void DefaultConnectionCallback(const TcpConnectionPtr& conn)
 {
     LOG_TRACE << conn->GetLocalAddress().ToIpPort() << " ->"
               << conn->GetPeerAddress().ToIpPort() << " is "
-              << (conn->connected() ? "up" : "down");
+              << (conn->Connected() ? "up" : "down");
     // Do not call conn->ForceClose(), some users only want to register message callback only
 }
 

@@ -16,7 +16,7 @@
 namespace
 {
 
-thread_local blaze::net::EventLoop* t_loop_in_this_thread = nullptr;
+thread_local blaze::net::EventLoop* t_loop_of_this_thread = nullptr;
 
 const int kPollTimeMs = 10'000; // 10 seconds
 
@@ -68,14 +68,14 @@ EventLoop::EventLoop() :
     current_active_channel_(nullptr)
 {
     LOG_TRACE << "EventLoop created " << this << " in thread " << thread_id_;
-    if (t_loop_in_this_thread)
+    if (t_loop_of_this_thread)
     {
-        LOG_FATAL << "Another EventLoop " << t_loop_in_this_thread
+        LOG_FATAL << "Another EventLoop " << t_loop_of_this_thread
                   << " exists in this thread " << thread_id_;
     }
     else
     {
-        t_loop_in_this_thread = this;
+        t_loop_of_this_thread = this;
     }
     // FIXME: where is the Timestamp receive_time parameter ?
     wakeup_channel_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
@@ -89,7 +89,7 @@ EventLoop::~EventLoop()
     wakeup_channel_->DisableAll();
     wakeup_channel_->Remove();
     ::close(wakeupfd_);
-    t_loop_in_this_thread = nullptr;
+    t_loop_of_this_thread = nullptr;
 }
 
 void EventLoop::Loop()
@@ -97,7 +97,7 @@ void EventLoop::Loop()
     assert(!looping_);
     AssertInLoopThread();
     looping_ = true;
-    quit_ = false; // FIXME: what if someone calls quit() before loop() ?
+    quit_ = false; // FIXME: what if someone calls Quit() before Loop() ?
     LOG_TRACE << "EventLoop " << this << " start looping";
     while (!quit_)
     {
@@ -249,7 +249,7 @@ void EventLoop::AbortNotInLoopThread()
 
 EventLoop* EventLoop::GetEventLoopOfCurrentThread()
 {
-    return t_loop_in_this_thread;
+    return t_loop_of_this_thread;
 }
 
 } // namespace blaze

@@ -17,7 +17,7 @@ using namespace blaze::net;
 
 void OnConnection(const TcpConnectionPtr& conn)
 {
-    if (conn->connected())
+    if (conn->Connected())
     {
         conn->SetTcpNoDelay(true);
     }

@@ -101,7 +101,7 @@ TimerId TimerQueue::AddTimer(TimerCallback cb, Timestamp when, double interval)
 {
     Timer* timer = new Timer(std::move(cb), when, interval);
     loop_->RunInLoop(std::bind(&TimerQueue::AddTimerInLoop, this, timer));
-    return TimerId(timer, timer->sequence());
+    return TimerId(timer, timer->Sequence());
 }
 
 void TimerQueue::CancelTimer(TimerId timerid)
@@ -115,7 +115,7 @@ void TimerQueue::AddTimerInLoop(Timer* timer)
     bool earliest_changed = Insert(timer);
     if (earliest_changed)
     {
-        detail::ResetTimerfd(timerfd_, timer->expiration());
+        detail::ResetTimerfd(timerfd_, timer->Expiration());
     }
 }
 
@@ -127,7 +127,7 @@ void TimerQueue::CancelTimerInLoop(TimerId timerid)
     auto iter = active_timers_.find(timer);
     if (iter != active_timers_.end())
     {
-        size_t n = timers_.erase(Entry(iter->first->expiration(), iter->first));
+        size_t n = timers_.erase(Entry(iter->first->Expiration(), iter->first));
         assert(n == 1);
         UnusedVariable(n);
         delete iter->first; // FIXME: use std::unique_ptr, no delete
@@ -168,7 +168,7 @@ std::vector<TimerQueue::Entry> TimerQueue::GetExpired(Timestamp when)
     timers_.erase(timers_.begin(), end);
     for (const Entry& entry : expired)
     {
-        ActiveTimer timer(entry.second, entry.second->sequence());
+        ActiveTimer timer(entry.second, entry.second->Sequence());
         size_t n = active_timers_.erase(timer);
         assert(n == 1);
         UnusedVariable(n);
@@ -182,8 +182,8 @@ void TimerQueue::Reset(const std::vector<TimerQueue::Entry>& expired, Timestamp 
     Timestamp next_expire;
     for (const Entry& entry : expired)
     {
-        ActiveTimer timer(entry.second, entry.second->sequence());
-        if (timer.first->repeat()
+        ActiveTimer timer(entry.second, entry.second->Sequence());
+        if (timer.first->Repeat()
             && canceling_timers_.find(timer) == canceling_timers_.end())
         {
             timer.first->Restart(now);
@@ -198,7 +198,7 @@ void TimerQueue::Reset(const std::vector<TimerQueue::Entry>& expired, Timestamp 
     }
     if (!timers_.empty())
     {
-        next_expire = timers_.begin()->second->expiration();
+        next_expire = timers_.begin()->second->Expiration();
     }
     if (next_expire.IsValid())
     {
@@ -211,7 +211,7 @@ bool TimerQueue::Insert(Timer* timer)
     loop_->AssertInLoopThread();
     assert(timers_.size() == active_timers_.size());
     bool earliest_changed = false;
-    Timestamp when = timer->expiration();
+    Timestamp when = timer->Expiration();
     auto begin = timers_.begin();
     if (when < begin->first || begin == timers_.end())
     {
@@ -221,7 +221,7 @@ bool TimerQueue::Insert(Timer* timer)
     assert(result1.second);
     UnusedVariable(result1);
     std::pair<ActiveTimerList::iterator, bool> result2
-             = active_timers_.insert(ActiveTimer(timer, timer->sequence()));
+             = active_timers_.insert(ActiveTimer(timer, timer->Sequence()));
     assert(result2.second);
     UnusedVariable(result2);
     assert(timers_.size() == active_timers_.size());

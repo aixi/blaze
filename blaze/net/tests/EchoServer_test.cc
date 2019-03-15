@@ -41,7 +41,7 @@ private:
     {
         LOG_TRACE << conn->GetPeerAddress().ToIpPort() << "->"
                   << conn->GetLocalAddress().ToIpPort() << " is "
-                  << (conn->connected() ? "up" : "down");
+                  << (conn->Connected() ? "up" : "down");
         LOG_INFO << conn->GetTcpInfoString();
         conn->Send("hello\n");
     }

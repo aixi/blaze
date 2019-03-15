@@ -46,7 +46,7 @@ public:
         return loop_;
     }
 
-    bool retry() const
+    bool Retry() const
     {
         return retry_;
     }
@@ -56,7 +56,7 @@ public:
         retry_ = true;
     }
 
-    const std::string& name() const
+    const std::string& Name() const
     {
         return name_;
     }

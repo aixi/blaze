@@ -16,7 +16,7 @@ namespace blaze
 namespace net
 {
 
-// Channel does NOT own fd
+// Channel does NOT own file descriptors, it will not close the fd
 // the fd could be socket, eventfd, timerfd, signalfd
 
 class EventLoop;
