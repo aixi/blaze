@@ -8,7 +8,7 @@ namespace blaze
 {
 namespace net
 {
-std::atomic<int64_t> Timer::s_created_nums_;
+std::atomic<int64_t> Timer::s_created_nums_(0);
 
 void Timer::Restart(Timestamp now)
 {
