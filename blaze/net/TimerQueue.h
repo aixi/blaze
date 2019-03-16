@@ -69,7 +69,6 @@ private:
     ActiveTimerList active_timers_; // for cancel()
     ActiveTimerList canceling_timers_; // for cancel()
     TimerList timers_; // Timer list sorted by expiration
-    // timers_ and active_timers
 };
 
 } // namespace net
