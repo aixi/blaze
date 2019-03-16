@@ -67,12 +67,17 @@ private:
     TcpServer server_;
 };
 
-int main()
+int main(int argc, char* argv[])
 {
     LOG_INFO << "pid = " << getpid();
-    LOG_INFO << "sizeof TcpConnection = " << sizeof(TcpConnection);
+    if (argc == 1)
+    {
+        printf("Usage: %s port\n", argv[0]);
+        return 0;
+    }
     EventLoop loop;
-    InetAddress listen_addr(9981, false, false);
+    uint16_t port = static_cast<uint16_t>(atoi(argv[1]));
+    InetAddress listen_addr(port, false, false);
     EchoServer server(&loop, listen_addr);
     server.SetThreadNum(4);
     server.Start();
