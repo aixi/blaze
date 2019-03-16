@@ -21,7 +21,7 @@ EventLoopThreadPool::EventLoopThreadPool(EventLoop* base_loop, const std::string
     next_(0)
 {}
 
-// NOTE: Do NOT delete element in loops_, they are stack variables in EventLoopThread::ThreadFunc()
+// NOTE: Do NOT delete element in loops_, they are local variables in EventLoopThread::ThreadFunc()
 EventLoopThreadPool::~EventLoopThreadPool() = default;
 
 void EventLoopThreadPool::Start(const ThreadInitCallback& cb)
@@ -34,7 +34,7 @@ void EventLoopThreadPool::Start(const ThreadInitCallback& cb)
         char buf[name_.size() + 32];
         snprintf(buf, sizeof(buf), "%s%d", name_.c_str(), i);
         EventLoopThread* t = new EventLoopThread(cb, buf);
-        threads_.push_back(std::unique_ptr<EventLoopThread>(t));
+        threads_.emplace_back(std::unique_ptr<EventLoopThread>(t));
         loops_.push_back(t->StartLoop());
     }
     if (threads_num_ == 0 && cb)
@@ -50,7 +50,7 @@ EventLoop* EventLoopThreadPool::GetNextLoop()
     EventLoop* loop = base_loop_;
     if (!loops_.empty())
     {
-        // FIXME: any non-trivial method ?
+        // FIXME: any non-trivial method other then round-robin?
         // round-robin
         loop = loops_[next_];
         ++next_;

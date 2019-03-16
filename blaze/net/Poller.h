@@ -43,7 +43,7 @@ public:
 
     // Must be called in loop thread
     // When Channel object destructs, unregister it from Poller
-     virtual void RemoveChannel(Channel* channel) = 0;
+    virtual void RemoveChannel(Channel* channel) = 0;
 
     virtual bool HasChannel(Channel* channel) const;
 
@@ -53,7 +53,7 @@ public:
 
 protected:
 
-    using ChannelMap = std::map<int, Channel*>;
+    using ChannelMap = std::map<int, Channel*>; // map fd to Channel*
     ChannelMap channels_;
 
 private:

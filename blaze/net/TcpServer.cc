@@ -3,7 +3,6 @@
 //
 
 #include <blaze/log/Logging.h>
-
 #include <blaze/net/SocketsOps.h>
 #include <blaze/net/TcpConnection.h>
 #include <blaze/net/EventLoop.h>
