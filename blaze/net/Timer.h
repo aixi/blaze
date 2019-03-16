@@ -26,7 +26,7 @@ public:
         expiration_(when),
         interval_(interval),
         repeat_(interval_ > 0.0),
-        sequence_(s_created_nums_.fetch_add(1, std::memory_order_relaxed))
+        sequence_(s_created_nums_.fetch_add(1))
     {}
 
     void Run() const
@@ -53,7 +53,7 @@ public:
 
     static int64_t CreatedNumber()
     {
-        return s_created_nums_.load(std::memory_order_relaxed);
+        return s_created_nums_.load();
     }
 
 private:
