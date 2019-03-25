@@ -45,6 +45,7 @@ public:
     }
 
     Singleton() = delete;
+
     ~Singleton() = delete;
 
 private:

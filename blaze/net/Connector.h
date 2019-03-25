@@ -34,11 +34,11 @@ public:
         new_connection_callback_ = cb;
     }
 
-    void Start();
+    void Start(); // can be called in any thread
 
-    void Restart();
+    void Restart(); // can be called in any thread
 
-    void Stop();
+    void Stop(); // can be called in any thread
 
     const InetAddress& ServerAddress() const
     {

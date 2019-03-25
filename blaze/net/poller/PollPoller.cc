@@ -27,8 +27,8 @@ Timestamp PollPoller::Poll(int timeout, ChannelList* active_channels)
 {
     // pollfds_ shall not change, change active_channels, active_channels is  EventLoop's data member
     int events_num = ::poll(pollfds_.data(), pollfds_.size(), timeout); // timeout in millisecond
-    int saved_errno = errno;
     Timestamp now(Timestamp::Now());
+    int saved_errno = errno;
     if (events_num > 0)
     {
         LOG_TRACE << events_num << " events happened";
@@ -109,7 +109,8 @@ void PollPoller::RemoveChannel(Channel* channel)
     }
     else
     {
-        // exchange target and back elements, then pop_back, complexity O(1)
+        // how to remove a element in vector:
+        // exchange target with last elements, then pop_back, complexity O(1)
         int fd_at_back = pollfds_.back().fd;
         std::iter_swap(pollfds_.begin() + idx, pollfds_.end() - 1);
         if (fd_at_back < 0)

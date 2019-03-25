@@ -60,6 +60,7 @@ Timestamp EPollPoller::Poll(int timeout, ChannelList* active_channels)
     {
         LOG_TRACE << events_num << " events happened";
         FillActiveChannels(events_num, active_channels);
+        // FIXME: auto shrink ?
         if (implicit_cast<size_t>(events_num) == events_.size())
         {
             events_.resize(events_.size() * 2);
