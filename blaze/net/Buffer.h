@@ -56,7 +56,7 @@ public:
         return buffer_.size() - write_index_;
     }
 
-    void Swap(Buffer& other)
+    void swap(Buffer& other)
     {
         buffer_.swap(other.buffer_);
         std::swap(read_index_, other.read_index_);
@@ -313,7 +313,7 @@ public:
         Buffer other;
         other.EnsureWritableBytes(ReadableBytes() + reserve);
         other.Append(ToString());
-        Swap(other);
+        swap(other);
     }
 
     size_t InternalCapacity() const
