@@ -105,7 +105,7 @@ private:
 
     // if program crush, how to save last log line
     // using cookie_ to save in core dump file
-    // if no core dump file, use ulimit -c unlimited, the core dump files are large
+    // if no core dump file, use ulimit -c unlimited, note the core dump files are large
     void (*cookie_)();
     //must be out-line function for cookies
     static void CookieStart();

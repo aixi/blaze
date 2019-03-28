@@ -8,8 +8,6 @@ namespace blaze
 {
 
 CountDownLatch::CountDownLatch(int count) :
-    mutex_(),
-    cond_(),
     count_(count)
 {}
 
@@ -28,6 +26,7 @@ void CountDownLatch::CountDown()
     --count_;
     if (count_ == 0)
     {
+        // not notify_one()
         cond_.notify_all();
     }
 }

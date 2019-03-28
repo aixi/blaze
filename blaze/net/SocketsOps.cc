@@ -135,7 +135,7 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
 int sockets::connect(int sockfd, const struct sockaddr* addr)
 {
     // return 0 if success, -1 if fail
-    // FIXME: check errno, ECONNREFUSED ? ETIMEDOUT ?
+    // FIXME: check errno, ECONNREFUSED ?
     return ::connect(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
 }
 

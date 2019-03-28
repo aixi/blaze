@@ -25,9 +25,9 @@ public:
     int GetCount() const;
 
 private:
+    int count_;
     mutable std::mutex mutex_;
     std::condition_variable cond_;
-    int count_;
 };
 
 }

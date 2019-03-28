@@ -159,7 +159,7 @@ public:
         write_index_ = kCheapPrepend;
     }
 
-    void Append(const std::string_view& sv)
+    void Append(std::string_view sv)
     {
         Append(sv.data(), sv.size());
     }
@@ -309,7 +309,7 @@ public:
 
     void Shrink(size_t reserve)
     {
-        // FIXME: use vector::shrink_to_fit()
+        // FIXME: std::vector::shrink_to_fit()
         Buffer other;
         other.EnsureWritableBytes(ReadableBytes() + reserve);
         other.Append(ToString());

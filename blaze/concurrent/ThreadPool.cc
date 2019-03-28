@@ -89,6 +89,7 @@ bool ThreadPool::IsFullUnlock() const
 
 void ThreadPool::RunInThread()
 {
+    // FIXME: Do not use exception, just let it crush
     try
     {
         if (thread_init_callback_)

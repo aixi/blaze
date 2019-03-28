@@ -15,7 +15,7 @@ const char* strerror_tl(int saved_errno);
 
 void DefaultOutput(const char* msg, int len);
 
-// NOTE: enum class can not implicitly cast to integer type
+// NOTE: enum class can NOT implicitly cast to integer type
 
 template<typename E>
 constexpr std::underlying_type_t<E> ToUType(E enumerator) noexcept
