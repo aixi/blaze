@@ -9,7 +9,7 @@
 #include <vector>
 
 #include <blaze/utils/Timestamp.h>
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 
 namespace blaze
 {
@@ -23,7 +23,7 @@ class EventLoop;
 // Base class for IO Multiplexing
 // This class does not own the Channel object
 
-class Poller : public noncopyable
+class Poller
 {
 public:
 
@@ -50,6 +50,8 @@ public:
     static Poller* NewDefaultPoller(EventLoop* loop);
 
     void AssertInLoopThread() const;
+
+    DISABLE_COPY_AND_ASSIGN(Poller);
 
 protected:
 

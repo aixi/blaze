@@ -12,7 +12,7 @@
 #include <string_view>
 
 #include <blaze/concurrent/ThreadGuard.h>
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 
 namespace blaze
 {
@@ -22,7 +22,7 @@ namespace net
 
 class EventLoop;
 
-class EventLoopThread : public noncopyable
+class EventLoopThread
 {
 public:
     using ThreadInitCallback = std::function<void(EventLoop*)>;
@@ -39,6 +39,7 @@ public:
         return name_;
     }
 
+    DISABLE_COPY_AND_ASSIGN(EventLoopThread);
 
 private:
 

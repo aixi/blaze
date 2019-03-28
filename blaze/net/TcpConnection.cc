@@ -133,7 +133,7 @@ void TcpConnection::Send(std::string_view message)
         {
             // FIXME: shared_from_this() ?
             // FIXME: avoid copy message
-            void (TcpConnection::*fp)(const std::string_view& message) = &TcpConnection::SendInLoop;
+            void (TcpConnection::*fp)(std::string_view message) = &TcpConnection::SendInLoop;
             loop_->RunInLoop(std::bind(fp, this, std::string(message)));
         }
     }
@@ -151,7 +151,7 @@ void TcpConnection::Send(Buffer* buffer)
         {
             // FIXME: shared_from_this() ?
             // FIXME: avoid copy message
-            void (TcpConnection::*fp)(const std::string_view& message) = &TcpConnection::SendInLoop;
+            void (TcpConnection::*fp)(std::string_view message) = &TcpConnection::SendInLoop;
             loop_->RunInLoop(std::bind(fp, this, buffer->RetrieveAllAsString()));
         }
     }

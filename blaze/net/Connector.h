@@ -8,7 +8,7 @@
 #include <memory>
 #include <functional>
 
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 
 #include <blaze/net/InetAddress.h>
 
@@ -20,7 +20,7 @@ namespace net
 class Channel;
 class EventLoop;
 
-class Connector : public noncopyable, public std::enable_shared_from_this<Connector>
+class Connector : public std::enable_shared_from_this<Connector>
 {
 public:
     using NewConnectionCallback = std::function<void (int sockfd)>;
@@ -77,6 +77,8 @@ private:
     int RemoveAndResetChannel();
 
     void ResetChannel();
+
+    DISABLE_COPY_AND_ASSIGN(Connector);
 
 private:
     EventLoop* loop_;

@@ -19,7 +19,7 @@
 namespace blaze
 {
 
-class AsyncLogging : public noncopyable
+class AsyncLogging
 {
 public:
 
@@ -32,6 +32,8 @@ public:
     void Start();
 
     void Stop();
+
+    DISABLE_COPY_AND_ASSIGN(AsyncLogging);
 
 private:
 

@@ -13,7 +13,7 @@
 #include <functional>
 
 #include <blaze/utils/Timestamp.h>
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 #include <blaze/net/Callbacks.h>
 #include <blaze/net/TimerId.h>
 
@@ -27,7 +27,7 @@ class Channel;
 class Poller;
 class TimerQueue;
 
-class EventLoop : public noncopyable
+class EventLoop
 {
 public:
 
@@ -111,6 +111,8 @@ public:
     {
         return event_handling_;
     };
+
+    DISABLE_COPY_AND_ASSIGN(EventLoop);
 
     static EventLoop* GetEventLoopOfCurrentThread();
 

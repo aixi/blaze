@@ -5,7 +5,7 @@
 #ifndef BLAZE_SOCKET_H
 #define BLAZE_SOCKET_H
 
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 
 // struct tcp_info is in <netinet/tcp.h>
 
@@ -23,7 +23,7 @@ class InetAddress; // forward declare
 // It close the sockfd when destructs
 // It's thread safe, all operations delegate to OS
 
-class Socket : public noncopyable
+class Socket
 {
 public:
     explicit Socket(int sockfd) :
@@ -68,6 +68,8 @@ public:
 
     // SO_KEEPALIVE
     void SetKeepAlive(bool on);
+
+    DISABLE_COPY_AND_ASSIGN(Socket);
 
 private:
     int sockfd_;

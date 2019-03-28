@@ -14,14 +14,12 @@
 #include <thread>
 #include <future>
 #include <functional>
-
-#include <blaze/utils/noncopyable.h>
 #include <blaze/utils/Types.h>
 
 namespace blaze
 {
 
-class ThreadPool : public noncopyable
+class ThreadPool
 {
 public:
     using Task = std::function<void()>;
@@ -56,6 +54,8 @@ public:
     // Could block if max_tasks_size > 0
     template <typename F, typename... Args>
     std::future<std::result_of_t<F(Args...)>> Run(F&& f, Args&&... args);
+
+    DISABLE_MOVE_AND_ASSIGN(ThreadPool);
 
 private:
 

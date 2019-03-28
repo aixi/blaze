@@ -8,7 +8,7 @@
 #include <set>
 #include <blaze/net/TimerId.h>
 #include <blaze/net/Channel.h>
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 
 namespace blaze
 {
@@ -21,7 +21,7 @@ class Timer;
 
 // Best effort, no guarantee that callback will be on time.
 
-class TimerQueue : public noncopyable
+class TimerQueue
 {
 public:
 
@@ -59,6 +59,8 @@ private:
     void Reset(const std::vector<Entry>& expired, Timestamp now);
 
     bool Insert(Timer* timer);
+
+    DISABLE_COPY_AND_ASSIGN(TimerQueue);
 
 private:
 

@@ -6,6 +6,7 @@
 #define BLAZE_TCPCLIENT_H
 
 #include <mutex>
+#include <blaze/utils/Types.h>
 #include <blaze/net/TcpConnection.h>
 
 namespace blaze
@@ -16,7 +17,7 @@ namespace net
 class Connector;
 typedef std::shared_ptr<Connector> ConnectorPtr;
 
-class TcpClient : public noncopyable
+class TcpClient
 {
 public:
     // TcpClient(EventLoop* loop);
@@ -57,6 +58,8 @@ public:
     /// Not thread safe.
     void SetWriteCompleteCallback(WriteCompleteCallback cb)
     { write_complete_callback_ = std::move(cb); }
+
+    DISABLE_COPY_AND_ASSIGN(TcpClient);
 
 private:
     /// Not thread safe, but in loop

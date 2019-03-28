@@ -10,13 +10,11 @@
 #include <condition_variable>
 #include <deque>
 
-#include <blaze/utils/noncopyable.h>
-
 namespace blaze
 {
 
 template <typename T>
-class BoundedBlockingQueue : public noncopyable
+class BoundedBlockingQueue
 {
 public:
 
@@ -85,6 +83,8 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);
         return queue_.capacity();
     }
+
+    DISABLE_COPY_AND_ASSIGN(BoundedBlockingQueue);
 
 private:
     const size_t max_size_;

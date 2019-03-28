@@ -12,7 +12,6 @@
 #include <blaze/net/InetAddress.h>
 #include <blaze/net/Callbacks.h>
 #include <blaze/net/Buffer.h>
-#include <blaze/utils/noncopyable.h>
 #include <blaze/utils/Types.h>
 
 // included in <netinet/tcp.h>
@@ -28,7 +27,7 @@ class EventLoop;
 class Socket;
 class Channel;
 
-class TcpConnection : public noncopyable, public std::enable_shared_from_this<TcpConnection>
+class TcpConnection : public std::enable_shared_from_this<TcpConnection>
 {
 public:
     // User shall not explicitly create this object
@@ -192,6 +191,8 @@ private:
     }
 
     const char* StateToCStr() const;
+
+    DISABLE_COPY_AND_ASSIGN(TcpConnection);
 
 private:
     EventLoop* loop_;

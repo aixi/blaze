@@ -10,7 +10,7 @@
 #include <blaze/net/Channel.h>
 #include <blaze/net/Socket.h>
 
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 
 namespace blaze
 {
@@ -20,7 +20,7 @@ namespace net
 class EventLoop;
 class InetAddress;
 
-class Acceptor : public noncopyable
+class Acceptor
 {
 public:
     using NewConnectionCallback = std::function<void(int sockfd, const InetAddress&)>;
@@ -41,7 +41,10 @@ public:
 
     void Listen();
 
+    DISABLE_COPY_AND_ASSIGN(Acceptor);
+
 private:
+
     void HandleRead();
 
 private:

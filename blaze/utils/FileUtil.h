@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 
 namespace blaze
 {
@@ -21,7 +21,7 @@ namespace FileUtil
 static const int kBufferSize = 1024 * 64;
 
 //file size < 64KB
-class ReadSmallFile : public noncopyable
+class ReadSmallFile
 {
 public:
     explicit ReadSmallFile(const std::string& filename);
@@ -44,6 +44,7 @@ public:
         return buf_;
     }
 
+    DISABLE_COPY_AND_ASSIGN(ReadSmallFile);
 
 private:
     int fd_;
@@ -63,7 +64,7 @@ int ReadFile(const std::string& filename, int max_size,
 }
 
 //NOT thread safe
-class AppendFile : public noncopyable
+class AppendFile
 {
 public:
     explicit AppendFile(const std::string& filename);
@@ -78,6 +79,8 @@ public:
     {
         return written_bytes_;
     }
+
+    DISABLE_COPY_AND_ASSIGN(AppendFile);
 
 private:
 

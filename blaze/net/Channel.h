@@ -8,7 +8,7 @@
 #include <functional>
 #include <memory>
 #include <blaze/utils/Timestamp.h>
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 
 namespace blaze
 {
@@ -21,7 +21,7 @@ namespace net
 
 class EventLoop;
 
-class Channel : public noncopyable
+class Channel
 {
 public:
     using EventCallback = std::function<void ()>;
@@ -138,6 +138,8 @@ public:
     std::string REventToString() const;
 
     void Remove();
+
+    DISABLE_COPY_AND_ASSIGN(Channel);
 
 private:
 

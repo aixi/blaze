@@ -7,13 +7,12 @@
 
 #include <mutex>
 #include <condition_variable>
-#include <blaze/utils/noncopyable.h>
-
+#include <blaze/utils/Types.h>
 
 namespace blaze
 {
 
-class CountDownLatch : public noncopyable
+class CountDownLatch
 {
 public:
     explicit CountDownLatch(int count);
@@ -23,6 +22,8 @@ public:
     void CountDown();
 
     int GetCount() const;
+
+    DISABLE_COPY_AND_ASSIGN(CountDownLatch);
 
 private:
     int count_;

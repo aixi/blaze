@@ -10,7 +10,7 @@
 #include <map>
 #include <string_view>
 #include <blaze/net/Callbacks.h>
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 
 namespace blaze
 {
@@ -22,7 +22,7 @@ class Acceptor;
 class InetAddress;
 class EventLoopThreadPool;
 
-class TcpServer : public noncopyable
+class TcpServer
 {
 public:
     using ThreadInitCallback = std::function<void (EventLoop*)>;
@@ -91,6 +91,8 @@ public:
     {
         write_complete_callback_ = cb;
     }
+
+    DISABLE_COPY_AND_ASSIGN(TcpServer);
 
 private:
     // Not thread safe, but in loop

@@ -6,6 +6,7 @@
 #define BLAZE_THREADGUARD_H
 
 #include <thread>
+#include <blaze/utils/Types.h>
 
 namespace blaze
 {
@@ -24,12 +25,9 @@ public:
     ~ThreadGuard();
 
     // non-copyable
-    ThreadGuard(const ThreadGuard&) = delete;
-    ThreadGuard& operator=(const ThreadGuard&) = delete;
-
+    DISABLE_COPY_AND_ASSIGN(ThreadGuard);
     // movable
-    ThreadGuard(ThreadGuard&&) = default;
-    ThreadGuard& operator=(ThreadGuard&&) = default;
+    DISABLE_MOVE_AND_ASSIGN(ThreadGuard);
 
     std::thread& get()
     {

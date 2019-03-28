@@ -33,7 +33,7 @@ struct has_no_destroy
 } // namespace detail
 
 template <typename T>
-class Singleton : public noncopyable
+class Singleton
 {
 public:
 
@@ -47,6 +47,8 @@ public:
     Singleton() = delete;
 
     ~Singleton() = delete;
+
+    DISABLE_COPY_AND_ASSIGN(Singleton);
 
 private:
 

@@ -10,7 +10,6 @@
 #include <string_view>
 #include <functional>
 
-#include <blaze/utils/noncopyable.h>
 #include <blaze/utils/Types.h>
 
 namespace blaze
@@ -21,7 +20,7 @@ namespace net
 class EventLoop;
 class EventLoopThread;
 
-class EventLoopThreadPool : public noncopyable
+class EventLoopThreadPool
 {
 public:
     using ThreadInitCallback = std::function<void (EventLoop*)>;
@@ -54,6 +53,8 @@ public:
     {
         return name_;
     }
+
+    DISABLE_COPY_AND_ASSIGN(EventLoopThreadPool);
 
 private:
     EventLoop* base_loop_;

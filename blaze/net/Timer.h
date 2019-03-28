@@ -8,7 +8,7 @@
 #include <atomic>
 
 #include <blaze/net/Callbacks.h>
-#include <blaze/utils/noncopyable.h>
+#include <blaze/utils/Types.h>
 #include <blaze/utils/Timestamp.h>
 
 namespace blaze
@@ -18,7 +18,7 @@ namespace net
 {
 
 
-class Timer : public noncopyable
+class Timer
 {
 public:
     Timer(TimerCallback cb, Timestamp when, double interval) :
@@ -50,6 +50,8 @@ public:
     {
         return sequence_;
     }
+
+    DISABLE_COPY_AND_ASSIGN(Timer);
 
     static int64_t CreatedNumber()
     {

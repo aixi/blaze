@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <mutex>
-#include <blaze/utils/noncopyable.h>
 #include <blaze/utils/Types.h>
 
 namespace blaze
@@ -19,7 +18,7 @@ class AppendFile;
 
 } // namespace FileUtil
 
-class LogFile : public noncopyable
+class LogFile
 {
 public:
 
@@ -38,6 +37,8 @@ public:
     void Flush();
 
     bool RollFile();
+
+    DISABLE_COPY_AND_ASSIGN(LogFile);
 
 private:
 

@@ -9,14 +9,13 @@
 #include <mutex>
 #include <condition_variable>
 #include <deque>
-#include <blaze/utils/noncopyable.h>
 #include <blaze/utils/Types.h>
 
 namespace blaze
 {
 
 template <typename T>
-class BlockingQueue : public noncopyable
+class BlockingQueue
 {
 public:
     BlockingQueue() = default;
@@ -54,6 +53,8 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);
         return queue_.size();
     }
+
+    DISABLE_COPY_AND_ASSIGN(BlockingQueue);
 
 private:
     mutable std::mutex mutex_;
