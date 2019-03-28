@@ -121,7 +121,7 @@ void TcpConnection::Send(const void* data, size_t len)
     SendInLoop(std::string_view(static_cast<const char*>(data), len));
 }
 
-void TcpConnection::Send(const std::string_view& message)
+void TcpConnection::Send(std::string_view message)
 {
     if (state_ == State::kConnected)
     {
@@ -157,7 +157,7 @@ void TcpConnection::Send(Buffer* buffer)
     }
 }
 
-void TcpConnection::SendInLoop(const std::string_view& message)
+void TcpConnection::SendInLoop(std::string_view message)
 {
     SendInLoop(message.data(), message.size());
 }

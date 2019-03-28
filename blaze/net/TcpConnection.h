@@ -111,7 +111,7 @@ public:
 
     void Send(const void* data, size_t len);
 
-    void Send(const std::string_view& message);
+    void Send(std::string_view message);
 
     void Send(Buffer* buf);
 
@@ -177,7 +177,7 @@ private:
     void HandleClose();
     void HandleError();
 
-    void SendInLoop(const std::string_view& message);
+    void SendInLoop(std::string_view message);
     void SendInLoop(const void* data, size_t len);
     void ShutDownInLoop();
 
