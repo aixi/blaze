@@ -138,11 +138,18 @@ inline ::std::shared_ptr<To> down_pointer_cast(const ::std::shared_ptr<From>& f)
     return std::static_pointer_cast<To>(f);
 }
 
+template <typename T>
+class TypeDisplayer;
+
+// TypeDisplayer<decltype<T>> td; it it will cause compiler error to show type info of T
+
 // disable copy-ctor and copy-assign
 
 #define DISABLE_COPY_AND_ASSIGN(classname) \
     classname(const classname&) = delete; \
     classname& operator=(const classname&) = delete
+
+// disable move-ctor and move-assign
 
 #define DISABLE_MOVE_AND_ASSIGN(classname) \
     classname(classname&&) = delete; \
