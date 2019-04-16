@@ -7,7 +7,7 @@ blaze 是仿照 muduo[1] 实现的一个基于 Reactor 模式的多线程 C++ �
 - 多线程依赖于 C++11 提供的 std::thread，而不是重新封装 POSIX thread API。
 - 原子操作使用 C++11 提供的 std::atomic。
 - 重新实现了 BlockingQueue、BoundedBlockingQueue、CountDownLatch 等线程安全容器
-- 新增了ThreadGuard类，防止joinable thread析构时调用 std::terminate
+- 新增了ThreadGuard类，防止joinable thread对象析构时调用 std::terminate
 ## 示例
 
 一个简单的echo服务器如下：
