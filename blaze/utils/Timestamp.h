@@ -17,7 +17,7 @@ class Timestamp
 {
 public:
 
-    const static int kMicroSecondsPerSecond = 1000 * 1000;
+    const static int kMicroSecondsPerSecond;
 
     // construct an invalid Timestamp
 

@@ -16,6 +16,8 @@
 namespace
 {
 
+// https://www.cnblogs.com/pop-lar/p/5123014.html
+
 thread_local blaze::net::EventLoop* t_loop_of_this_thread = nullptr;
 
 const int kPollTimeMs = 10'000; // 10 seconds

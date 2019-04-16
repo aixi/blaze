@@ -112,14 +112,14 @@ public:
         return event_handling_;
     };
 
-    DISABLE_COPY_AND_ASSIGN(EventLoop);
-
     static EventLoop* GetEventLoopOfCurrentThread();
+
+    DISABLE_COPY_AND_ASSIGN(EventLoop);
 
 private:
 
     void AbortNotInLoopThread();
-    void HandleRead(); // wakeup from IO Multiplexing function
+    void HandleRead(); // wakeup from IO Multiplexing function using event fd
     void DoPendingTasks();
 
 private:

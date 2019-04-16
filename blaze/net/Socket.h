@@ -60,13 +60,13 @@ public:
     // TCP_NODELAY, Nagle's algorithm
     void SetTcpNoDelay(bool on);
 
-    // SO_REUSEADDR
+    // SO_REUSEADDR, handle tcp connection in TIME_WAIT
     void SetReuseAddr(bool on);
 
     // SO_REUSEPORT
     void SetReusePort(bool on);
 
-    // SO_KEEPALIVE
+    // SO_KEEPALIVE, heartbeat protocol is still needed
     void SetKeepAlive(bool on);
 
     DISABLE_COPY_AND_ASSIGN(Socket);

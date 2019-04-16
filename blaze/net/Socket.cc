@@ -108,7 +108,6 @@ void Socket::SetReuseAddr(bool on)
                            static_cast<socklen_t>(sizeof(optval)));
     UnusedVariable(ret);
     // FIXME: check ret errno
-
 }
 
 void Socket::SetReusePort(bool on)

@@ -20,6 +20,8 @@ namespace blaze
 
 static_assert(sizeof(Timestamp) == sizeof(int64_t), "Timestamp is same size as int64_t");
 
+const int Timestamp::kMicroSecondsPerSecond = 1000 * 1000;
+
 std::string Timestamp::ToString() const
 {
     char buf[32] = {0};
