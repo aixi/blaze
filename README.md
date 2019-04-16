@@ -54,7 +54,7 @@ public:
   }
   void OnHighWaterMark(const TcpConnectionPtr& conn, size_t mark)
   {
-    INFO("high water mark %lu bytes, stop read", mark);
+    LOG_INFO << "high water mark " << mark << " bytes, stop read";
     conn->StopRead();
   }
   
@@ -92,7 +92,6 @@ int main()
   InetAddress server_addr(9877);
   // echo server with 4 threads and timeout of 10 seconds
   EchoServer server(&loop, server_addr);
-  // loop all other threads except this one
   server.SetThreadNum(4)
   server.Start();
   // quit after 1 minute
@@ -103,8 +102,7 @@ int main()
 ```
 blaze还提供了定时器功能:
 利用std::set管理定时器，实现较为简单
-std::set提供了lower_bound功能，可以较快地找到已到期的定时器
-便利的定时器功能，能够应对自己注销自己的情况：
+std::set提供了lower_bound功能，可以较快地找到已到期的定时器：
 ```c++
 void PrintTid()
 {
