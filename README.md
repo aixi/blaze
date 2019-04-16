@@ -2,7 +2,7 @@
 
 ## 简介
 
-blaze 是仿照 muduo[1] 实现的一个基于 Reactor 模式的多线程 C++ 网络库。简化的部分如下：
+blaze 是仿照 muduo[1] 实现的一个基于 Reactor 模式的多线程 C++ 网络库。改动的部分如下：
 - 去掉了 muduo/base 中的基础库，利用 C++11 的新特性而非自己实现。
 - 多线程依赖于 C++11 提供的 std::thread，而不是重新封装 POSIX thread API。
 - 原子操作使用 C++11 提供的 std::atomic。
