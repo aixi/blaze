@@ -21,7 +21,7 @@ class EventLoop;
 
 // IO Multiplexing using poll(2)
 
-class PollPoller : public Poller
+class PollPoller final : public Poller
 {
 public:
     using ChannelList = std::vector<Channel*>;

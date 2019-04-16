@@ -16,7 +16,7 @@ namespace blaze
 namespace net
 {
 
-class EPollPoller : public Poller
+class EPollPoller final : public Poller
 {
 public:
     explicit EPollPoller(EventLoop* loop);

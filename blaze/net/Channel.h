@@ -33,7 +33,7 @@ public:
 
     void HandleEvent(Timestamp when);
 
-    // Tie this channel object to its owner object managed by shared_ptr
+    // Tie this channel object to its owner object which is managed by shared_ptr
     // prevent the owner object being destroyed in HandleEvent(Timestamp when)
     // std::shared_ptr<void> could hold all types like void*
     void Tie(const std::shared_ptr<void>& obj);
@@ -133,7 +133,7 @@ public:
         return events_ == kNoneEvent;
     };
 
-    // for debug
+    // for debug, we could call function in gdb
     std::string EventToString() const;
     std::string REventToString() const;
 
