@@ -51,15 +51,15 @@ public:
 
     size_t TaskSize() const;
 
-    // Could block if max_tasks_size > 0
+    // Could block if max_tasks_size > 0 && task queue is full
     template <typename F, typename... Args>
     std::future<std::result_of_t<F(Args...)>> Run(F&& f, Args&&... args);
 
-    DISABLE_MOVE_AND_ASSIGN(ThreadPool);
+    DISABLE_COPY_AND_ASSIGN(ThreadPool);
 
 private:
 
-    bool IsFullUnlock() const;
+    bool IsFullWithoutLockHold() const;
     void RunInThread();
     Task Take();
 
@@ -93,11 +93,11 @@ std::future<std::result_of_t<F(Args...)>> ThreadPool::Run(F&& f, Args&&... args)
     else
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        while (IsFullUnlock())
+        while (IsFullWithoutLockHold())
         {
             not_full_.wait(lock);
         }
-        assert(!IsFullUnlock());
+        assert(!IsFullWithoutLockHold());
         tasks_.emplace_back([task](){(*task)();});
         not_empty_.notify_one();
     }

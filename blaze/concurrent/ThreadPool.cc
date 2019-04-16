@@ -82,7 +82,7 @@ ThreadPool::Task ThreadPool::Take()
     return task;
 }
 
-bool ThreadPool::IsFullUnlock() const
+bool ThreadPool::IsFullWithoutLockHold() const
 {
     return max_task_size_ > 0 && tasks_.size() >= max_task_size_;
 }
