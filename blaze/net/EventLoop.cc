@@ -47,6 +47,8 @@ public:
 };
 #pragma GCC diagnostic error "-Wold-style-cast"
 
+// https://www.cnblogs.com/catch/p/4314256.html
+// global variable construct before main
 IgnoreSigPipe ignoreSigPipe;
 
 } // anonymous namespace
