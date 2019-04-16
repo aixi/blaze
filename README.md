@@ -37,10 +37,21 @@ private:
 这个实现非常简单，只需关注`OnMessage`回调函数，它将收到消息发回客户端。然而，该实现有一个问题：若客户端只发送而不接收数据（即只调用`write`而不调用`read`），则TCP的流量控制（flow control）会导致数据堆积在服务端，最终会耗尽服务端内存。为解决该问题我们引入高/低水位回调：
 
 ```c++
-class EchoServer: public noncopyable
+class EchoServer : public noncopyable
 {
 public:
   ...
+ 
+  void Start()
+  {
+      server_.Start();
+  }
+  
+  void SetThreadNum(size_t n)
+  {
+      server_.SetThreadNum(n);
+  }
+  
   void OnConnection(const TcpConnectionPtr& conn)
   {
     if (conn->Connected())
@@ -52,6 +63,7 @@ public:
     INFO("high water mark %lu bytes, stop read", mark);
     conn->StopRead();
   }
+  
   void OnWriteComplete(const TcpConnectionPtr& conn)
   {
     if (!conn->IsReading()) {
@@ -70,11 +82,11 @@ public:
 然后，我们给服务器加上多线程功能。实现起来非常简单，只需加一行代码即可：
 
 ```c++
-EchoServer：：void start()
+EchoServer::void start()
 {
   // set thread num here
-  server_.setNumThread(2);
-  server_.start();
+  server_.SetNumThread(2);
+  server_.Start();
 }
 ```
 
@@ -85,15 +97,16 @@ int main()
 {
   EventLoop loop;
   // listen address localhost:9877
-  InetAddress addr(9877);
+  InetAddress server_addr(9877);
   // echo server with 4 threads and timeout of 10 seconds
-  EchoServer server(&loop, addr, 4, 10s);
+  EchoServer server(&loop, server_addr, 10);
   // loop all other threads except this one
-  server.start();
+  server.SetThreadNum(4)
+  server.Start();
   // quit after 1 minute
-  loop.runAfter(1min, [&](){ loop.quit(); });
+  loop.RunAfter(60, [&](){ loop.quit(); });
   // loop main thread
-  loop.loop();
+  loop.Loop();
 }
 ```
 
