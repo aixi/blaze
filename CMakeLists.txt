@@ -161,3 +161,9 @@ target_link_libraries(chat_client blaze)
 
 add_executable(chat_server examples/chat/server.cc)
 target_link_libraries(chat_server blaze)
+
+#add_executable(discard examples/discard/discard.cc)
+#target_link_libraries(discard blaze)
+
+add_executable(echo_server examples/echo/echo_server.cc)
+target_link_libraries(echo_server blaze)

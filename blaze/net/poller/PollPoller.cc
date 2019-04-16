@@ -100,7 +100,7 @@ void PollPoller::RemoveChannel(Channel* channel)
     const struct pollfd& pfd = pollfds_[idx];
     assert(pfd.fd == -channel->fd() - 1 && pfd.events == channel->events());
     UnusedVariable(pfd);
-    size_t n = channels_.erase(channel->fd()); //  return number of elements removed.
+    size_t n = channels_.erase(channel->fd()); //  return number of elements been removed.
     assert(n == 1);
     UnusedVariable(n);
     if (implicit_cast<size_t>(idx) == pollfds_.size() - 1)

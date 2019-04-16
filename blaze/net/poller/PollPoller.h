@@ -40,6 +40,7 @@ private:
 
     void FillActiveChannels(int event_nums, ChannelList* active_channels) const;
 
+    // no need to include poll.h
     using PollfdList = std::vector<struct pollfd>;
 
     PollfdList pollfds_;

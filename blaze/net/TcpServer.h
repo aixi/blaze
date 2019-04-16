@@ -8,6 +8,7 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <atomic>
 #include <string_view>
 #include <blaze/net/Callbacks.h>
 #include <blaze/utils/Types.h>

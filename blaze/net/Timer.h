@@ -51,12 +51,12 @@ public:
         return sequence_;
     }
 
-    DISABLE_COPY_AND_ASSIGN(Timer);
-
     static int64_t CreatedNumber()
     {
         return s_created_nums_.load();
     }
+
+    DISABLE_COPY_AND_ASSIGN(Timer);
 
 private:
 

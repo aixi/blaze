@@ -29,7 +29,8 @@ EventLoopThread::~EventLoopThread()
     {
         // still a chance to call nullptr loop_, if ThreadFunc exits just now
         loop_->Quit();
-        // thread_->join(); calling detach() join() of  unjoinable thread leads to UB
+        // thread_->join(); call function detach() or join() of a unjoinable thread leads to UB
+        // so we use ThreadGuard to ensure safely destruct of thread object
     }
 }
 
