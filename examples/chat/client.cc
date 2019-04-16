@@ -15,7 +15,7 @@
 using namespace blaze;
 using namespace blaze::net;
 
-class ChatClient : noncopyable
+class ChatClient : public noncopyable
 {
 public:
     ChatClient(EventLoop* loop, const InetAddress& server_addr) :

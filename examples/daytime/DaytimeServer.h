@@ -6,8 +6,9 @@
 #define BLAZE_DAYTIMESERVER_H
 
 #include <blaze/net/TcpServer.h>
+#include <blaze/utils/noncopyable.h>
 
-class DaytimeServer
+class DaytimeServer : public blaze::noncopyable
 {
 public:
 

@@ -9,8 +9,9 @@
 #include <blaze/utils/Types.h>
 #include <blaze/net/TcpServer.h>
 #include <blaze/net/Callbacks.h>
+#include <blaze/utils/noncopyable.h>
 
-class EchoServer
+class EchoServer : public blaze::noncopyable
 {
 public:
 
