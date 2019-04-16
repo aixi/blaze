@@ -7,6 +7,7 @@ blaze 是仿照 muduo[1] 实现的一个基于 Reactor 模式的多线程 C++ �
 - 多线程依赖于 C++11 提供的 std::thread，而不是重新封装 POSIX thread API。
 - 原子操作使用 C++11 提供的 std::atomic。
 - 重新实现了 BlockingQueue、BoundedBlockingQueue、CountDownLatch 等线程安全容器
+- 新增了ThreadGuard类，防止joinable thread析构时调用 std::terminate
 ## 示例
 
 一个简单的echo服务器如下：
@@ -22,7 +23,11 @@ public:
     // set echo callback
     server_.SetMessageCallback(std::bind(&EchoServer::OnMessage, this, _1, _2, _3));
   }
-  void Start() { server_.Start(); }
+  void Start() 
+  { 
+    server_.Start(); 
+  }
+  
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp time)
   {
     // echo message
@@ -41,17 +46,6 @@ class EchoServer : public noncopyable
 {
 public:
   ...
- 
-  void Start()
-  {
-      server_.Start();
-  }
-  
-  void SetThreadNum(size_t n)
-  {
-      server_.SetThreadNum(n);
-  }
-  
   void OnConnection(const TcpConnectionPtr& conn)
   {
     if (conn->Connected())
@@ -67,7 +61,7 @@ public:
   void OnWriteComplete(const TcpConnectionPtr& conn)
   {
     if (!conn->IsReading()) {
-      INFO("write complete, start read");
+      LOG_INFO << "write complete, start read";
       conn->StartRead();
     }
   }
@@ -75,18 +69,16 @@ public:
 };
 ```
 
-新增了3个回调：`OnConnection`，`OnHighWaterMark`和`OnWriteComplete`。当TCP连接建立时`OnConnection`会设置高水位回调值（high water mark）；当send buffer达到该值时，`onHighWaterMark`会停止读socket；当send buffer全部写入内核时，`onWriteComplete`会重新开始读socket。
+新增了3个回调：`OnConnection`，`OnHighWaterMark`和`OnWriteComplete`。当TCP连接建立时`OnConnection`会设置高水位回调值（high water mark）；当 output buffer 达到该值时，`OnHighWaterMark`会停止读socket；当 Output buffer全部写入内核时，`OnWriteComplete`会重新开始读socket。
 
-除此以外，还需要给服务器加上定时功能以清除空闲连接。实现思路是让服务器保存一个TCP连接的`std::map`，每隔几秒扫描一遍所有连接并清除超时的连接，代码在[这里](./example/echo.cc)。
 
 然后，我们给服务器加上多线程功能。实现起来非常简单，只需加一行代码即可：
 
 ```c++
-EchoServer::void start()
+void EchoServer::SetThreadNum(size_t n)
 {
   // set thread num here
-  server_.SetNumThread(2);
-  server_.Start();
+  server_.SetNumThread(n);
 }
 ```
 
@@ -99,7 +91,7 @@ int main()
   // listen address localhost:9877
   InetAddress server_addr(9877);
   // echo server with 4 threads and timeout of 10 seconds
-  EchoServer server(&loop, server_addr, 10);
+  EchoServer server(&loop, server_addr);
   // loop all other threads except this one
   server.SetThreadNum(4)
   server.Start();
@@ -107,6 +99,65 @@ int main()
   loop.RunAfter(60, [&](){ loop.quit(); });
   // loop main thread
   loop.Loop();
+}
+```
+blaze还提供了定时器功能:
+利用std::set管理定时器，实现较为简单
+std::set提供了lower_bound功能，可以较快地找到已到期的定时器
+便利的定时器功能，能够应对自己注销自己的情况：
+```c++
+void PrintTid()
+{
+    std::stringstream ss;
+    ss << std::this_thread::get_id();
+    printf("pid = %d, tid = %s\n", getpid(), ss.str().data());
+}
+
+void Print(const char* msg)
+{
+    printf("msg %s %s\n", Timestamp::Now().ToString().c_str(), msg);
+    if (++cnt == 20)
+    {
+        g_loop->Quit();
+    }
+}
+
+void Cancel(TimerId timer)
+{
+    g_loop->CancelTimer(timer);
+    // 自注销
+    printf("cancelled timer at %s\n", Timestamp::Now().ToString().c_str());
+}
+
+int main()
+{
+    PrintTid();
+    sleep(1);
+    {
+        EventLoop loop;
+        g_loop = &loop;
+        Print("main");
+        loop.RunAfter(1, [](){Print("once1");});
+        loop.RunAfter(1.5, [](){Print("once1.5");});
+        loop.RunAfter(2.5, [](){Print("once2.5");});
+        loop.RunAfter(3.5, [](){Print("once3.5");});
+        TimerId t45 = loop.RunAfter(4.5, [](){Print("once4.5");});
+        loop.RunAfter(4.2, [t45](){Cancel(t45);});
+        loop.RunAfter(4.8, [t45](){Cancel(t45);});
+        loop.RunEvery(2, [](){Print("every2");});
+        TimerId t3 = loop.RunEvery(3, [](){Print("every3");});
+        loop.RunAfter(9.001, [&t3](){Cancel(t3);});
+        loop.Loop();
+        printf("main loop exits");
+    }
+    sleep(1);
+    {
+        EventLoopThread loop_thread;
+        EventLoop* loop = loop_thread.StartLoop();
+        loop->RunAfter(2, PrintTid);
+        sleep(3);
+        printf("thread loop exits");
+    }
 }
 ```
 
