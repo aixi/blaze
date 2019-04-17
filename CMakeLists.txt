@@ -167,3 +167,9 @@ target_link_libraries(daytime_server blaze)
 
 add_executable(echo_server examples/echo/echo_server.cc)
 target_link_libraries(echo_server blaze)
+
+add_library(blaze_http STATIC
+        examples/http/HttpContext.cc
+        examples/http/HttpReponse.cc
+        examples/http/HttpRequest.cc
+        examples/http/HttpServer.cc)
