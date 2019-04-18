@@ -24,7 +24,7 @@ bool HttpContext::ParseRequest(blaze::net::Buffer* buf, blaze::Timestamp receive
             const char* clrf = buf->FindCRLF();
             if (clrf)
             {
-                ok = ProcessRequesLine(buf->BeginRead(), clrf);
+                ok = ProcessRequestLine(buf->BeginRead(), clrf);
                 if (ok)
                 {
                     request_.SetReceiveTime(receive_time);
@@ -73,7 +73,7 @@ bool HttpContext::ParseRequest(blaze::net::Buffer* buf, blaze::Timestamp receive
     return ok;
 }
 
-bool HttpContext::ProcessRequesLine(const char* begin, const char* end)
+bool HttpContext::ProcessRequestLine(const char* begin, const char* end)
 {
     bool succeed = false;
     const char* start = begin;

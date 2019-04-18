@@ -59,7 +59,7 @@ public:
     }
 
 private:
-    bool ProcessRequesLine(const char* begin, const char* end);
+    bool ProcessRequestLine(const char* begin, const char* end);
 
 private:
     HttpRequestParseState state_;

@@ -170,7 +170,7 @@ target_link_libraries(echo_server blaze)
 
 add_library(blaze_http STATIC
         blaze/net/http/HttpContext.cc
-        blaze/net/http/HttpReponse.cc
+        blaze/net/http/HttpResponse.cc
         blaze/net/http/HttpRequest.cc
         blaze/net/http/HttpServer.cc)
 
