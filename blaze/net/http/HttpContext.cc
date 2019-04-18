@@ -65,7 +65,7 @@ bool HttpContext::ParseRequest(blaze::net::Buffer* buf, blaze::Timestamp receive
                 has_more = false;
             }
         }
-        else if (state_ == HttpRequestParseState::kExceptionBody)
+        else if (state_ == HttpRequestParseState::kExpectBody)
         {
             // TODO: handle body
         }

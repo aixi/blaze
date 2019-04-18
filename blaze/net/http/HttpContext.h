@@ -23,7 +23,7 @@ public:
     {
         kExpectRequestLine,
         kExpectHeaders,
-        kExceptionBody,
+        kExpectBody,
         kGotAll
     };
 
