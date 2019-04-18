@@ -34,7 +34,7 @@ endif()
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 set(CMAKE_CXX_COMPILER "clang++")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 include_directories("${PROJECT_SOURCE_DIR}")
@@ -169,7 +169,13 @@ add_executable(echo_server examples/echo/echo_server.cc)
 target_link_libraries(echo_server blaze)
 
 add_library(blaze_http STATIC
-        examples/http/HttpContext.cc
-        examples/http/HttpReponse.cc
-        examples/http/HttpRequest.cc
-        examples/http/HttpServer.cc)
+        blaze/net/http/HttpContext.cc
+        blaze/net/http/HttpReponse.cc
+        blaze/net/http/HttpRequest.cc
+        blaze/net/http/HttpServer.cc)
+
+add_executable(HttpRequest_unittest blaze/net/http/tests/HttpRequest_unittest.cc)
+target_link_libraries(HttpRequest_unittest boost_unit_test_framework blaze_http blaze)
+add_test(NAME HttpRequest_unittest COMMAND HttpRequest_unittest)
+
+add_dependencies(HttpRequest_unittest blaze_http)

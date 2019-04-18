@@ -17,7 +17,7 @@ namespace blaze
 namespace net
 {
 
-class HttpRequest // : public copyable
+class HttpRequest  : public copyable
 {
 public:
     enum class Method
@@ -36,6 +36,8 @@ public:
         kHttp10,
         kHttp11
     };
+
+    // default copy-ctor, dtor and assignment are OK
 
     HttpRequest() :
         method_(Method::kInvalid),

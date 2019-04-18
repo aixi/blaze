@@ -2,7 +2,7 @@
 // Created by xi on 19-4-17.
 //
 
-#include <examples/http/HttpRequest.h>
+#include <blaze/net/http/HttpRequest.h>
 
 namespace blaze
 {
