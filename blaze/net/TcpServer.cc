@@ -16,11 +16,11 @@ namespace blaze
 namespace net
 {
 
-TcpServer::TcpServer(EventLoop* loop, const InetAddress& listen_addr, const std::string_view& name) :
+TcpServer::TcpServer(EventLoop* loop, const InetAddress& listen_addr, std::string_view name, Option option) :
     loop_(CHECK_NOTNULL(loop)),
     name_(name),
     ip_port_(listen_addr.ToIpPort()),
-    acceptor_(new Acceptor(loop_, listen_addr)),
+    acceptor_(new Acceptor(loop_, listen_addr, option == Option::kReusePort)),
     next_conn_id_(0),
     started_(0),
     thread_pool_(std::make_shared<EventLoopThreadPool>(loop_, name_)),

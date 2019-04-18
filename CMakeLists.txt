@@ -179,3 +179,7 @@ target_link_libraries(HttpRequest_unittest boost_unit_test_framework blaze_http 
 add_test(NAME HttpRequest_unittest COMMAND HttpRequest_unittest)
 
 add_dependencies(HttpRequest_unittest blaze_http)
+
+add_executable(HttpServer_test blaze/net/http/tests/HttpServer_test.cc)
+target_link_libraries(HttpServer_test blaze_http blaze)
+add_dependencies(HttpServer_test blaze_http)

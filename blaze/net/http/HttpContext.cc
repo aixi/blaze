@@ -21,14 +21,14 @@ bool HttpContext::ParseRequest(blaze::net::Buffer* buf, blaze::Timestamp receive
         if (state_ == HttpRequestParseState::kExpectRequestLine)
         {
             // NOTE: Accept-Language: zh-CN \r\n
-            const char* clrf = buf->FindCRLF();
-            if (clrf)
+            const char* crlf = buf->FindCRLF();
+            if (crlf)
             {
-                ok = ProcessRequestLine(buf->BeginRead(), clrf);
+                ok = ProcessRequestLine(buf->BeginRead(), crlf);
                 if (ok)
                 {
                     request_.SetReceiveTime(receive_time);
-                    buf->RetrieveUntil(clrf + 2);
+                    buf->RetrieveUntil(crlf + 2);
                     state_ = HttpRequestParseState::kExpectHeaders;
                 }
                 else

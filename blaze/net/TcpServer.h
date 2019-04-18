@@ -28,7 +28,13 @@ class TcpServer
 public:
     using ThreadInitCallback = std::function<void (EventLoop*)>;
 
-    TcpServer(EventLoop* loop, const InetAddress& listen_addr, const std::string_view& name);
+    enum class Option
+    {
+        kNoReusePort,
+        kReusePort
+    };
+
+    TcpServer(EventLoop* loop, const InetAddress& listen_addr, std::string_view name, Option option = Option::kNoReusePort);
 
     ~TcpServer(); // forced out-of-line dtor, for std::unique_ptr member
 
@@ -54,7 +60,7 @@ public:
         return ip_port_;
     }
 
-    const std::string& Name() const
+    const std::string& GetName() const
     {
         return name_;
     }

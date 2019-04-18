@@ -94,9 +94,9 @@ public:
         return context_;
     }
 
-    std::any& GetContext()
+    std::any* GetMutableContext()
     {
-        return context_;
+        return &context_;
     }
 
     // called when TcpServer accepts a new connection
