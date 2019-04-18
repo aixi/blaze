@@ -50,7 +50,7 @@ public:
         close_connection_ = on;
     }
 
-    bool GetCloseConnection() const
+    bool IsCloseConnection() const
     {
         return close_connection_;
     }

@@ -12,7 +12,7 @@ namespace net
 {
 
 // return false if any error
-bool HttpContext::ParseRequest(blaze::net::Buffer* buf, blaze::Timestamp receive_time)
+bool HttpContext::ParseRequest(Buffer* buf, Timestamp receive_time)
 {
     bool ok = true;
     bool has_more = true;

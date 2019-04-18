@@ -78,7 +78,7 @@ void HttpServer::OnRequest(const TcpConnectionPtr& conn, const HttpRequest& requ
     Buffer buf;
     response.AppendToBuffer(&buf);
     conn->Send(&buf);
-    if (response.GetCloseConnection())
+    if (response.IsCloseConnection())
     {
         conn->Shutdown();
     }
