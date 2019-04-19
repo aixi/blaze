@@ -29,7 +29,7 @@ public:
         // until the remaining data can not form a message
         while (buf->ReadableBytes() >= kHeaderLength) // kHeaderLen == 4
         {
-            const void* data = buf->BeginRead();
+            const void* data = buf->Peek();
             int32_t be32 = *static_cast<const int32_t*>(data);
             const int32_t len = blaze::net::sockets::NetworkToHost32(be32);
             if (len > 65535 || len < 0)
@@ -41,7 +41,7 @@ public:
             else if (buf->ReadableBytes() >= len + kHeaderLength)
             {
                 buf->Retrieve(kHeaderLength);
-                std::string message(buf->BeginRead(), len);
+                std::string message(buf->Peek(), len);
                 message_callback_(conn, message, receive_time);
                 buf->Retrieve(len);
             }

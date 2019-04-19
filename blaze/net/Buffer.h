@@ -63,20 +63,20 @@ public:
         std::swap(write_index_, other.write_index_);
     }
 
-    const char* BeginRead() const
+    const char* Peek() const
     {
         return Begin() + read_index_;
     }
 
     const char* FindCRLF() const
     {
-        const char* crlf = std::search(BeginRead(), BeginWrite(), kCRLF, kCRLF + 2);
+        const char* crlf = std::search(Peek(), BeginWrite(), kCRLF, kCRLF + 2);
         return crlf == BeginWrite() ? nullptr : crlf;
     }
 
     const char* FindCRLF(const char* start) const
     {
-        assert(BeginRead() <= start);
+        assert(Peek() <= start);
         assert(start <= BeginWrite());
         const char* crlf = std::search(start, BeginWrite(), kCRLF, kCRLF + 2);
         return crlf == BeginWrite() ? nullptr : crlf;
@@ -88,13 +88,13 @@ public:
     {
         // in gcc char is unsigned, so max char num is 255
         // in msvc char is signed, so max char num is 127
-        const void* eol = memchr(BeginRead(), '\n', ReadableBytes());
+        const void* eol = memchr(Peek(), '\n', ReadableBytes());
         return static_cast<const char*>(eol);
     }
 
     const char* FindEOL(const char* start) const
     {
-        assert(BeginRead() <= start);
+        assert(Peek() <= start);
         assert(start <= BeginWrite());
         const void* eol = memchr(start, '\n', BeginWrite() - start);
         return static_cast<const char*>(eol);
@@ -115,9 +115,9 @@ public:
 
     void RetrieveUntil(const char* end)
     {
-        assert(BeginRead() <= end);
+        assert(Peek() <= end);
         assert(end <= BeginWrite());
-        Retrieve(end - BeginRead());
+        Retrieve(end - Peek());
     }
 
     void RetrieveInt64()
@@ -148,7 +148,7 @@ public:
     std::string RetrieveAsString(size_t size)
     {
         assert(size <= ReadableBytes());
-        std::string result(BeginRead(), size);
+        std::string result(Peek(), size);
         Retrieve(size);
         return result;
     }
@@ -256,7 +256,7 @@ public:
     int8_t PeekInt8() const
     {
         assert(ReadableBytes() >= sizeof(int8_t));
-        int8_t be8 = *BeginRead();
+        int8_t be8 = *Peek();
         return be8;
     }
 
@@ -264,7 +264,7 @@ public:
     {
         assert(ReadableBytes() >= sizeof(int16_t));
         int16_t be16 = 0;
-        ::memcpy(&be16, BeginRead(), sizeof(be16));
+        ::memcpy(&be16, Peek(), sizeof(be16));
         return sockets::NetworkToHost16(be16);
     }
 
@@ -272,7 +272,7 @@ public:
     {
         assert(ReadableBytes() >= sizeof(int32_t));
         int32_t be32 = 0;
-        ::memcpy(&be32, BeginRead(), sizeof(be32));
+        ::memcpy(&be32, Peek(), sizeof(be32));
         return sockets::NetworkToHost32(be32);
     }
 
@@ -280,7 +280,7 @@ public:
     {
         assert(ReadableBytes() >= sizeof(int64_t));
         int64_t be64 = 0;
-        ::memcpy(&be64, BeginRead(), sizeof(be64));
+        ::memcpy(&be64, Peek(), sizeof(be64));
         return sockets::NetworkToHost64(be64);
     }
 
@@ -296,7 +296,7 @@ public:
 
     std::string ToString() const
     {
-        return std::string(BeginRead(), ReadableBytes());
+        return std::string(Peek(), ReadableBytes());
     }
 
     void Prepend(const void* data, size_t size)

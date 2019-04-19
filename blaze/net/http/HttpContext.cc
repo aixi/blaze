@@ -24,7 +24,7 @@ bool HttpContext::ParseRequest(Buffer* buf, Timestamp receive_time)
             const char* crlf = buf->FindCRLF();
             if (crlf)
             {
-                ok = ProcessRequestLine(buf->BeginRead(), crlf);
+                ok = ProcessRequestLine(buf->Peek(), crlf);
                 if (ok)
                 {
                     request_.SetReceiveTime(receive_time);
@@ -46,10 +46,10 @@ bool HttpContext::ParseRequest(Buffer* buf, Timestamp receive_time)
             const char* crlf = buf->FindCRLF();
             if (crlf)
             {
-                const char* colon = std::find(buf->BeginRead(), crlf, ':');
+                const char* colon = std::find(buf->Peek(), crlf, ':');
                 if (colon != crlf)
                 {
-                    request_.AddHeader(buf->BeginRead(), colon, crlf);
+                    request_.AddHeader(buf->Peek(), colon, crlf);
                 }
                 else
                 {

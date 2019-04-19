@@ -145,7 +145,7 @@ void TcpConnection::Send(Buffer* buffer)
     {
         if (loop_->IsInLoopThread())
         {
-            SendInLoop(buffer->BeginRead(), buffer->ReadableBytes());
+            SendInLoop(buffer->Peek(), buffer->ReadableBytes());
         }
         else
         {
@@ -328,7 +328,7 @@ void TcpConnection::HandleWrite()
         // NOTE: call ::write only once, not call ::write repeatedly until it returns EAGAIN
         // If you fail to ::write all data for the first time, you will definitely return EAGAIN for the second time.
         ssize_t n = sockets::write(channel_->fd(),
-                                   output_buffer_.BeginRead(),
+                                   output_buffer_.Peek(),
                                    output_buffer_.ReadableBytes());
         if (n > 0)
         {

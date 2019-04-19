@@ -155,13 +155,13 @@ BOOST_AUTO_TEST_CASE(testBufferFindEOL)
     buf.Append(std::string(100'000, 'x'));
     const char* null = nullptr;
     BOOST_CHECK_EQUAL(buf.FindEOL(), null);
-    BOOST_CHECK_EQUAL(buf.FindEOL(buf.BeginRead() + 90'000), null);
+    BOOST_CHECK_EQUAL(buf.FindEOL(buf.Peek() + 90'000), null);
 }
 
 void output(Buffer&& buf, const void* inner)
 {
     Buffer new_buf(std::move(buf));
-    BOOST_CHECK_EQUAL(inner, new_buf.BeginRead());
+    BOOST_CHECK_EQUAL(inner, new_buf.Peek());
 }
 
 // NOTE: failed in g++ 4.4
@@ -170,6 +170,6 @@ BOOST_AUTO_TEST_CASE(testMove)
 {
     Buffer buf;
     buf.Append("blaze", 5);
-    const void* inner = buf.BeginRead();
+    const void* inner = buf.Peek();
     output(std::move(buf), inner);
 }
