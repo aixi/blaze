@@ -159,15 +159,14 @@ int main()
 ```
 
 ## 简单的HTTP Server
-这个简单的HTTP Server并未完全符合HTTP 1.1的标准，仅仅能做到与HttpClient及Web browser通信<br>
-通信是同步的，与Java Servlet相似<br>
+这个简单的HTTP Server并未完全符合HTTP 1.1的标准，仅仅能做到与HttpClient及Web browser通信,通信是同步的，与Java Servlet相似<br>
 在HttpServer_test.cc中提供了几个简单的response，如hello、favicon图片等，你可以修改HttpServer_test.cc中的OnRequest函数
 <br>
 <br>
 利用ab命令进行测试
 - ab -n 500000 -r -c 20000 -k 0.0.0.0:8000/hello
 - http server 设置为4线程
-<br>
+测试结果：总请求数50000，并发请求数20000，90%的请求都在0.897 ms内得到响应
 Percentage of the requests served within a certain time (ms)<br>
   50%    548 <br>
   66%    589 <br>
@@ -178,7 +177,6 @@ Percentage of the requests served within a certain time (ms)<br>
   98%  12411 <br>
   99%  12435 <br>
  100%  14004 (longest request) <br>
- 测试结果：总请求数50000，并发请求数20000，90%的请求都在0.897 ms内得到响应
 
 
 ## 参考
