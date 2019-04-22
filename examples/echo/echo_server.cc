@@ -34,7 +34,7 @@ void EchoServer::OnConnection(const TcpConnectionPtr& conn)
 void EchoServer::OnMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp time)
 {
     std::string msg(buf->RetrieveAllAsString());
-    LOG_INFO << conn->name() << " echo " << msg.size() << " bytes,"
+    LOG_INFO << conn->GetName() << " echo " << msg.size() << " bytes,"
              << " data received at " << time.ToString();
     conn->Send(msg);
 }

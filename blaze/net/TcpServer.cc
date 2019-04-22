@@ -91,8 +91,8 @@ void TcpServer::RemoveConnectionInLoop(const blaze::net::TcpConnectionPtr& conn)
 {
     loop_->AssertInLoopThread();
     LOG_INFO << "TcpServer::RemoveConnection [" << name_
-             << "] - connection " << conn->name();
-    size_t n = connections_.erase(conn->name());
+             << "] - connection " << conn->GetName();
+    size_t n = connections_.erase(conn->GetName());
     assert(n == 1);
     UnusedVariable(n);
     conn->GetLoop()->QueueInLoop(std::bind(&TcpConnection::ConnectionDestroyed, conn));

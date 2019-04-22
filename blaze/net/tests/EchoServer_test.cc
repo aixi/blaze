@@ -49,7 +49,7 @@ private:
     void OnMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp when)
     {
         std::string msg(buf->RetrieveAllAsString());
-        LOG_TRACE << conn->name() << " recv " << msg.size() << " bytes at " << when.ToFormattedString();
+        LOG_TRACE << conn->GetName() << " recv " << msg.size() << " bytes at " << when.ToFormattedString();
         if (msg == "exit\n")
         {
             conn->Send("bye\n");

@@ -183,3 +183,6 @@ add_dependencies(HttpRequest_unittest blaze_http)
 add_executable(HttpServer_test blaze/net/http/tests/HttpServer_test.cc)
 target_link_libraries(HttpServer_test blaze_http blaze)
 add_dependencies(HttpServer_test blaze_http)
+
+add_executable(roundtrip examples/roundtrip/roundtrip.cc)
+target_link_libraries(roundtrip blaze)
