@@ -61,11 +61,11 @@ int main()
     getpid(); // for ltrace and strace
     blaze::ThreadPool pool("ThreadPool");
     pool.Start(5);
-    pool.Run(LogInThread);
-    pool.Run(LogInThread);
-    pool.Run(LogInThread);
-    pool.Run(LogInThread);
-    pool.Run(LogInThread);
+    pool.Submit(LogInThread);
+    pool.Submit(LogInThread);
+    pool.Submit(LogInThread);
+    pool.Submit(LogInThread);
+    pool.Submit(LogInThread);
 
     LOG_TRACE << "trace";
     LOG_DEBUG << "debug";

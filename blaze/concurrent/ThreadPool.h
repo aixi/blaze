@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <deque>
 #include <vector>
-
+#include <string_view>
 #include <mutex>
 #include <condition_variable>
 #include <thread>
@@ -24,7 +24,7 @@ class ThreadPool
 public:
     using Task = std::function<void()>;
 
-    explicit ThreadPool(const std::string& name = std::string("ThreadPool"));
+    explicit ThreadPool(std::string_view name = "ThreadPool");
 
     ~ThreadPool();
 
@@ -44,7 +44,7 @@ public:
 
     void Stop();
 
-    const std::string& Name() const
+    const std::string& GetName() const
     {
         return name_;
     }
@@ -53,7 +53,7 @@ public:
 
     // Could block if max_tasks_size > 0 && task queue is full
     template <typename F, typename... Args>
-    std::future<std::result_of_t<F(Args...)>> Run(F&& f, Args&&... args);
+    std::future<std::result_of_t<F(Args...)>> Submit(F&& f, Args&& ... args);
 
     DISABLE_COPY_AND_ASSIGN(ThreadPool);
 
@@ -79,7 +79,7 @@ private:
 // NOTE: the std::future cannot chain or register callback
 // consider using facebook's folly::future instead
 template <typename F, typename... Args>
-std::future<std::result_of_t<F(Args...)>> ThreadPool::Run(F&& f, Args&&... args)
+std::future<std::result_of_t<F(Args...)>> ThreadPool::Submit(F&& f, Args&& ... args)
 {
     using return_type = std::result_of_t<F(Args...)>;
     auto task = std::make_shared<std::packaged_task<return_type()>>(

@@ -32,17 +32,17 @@ void test(int max_size)
     pool.SetMaxTaskSize(max_size);
     pool.Start(1);
     LOG_WARN << "Add task";
-    pool.Run(Print);
-    pool.Run(Print);
+    pool.Submit(Print);
+    pool.Submit(Print);
     for (int i = 0; i < 100; ++i)
     {
         char buf[32];
         snprintf(buf, sizeof(buf), "task %d", i);
-        pool.Run(PrintString, buf);
+        pool.Submit(PrintString, buf);
     }
     LOG_WARN << "Add task done";
     blaze::CountDownLatch latch(1);
-    pool.Run(&blaze::CountDownLatch::CountDown, std::ref(latch));
+    pool.Submit(&blaze::CountDownLatch::CountDown, std::ref(latch));
     latch.Wait();
     pool.Stop();
 }

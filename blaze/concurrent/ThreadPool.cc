@@ -10,7 +10,7 @@
 namespace blaze
 {
 
-ThreadPool::ThreadPool(const std::string &name) :
+ThreadPool::ThreadPool(std::string_view name) :
     mutex_(),
     not_empty_(),
     not_full_(),
@@ -34,7 +34,7 @@ void ThreadPool::Start(int num_threads)
     threads_.reserve(num_threads);
     for (int i = 0; i < num_threads; ++i)
     {
-        threads_.emplace_back(new std::thread(&ThreadPool::RunInThread, this));
+        threads_.emplace_back(new std::thread([this](){RunInThread();}));
     }
     if (num_threads == 0 && thread_init_callback_)
     {
