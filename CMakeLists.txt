@@ -71,6 +71,51 @@ set(SOURCE_FILES
         blaze/net/TcpClient.cc
         blaze/concurrent/ThreadGuard.cc)
 
+set(CONCURRENT_HEADERS
+        blaze/concurrent/BlockingQueue.h
+        blaze/concurrent/BoundedBlockingQueue.h
+        blaze/concurrent/CountDownLatch.h
+        blaze/concurrent/ThreadGuard.h
+        blaze/concurrent/ThreadPool.h)
+
+set(LOG_HEADERS
+        blaze/log/AsyncLogging.h
+        blaze/log/LogFile.h
+        blaze/log/Logging.h
+        blaze/log/LogStream.h)
+
+set(NET_HEADERS
+        blaze/net/Acceptor.h
+        blaze/net/Buffer.h
+        blaze/net/Callbacks.h
+        blaze/net/Channel.h
+        blaze/net/Connector.h
+        blaze/net/Endian.h
+        blaze/net/EventLoop.h
+        blaze/net/EventLoopThread.h
+        blaze/net/EventLoopThreadPool.h
+        blaze/net/InetAddress.h
+        blaze/net/Poller.h
+        blaze/net/Socket.h
+        blaze/net/SocketsOps.h
+        blaze/net/TcpClient.h
+        blaze/net/TcpConnection.h
+        blaze/net/TcpServer.h
+        blaze/net/Timer.h
+        blaze/net/TimerId.h
+        blaze/net/TimerQueue.h)
+
+set(UTILS_HEADERS
+        blaze/utils/copyable.h
+        blaze/utils/Exception.h
+        blaze/utils/FileUtil.h
+        blaze/utils/noncopyable.h
+        blaze/utils/ProcessInfo.h
+        blaze/utils/Singleton.h
+        blaze/utils/Timestamp.h
+        blaze/utils/Types.h
+        blaze/utils/WeakCallback.h)
+
 add_library(blaze STATIC ${SOURCE_FILES})
 target_link_libraries(blaze pthread)
 
@@ -183,3 +228,8 @@ add_dependencies(HttpRequest_unittest blaze_http)
 add_executable(HttpServer_test blaze/net/http/tests/HttpServer_test.cc)
 target_link_libraries(HttpServer_test blaze_http blaze)
 add_dependencies(HttpServer_test blaze_http)
+
+install(FILES ${CONCURRENT_HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/concurrent)
+install(FILES ${LOG_HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/log)
+install(FILES ${NET_HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/net)
+install(FILES ${UTILS_HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/utils)
