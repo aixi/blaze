@@ -32,6 +32,8 @@ public:
 
     Socket(Socket&& rhs) noexcept;
 
+    Socket& operator=(Socket&& rhs) noexcept;
+
     ~Socket();
 
     int fd() const

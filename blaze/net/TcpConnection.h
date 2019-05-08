@@ -41,31 +41,31 @@ public:
 
     ~TcpConnection();
 
-    void SetConnectionCallback(const ConnectionCallback& cb)
+    void SetConnectionCallback(ConnectionCallback cb)
     {
-        connection_callback_ = cb;
+        connection_callback_ = std::move(cb);
     }
 
-    void SetMessageCallback(const MessageCallback& cb)
+    void SetMessageCallback(MessageCallback cb)
     {
-        message_callback_ = cb;
+        message_callback_ = std::move(cb);
     }
 
     // internal use only
-    void SetCloseCallback(const CloseCallback& cb)
+    void SetCloseCallback(CloseCallback cb)
     {
-        close_callback_ = cb;
+        close_callback_ = std::move(cb);
     }
 
-    void SetHighwaterMarkCallback(const HighWaterMarkCallback& cb, size_t highwater_mark)
+    void SetHighwaterMarkCallback(HighWaterMarkCallback cb, size_t highwater_mark)
     {
-        highwater_mark_callback_ = cb;
+        highwater_mark_callback_ = std::move(cb);
         highwater_mark_ = highwater_mark;
     }
 
-    void SetWriteCompleteCallback(const WriteCompleteCallback& cb)
+    void SetWriteCompleteCallback(WriteCompleteCallback cb)
     {
-        write_complete_callback_ = cb;
+        write_complete_callback_ = std::move(cb);
     }
 
     // Nagle's algorithm

@@ -13,7 +13,7 @@ namespace blaze
 namespace net
 {
 
-EventLoopThreadPool::EventLoopThreadPool(EventLoop* base_loop, const std::string_view& name) :
+EventLoopThreadPool::EventLoopThreadPool(EventLoop* base_loop, std::string_view name) :
     base_loop_(base_loop),
     name_(name),
     started_(false),

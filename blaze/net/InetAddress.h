@@ -80,7 +80,7 @@ public:
     // return true on success
     // thread safe
     // NOTE: it could block
-    static bool Resolve(const std::string_view& hostname, InetAddress* /*out*/ address);
+    static bool Resolve(std::string_view hostname, InetAddress* /*out*/ address);
 
     // set IPv6 ScopeID
     void SetScopeId(uint32_t scope_id);

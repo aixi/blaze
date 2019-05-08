@@ -34,7 +34,7 @@ public:
 
     EventLoop* StartLoop();
 
-    const std::string name() const
+    const std::string GetName() const
     {
         return name_;
     }

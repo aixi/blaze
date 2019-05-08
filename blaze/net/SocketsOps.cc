@@ -36,7 +36,6 @@ void setNonBlockingAndCloseOnExec(int sockfd)
     ret = ::fcntl(sockfd, F_SETFD, flags);
     // FIXME: check ret
 }
-
 #endif
 
 } // anonymous namespace
@@ -67,7 +66,7 @@ int sockets::bindOrDie(int sockfd, const struct sockaddr* addr)
     int ret = ::bind(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
     if (ret < 0)
     {
-        // FIXME: check errno EACCES ? EADDRINUSE ?
+        // FIXME: check errno: EACCES ? EADDRINUSE ?
         LOG_SYSERR << "sockets::bindOrDie";
     }
     return ret;

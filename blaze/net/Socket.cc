@@ -24,6 +24,16 @@ Socket::Socket(Socket&& rhs) noexcept :
     rhs.sockfd_ = -1;
 }
 
+Socket& Socket::operator=(Socket&& rhs) noexcept
+{
+    if (&rhs != this)
+    {
+        sockfd_ = rhs.sockfd_;
+        rhs.sockfd_ = -1;
+    }
+    return *this;
+}
+
 Socket::~Socket()
 {
     if (sockfd_ >= 0)
@@ -134,7 +144,7 @@ void Socket::SetKeepAlive(bool on)
     int ret = ::setsockopt(sockfd_, SOL_SOCKET, SO_KEEPALIVE, &optval,
                            static_cast<socklen_t>(sizeof(optval)));
     UnusedVariable(ret);
-    // FIXME: check ret errno
+    // FIXME: check ret and errno
 }
 
 }

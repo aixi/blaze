@@ -54,7 +54,7 @@ void TcpServer::Start()
     {
         assert(!acceptor_->Listening());
         thread_pool_->Start(thread_init_callback_);
-        // NOTE: lambda expression can NOT capture class data member acceptor_
+        // NOTE: lambda expression can NOT capture class data member acceptor_, so only use std::bind
         loop_->RunInLoop(std::bind(&Acceptor::Listen, get_pointer(acceptor_)));
     }
 }

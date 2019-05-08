@@ -140,7 +140,7 @@ uint32_t InetAddress::IpNetEndian() const
 
 static thread_local char t_resolve_buffer[64 * 1024];
 
-bool InetAddress::Resolve(const std::string_view& hostname, InetAddress* address)
+bool InetAddress::Resolve(std::string_view hostname, InetAddress* address)
 {
     assert(address);
     struct hostent hent;

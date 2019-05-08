@@ -11,7 +11,6 @@
 #include <blaze/net/EventLoop.h>
 #include <blaze/net/InetAddress.h>
 #include <blaze/net/SocketsOps.h>
-
 #include <blaze/net/Acceptor.h>
 
 namespace blaze
@@ -25,9 +24,9 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listen_addr, bool reuse_p
     listen_socket_(sockets::CreateNonBlockingOrDie(listen_addr.family())),
     listen_channel_(loop_, listen_socket_.fd()),
     listening_(false),
-    idlefd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
+    idle_fd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
 {
-    assert(idlefd_ >= 0);
+    assert(idle_fd_ >= 0);
     listen_socket_.SetReuseAddr(true);
     listen_socket_.SetReuseAddr(reuse_port);
     listen_socket_.bindAddress(listen_addr);
@@ -38,7 +37,7 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listen_addr, bool reuse_p
 Acceptor::~Acceptor()
 {
     listen_channel_.DisableAll();
-    ::close(idlefd_);
+    ::close(idle_fd_);
 }
 
 void Acceptor::Listen()
@@ -69,12 +68,12 @@ void Acceptor::HandleRead()
     else 
     {
         LOG_SYSERR << "in Acceptor::HandleRead";
-        if (errno == EMFILE)
+        if (errno == EMFILE) // too many opened file, use ulimit -n to change a process's maximum open files number
         {
-            ::close(idlefd_);
-            idlefd_ = ::accept(listen_socket_.fd(), nullptr, nullptr);
-            ::close(idlefd_);
-            idlefd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
+            ::close(idle_fd_);
+            idle_fd_ = ::accept(listen_socket_.fd(), nullptr, nullptr);
+            ::close(idle_fd_);
+            idle_fd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
         }
     }
 }

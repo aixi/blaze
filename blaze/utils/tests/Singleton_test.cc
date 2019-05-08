@@ -70,20 +70,20 @@ void thread_func()
 {
     std::stringstream ss;
     ss << "thread_id=" << std::this_thread::get_id() << ", "
-        << &Singleton<Test>::Instance() << ' ' << Singleton<Test>::Instance().Name() << '\n';
+        << &Singleton<Test>::GetInstance() << ' ' << Singleton<Test>::GetInstance().Name() << '\n';
     std::cout << ss.str();
-    Singleton<Test>::Instance().SetName(" only once changed");
+    Singleton<Test>::GetInstance().SetName(" only once changed");
 }
 
 int main()
 {
-    Singleton<Test>::Instance().SetName("only once");
+    Singleton<Test>::GetInstance().SetName("only once");
     std::thread thread1(thread_func);
     thread1.join();
     std::stringstream ss;
     ss << "thread_id=" << std::this_thread::get_id() << ", "
-       << &Singleton<Test>::Instance() << Singleton<Test>::Instance().Name() << '\n';
+       << &Singleton<Test>::GetInstance() << Singleton<Test>::GetInstance().Name() << '\n';
     std::cout << ss.str();
-    Singleton<TestNoDestroy>::Instance();
+    Singleton<TestNoDestroy>::GetInstance();
     printf("with valgrind, you should see %zd-byte memory leak.\n", sizeof(TestNoDestroy));
 }

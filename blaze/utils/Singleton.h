@@ -37,7 +37,7 @@ class Singleton
 {
 public:
 
-    static T& Instance()
+    static T& GetInstance()
     {
         std::call_once(once_, Init);
         assert(value_ != nullptr);

@@ -34,7 +34,7 @@ int CreateEventfd()
 }
 
 
-// namespace level object will be created before main
+// global/namespace level object will be constructed before main
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 class IgnoreSigPipe
 {
@@ -67,8 +67,8 @@ EventLoop::EventLoop() :
     thread_id_(std::this_thread::get_id()),
     poller_(Poller::NewDefaultPoller(this)),
     timer_queue_(new TimerQueue(this)),
-    wakeupfd_(CreateEventfd()),
-    wakeup_channel_(new Channel(this, wakeupfd_)),
+    wakeup_fd_(CreateEventfd()),
+    wakeup_channel_(new Channel(this, wakeup_fd_)),
     current_active_channel_(nullptr)
 {
     LOG_TRACE << "EventLoop created " << this << " in thread " << thread_id_;
@@ -92,7 +92,7 @@ EventLoop::~EventLoop()
               << " destructs in thread " << std::this_thread::get_id();
     wakeup_channel_->DisableAll();
     wakeup_channel_->Remove();
-    ::close(wakeupfd_);
+    ::close(wakeup_fd_);
     t_loop_of_this_thread = nullptr;
 }
 
@@ -134,7 +134,7 @@ void EventLoop::Quit()
 void EventLoop::Wakeup()
 {
     uint64_t one = 1;
-    ssize_t n = sockets::write(wakeupfd_, &one, sizeof(one));
+    ssize_t n = sockets::write(wakeup_fd_, &one, sizeof(one));
     if (n != sizeof(one))
     {
         LOG_ERROR << "EventLoop::Wakeup() writes " << n << " bytes instead of 8";
@@ -170,7 +170,7 @@ bool EventLoop::HasChannel(Channel* channel)
 void EventLoop::HandleRead()
 {
     uint64_t one = 1;
-    ssize_t n = sockets::read(wakeupfd_, &one, sizeof(one));
+    ssize_t n = sockets::read(wakeup_fd_, &one, sizeof(one));
     if (n != sizeof(one))
     {
         LOG_ERROR << "EventLoop::HandleRead() reads " << n << " bytes instead of 8";

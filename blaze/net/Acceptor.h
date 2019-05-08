@@ -52,7 +52,7 @@ private:
     Socket listen_socket_;
     Channel listen_channel_;
     bool listening_;
-    int idlefd_;
+    int idle_fd_;
     NewConnectionCallback new_connection_callback_;
 
 };

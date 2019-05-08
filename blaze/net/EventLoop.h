@@ -132,7 +132,7 @@ private:
     const std::thread::id thread_id_;
     std::unique_ptr<Poller> poller_;
     std::unique_ptr<TimerQueue> timer_queue_;
-    int wakeupfd_;
+    int wakeup_fd_;
     std::unique_ptr<Channel> wakeup_channel_;
     Channel* current_active_channel_;
     Timestamp poll_return_time_;

@@ -76,27 +76,27 @@ public:
 //        return thread_pool_;
 //    }
 
-    void SetThreadInitCallback(const ThreadInitCallback& cb)
+    void SetThreadInitCallback(ThreadInitCallback cb)
     {
-        thread_init_callback_ = cb;
+        thread_init_callback_ = std::move(cb);
     }
 
     // NOT thread safe
-    void SetConnectionCallback(const ConnectionCallback& cb)
+    void SetConnectionCallback(ConnectionCallback cb)
     {
-        connection_callback_ = cb;
+        connection_callback_ = std::move(cb);
     }
 
     // NOT thread safe
-    void SetMessageCallback(const MessageCallback& cb)
+    void SetMessageCallback(MessageCallback cb)
     {
-        message_callback_ = cb;
+        message_callback_ = std::move(cb);
     }
 
     // NOT thread safe
-    void SetWriteCompleteCallback(const WriteCompleteCallback& cb)
+    void SetWriteCompleteCallback(WriteCompleteCallback cb)
     {
-        write_complete_callback_ = cb;
+        write_complete_callback_ = std::move(cb);
     }
 
     DISABLE_COPY_AND_ASSIGN(TcpServer);

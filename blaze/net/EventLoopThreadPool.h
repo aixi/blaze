@@ -25,7 +25,7 @@ class EventLoopThreadPool
 public:
     using ThreadInitCallback = std::function<void (EventLoop*)>;
 
-    EventLoopThreadPool(EventLoop* base_loop, const std::string_view& name);
+    EventLoopThreadPool(EventLoop* base_loop, std::string_view name);
 
     ~EventLoopThreadPool();
 
@@ -49,7 +49,7 @@ public:
         return started_;
     }
 
-    const std::string& name() const
+    const std::string& GetName() const
     {
         return name_;
     }

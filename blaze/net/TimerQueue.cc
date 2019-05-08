@@ -8,12 +8,10 @@
 
 #include <unistd.h>
 #include <sys/timerfd.h>
-
 #include <blaze/log/Logging.h>
 #include <blaze/net/EventLoop.h>
 #include <blaze/net/Timer.h>
 #include <blaze/net/TimerId.h>
-
 #include <blaze/net/TimerQueue.h>
 
 namespace blaze

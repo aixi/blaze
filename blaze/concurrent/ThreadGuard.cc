@@ -11,6 +11,8 @@ ThreadGuard::ThreadGuard( DtorAction action, std::thread&& thread) :
     thread_(std::move(thread))
 {}
 
+// call function detach() or join() of a unjoinable thread leads to UB
+// so we use ThreadGuard to ensure safely destruct of thread object
 ThreadGuard::~ThreadGuard()
 {
     if (thread_.joinable())
