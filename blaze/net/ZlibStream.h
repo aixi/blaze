@@ -18,7 +18,7 @@ namespace net
 
 // input is zlib compressed data
 // output uncompressed data
-// TODO:
+// TODO: implement this class
 class ZlibInputStream
 {
 public:
