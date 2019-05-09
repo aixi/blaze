@@ -69,7 +69,8 @@ set(SOURCE_FILES
         blaze/net/EventLoopThreadPool.cc
         blaze/net/Connector.cc
         blaze/net/TcpClient.cc
-        blaze/concurrent/ThreadGuard.cc)
+        blaze/concurrent/ThreadGuard.cc
+        blaze/net/ZlibStream.cc)
 
 set(CONCURRENT_HEADERS
         blaze/concurrent/BlockingQueue.h
@@ -103,7 +104,8 @@ set(NET_HEADERS
         blaze/net/TcpServer.h
         blaze/net/Timer.h
         blaze/net/TimerId.h
-        blaze/net/TimerQueue.h)
+        blaze/net/TimerQueue.h
+        blaze/net/ZlibStream.h)
 
 set(UTILS_HEADERS
         blaze/utils/copyable.h
@@ -117,7 +119,7 @@ set(UTILS_HEADERS
         blaze/utils/WeakCallback.h)
 
 add_library(blaze STATIC ${SOURCE_FILES})
-target_link_libraries(blaze pthread)
+target_link_libraries(blaze pthread z)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
@@ -169,6 +171,10 @@ target_link_libraries(Channel_test blaze)
 
 add_executable(EventLoop_test blaze/net/tests/EventLoop_test.cc)
 target_link_libraries(EventLoop_test blaze)
+
+add_executable(ZlibStream_unittest blaze/net/tests/ZlibStream_unittest.cc)
+target_link_libraries(ZlibStream_unittest blaze boost_unit_test_framework)
+add_test(NAME ZlibStream_unittest COMMAND ZlibStream_unittest)
 
 #add_executable(EchoClient_test blaze/net/tests/EchoClient_test.cc)
 #target_link_libraries(EchoClient_test blaze)
