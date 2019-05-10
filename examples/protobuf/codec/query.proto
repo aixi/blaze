@@ -6,7 +6,7 @@ message Query
 {
     required int64 id = 1;
     required string questioner = 2;
-    required string question = 3;
+    repeated string question = 3;
 }
 
 message Answer
@@ -14,7 +14,7 @@ message Answer
     required int64 id = 1;
     required string questioner = 2;
     required string answerer = 3;
-    required string solution = 4;
+    repeated string solution = 4;
 }
 
 message Empty

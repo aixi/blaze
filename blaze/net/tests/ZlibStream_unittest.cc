@@ -64,9 +64,10 @@ BOOST_AUTO_TEST_CASE(testZlibOutputStream4)
     ZlibOutputStream stream(&output);
     BOOST_CHECK_EQUAL(stream.ZlibErrorCode(), Z_OK);
     std::string input;
+    std::string_view temp("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-");
     for (int i = 0; i < 32768; ++i)
     {
-        input += "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-"[rand() % 64];
+        input += temp[rand() % 64];
     }
     for (int i = 0; i < 10; ++i)
     {
