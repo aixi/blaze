@@ -42,6 +42,7 @@ include_directories("${PROJECT_SOURCE_DIR}")
 find_package(Boost REQUIRED)
 find_package(Protobuf)
 find_package(ZLIB)
+find_package(Threads)
 
 if (BOOST_FOUND)
     message(STATUS "found Boost")
