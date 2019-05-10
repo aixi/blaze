@@ -12,3 +12,5 @@ set(HEADERS
         HttpContext.h)
 
 install(FILES ${HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/net/http)
+
+add_subdirectory(tests)
