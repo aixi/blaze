@@ -37,7 +37,7 @@ public:
         client_.Disconnect();
     }
 
-    void Write(const std::string_view& message)
+    void Write(std::string_view message)
     {
         std::lock_guard<std::mutex> lock(mutex_);
         if (connection_)

@@ -1,0 +1,9 @@
+add_executable(HttpRequest_unittest HttpRequest_unittest.cc)
+target_link_libraries(HttpRequest_unittest boost_unit_test_framework blaze_http blaze)
+add_test(NAME HttpRequest_unittest COMMAND HttpRequest_unittest)
+
+add_dependencies(HttpRequest_unittest blaze_http)
+
+add_executable(HttpServer_test HttpServer_test.cc)
+target_link_libraries(HttpServer_test blaze_http blaze)
+add_dependencies(HttpServer_test blaze_http)

@@ -1,0 +1,41 @@
+add_executable(Buffer_unittest Buffer_unittest.cc)
+target_link_libraries(Buffer_unittest blaze boost_unit_test_framework)
+add_test(NAME Buffer_unittest COMMAND Buffer_unittest)
+
+add_executable(EventLoopThread_test EventLoopThread_test.cc)
+target_link_libraries(EventLoopThread_test blaze)
+
+add_executable(EchoServer_test EchoServer_test.cc)
+target_link_libraries(EchoServer_test blaze)
+
+add_executable(EventLoopThreadPool_test EventLoopThreadPool_unittest.cc)
+target_link_libraries(EventLoopThreadPool_test blaze)
+
+add_executable(Channel_test Channel_test.cc)
+target_link_libraries(Channel_test blaze)
+
+add_executable(EventLoop_test EventLoop_test.cc)
+target_link_libraries(EventLoop_test blaze)
+
+add_executable(ZlibStream_unittest ZlibStream_unittest.cc)
+target_link_libraries(ZlibStream_unittest blaze boost_unit_test_framework z)
+add_test(NAME ZlibStream_unittest COMMAND ZlibStream_unittest)
+
+#add_executable(EchoClient_test EchoClient_test.cc)
+#target_link_libraries(EchoClient_test blaze)
+
+add_executable(TcpClient_reg1 TcpClient_reg1.cc)
+target_link_libraries(TcpClient_reg1 blaze)
+
+add_executable(TcpClient_reg2 TcpClient_reg1.cc)
+target_link_libraries(TcpClient_reg2 blaze)
+
+add_executable(TcpClient_reg3 TcpClient_reg1.cc)
+target_link_libraries(TcpClient_reg3 blaze)
+
+add_executable(InetAddress_unittest InetAddress_unittest.cc)
+target_link_libraries(InetAddress_unittest blaze boost_unit_test_framework)
+add_test(NAME InetAddress_unittest COMMAND InetAddress_unittest)
+
+add_executable(TimerQueue_test TimerQueue_test.cc)
+target_link_libraries(TimerQueue_test blaze)

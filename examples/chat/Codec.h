@@ -17,8 +17,8 @@ class LengthHeaderCodec : public blaze::noncopyable
 public:
     using StringMessageCallback = std::function<void (const blaze::net::TcpConnectionPtr&,
                                                       const std::string&, blaze::Timestamp)>;
-    explicit LengthHeaderCodec(const StringMessageCallback& cb) :
-        message_callback_(cb)
+    explicit LengthHeaderCodec(StringMessageCallback cb) :
+        message_callback_(std::move(cb))
     {}
 
     void OnMessage(const blaze::net::TcpConnectionPtr& conn,
@@ -48,7 +48,7 @@ public:
         }
     }
 
-    void Send(const blaze::net::TcpConnectionPtr& conn, const std::string_view& message)
+    void Send(const blaze::net::TcpConnectionPtr& conn, std::string_view message)
     {
         blaze::net::Buffer buf;
         buf.Append(message.data(), message.size());

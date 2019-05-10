@@ -39,6 +39,22 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
+find_package(Boost REQUIRED)
+find_package(Protobuf)
+find_package(ZLIB)
+
+if (BOOST_FOUND)
+    message(STATUS "found Boost")
+endif()
+
+if (PROTOBUF_FOUND)
+    message(STATUS "found Protobuf")
+endif()
+
+if (ZLIB_FOUND)
+    message(STATUS "found zlib")
+endif()
+
 set(SOURCE_FILES
         blaze/log/LogStream.cc
         blaze/utils/FileUtil.cc
@@ -118,122 +134,23 @@ set(UTILS_HEADERS
         blaze/utils/Types.h
         blaze/utils/WeakCallback.h)
 
-add_library(blaze STATIC ${SOURCE_FILES})
-target_link_libraries(blaze pthread z)
-
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
-add_executable(blaze_simple examples/simple.cc)
-target_link_libraries(blaze_simple blaze)
+add_subdirectory(blaze/concurrent/tests)
+add_subdirectory(blaze/log/tests)
+add_subdirectory(blaze/net/tests)
+add_subdirectory(blaze/utils/tests)
+add_subdirectory(blaze/net/http)
+add_subdirectory(blaze/net/http/tests)
+add_subdirectory(examples/chat)
+add_subdirectory(examples/daytime)
+add_subdirectory(examples/echo)
+add_subdirectory(examples/pingpong)
 
-add_executable(LogFile_test blaze/log/tests/LogFile_test.cc)
-target_link_libraries(LogFile_test blaze)
-
-add_executable(LogStream_unittest blaze/log/tests/LogStream_unittest.cc)
-target_link_libraries(LogStream_unittest blaze boost_unit_test_framework)
-add_test(NAME LogStream_unittest COMMAND LogStream_unittest)
-
-add_executable(Buffer_unittest blaze/net/tests/Buffer_unittest.cc)
-target_link_libraries(Buffer_unittest blaze boost_unit_test_framework)
-add_test(NAME Buffer_unittest COMMAND Buffer_unittest)
-
-add_executable(Singleton_test blaze/utils/tests/Singleton_test.cc)
-target_link_libraries(Singleton_test blaze)
-
-add_executable(Timestamp_test blaze/utils/tests/Timestamp_test.cc)
-target_link_libraries(Timestamp_test blaze)
-
-add_executable(Exception_test blaze/utils/tests/Exception_test.cc)
-target_link_libraries(Exception_test blaze)
-
-add_executable(ThreadPool_test blaze/concurrent/tests/ThreadPool_test.cc)
-target_link_libraries(ThreadPool_test blaze)
-
-add_executable(Logging_test blaze/log/tests/Logging_test.cc)
-target_link_libraries(Logging_test blaze)
-
-add_executable(AsyncLogging_test blaze/log/tests/AsyncLogging_test.cc)
-target_link_libraries(AsyncLogging_test blaze)
-
-add_executable(EventLoopThread_test blaze/net/tests/EventLoopThread_test.cc)
-target_link_libraries(EventLoopThread_test blaze)
-
-add_executable(EchoServer_test blaze/net/tests/EchoServer_test.cc)
-target_link_libraries(EchoServer_test blaze)
-
-add_executable(EventLoopThreadPool_test blaze/net/tests/EventLoopThreadPool_unittest.cc)
-target_link_libraries(EventLoopThreadPool_test blaze)
-
-add_executable(Channel_test blaze/net/tests/Channel_test.cc)
-target_link_libraries(Channel_test blaze)
-
-add_executable(EventLoop_test blaze/net/tests/EventLoop_test.cc)
-target_link_libraries(EventLoop_test blaze)
-
-add_executable(ZlibStream_unittest blaze/net/tests/ZlibStream_unittest.cc)
-target_link_libraries(ZlibStream_unittest blaze boost_unit_test_framework)
-add_test(NAME ZlibStream_unittest COMMAND ZlibStream_unittest)
-
-#add_executable(EchoClient_test blaze/net/tests/EchoClient_test.cc)
-#target_link_libraries(EchoClient_test blaze)
-#
-#add_executable(TcpClient_reg1 blaze/net/tests/TcpClient_reg1.cc)
-#target_link_libraries(TcpClient_reg1 blaze)
-#
-#add_executable(TcpClient_reg2 blaze/net/tests/TcpClient_reg1.cc)
-#target_link_libraries(TcpClient_reg2 blaze)
-#
-#add_executable(TcpClient_reg3 blaze/net/tests/TcpClient_reg1.cc)
-#target_link_libraries(TcpClient_reg3 blaze)
-
-add_executable(InetAddress_unittest blaze/net/tests/InetAddress_unittest.cc)
-target_link_libraries(InetAddress_unittest blaze boost_unit_test_framework)
-add_test(NAME InetAddress_unittest COMMAND InetAddress_unittest)
-
-add_executable(TimerQueue_test blaze/net/tests/TimerQueue_test.cc)
-target_link_libraries(TimerQueue_test blaze)
-
-add_executable(pingpong_client examples/pingpong/client.cc)
-target_link_libraries(pingpong_client blaze)
-
-add_executable(pingpong_server examples/pingpong/server.cc)
-target_link_libraries(pingpong_server blaze)
-
-#add_executable(pingpong_bench examples/pingpong/bench.cc)
-#target_link_libraries(pingpong_bench blaze)
-
-add_executable(BlockingQueue_test blaze/concurrent/tests/BlockingQueue_test.cc)
-target_link_libraries(BlockingQueue_test blaze)
-
-add_executable(chat_client examples/chat/client.cc)
-target_link_libraries(chat_client blaze)
-
-add_executable(chat_server examples/chat/server.cc)
-target_link_libraries(chat_server blaze)
-
-add_executable(daytime_server examples/daytime/DaytimeServer.cc)
-target_link_libraries(daytime_server blaze)
-
-add_executable(echo_server examples/echo/echo_server.cc)
-target_link_libraries(echo_server blaze)
-
-add_library(blaze_http STATIC
-        blaze/net/http/HttpContext.cc
-        blaze/net/http/HttpResponse.cc
-        blaze/net/http/HttpRequest.cc
-        blaze/net/http/HttpServer.cc)
-
-add_executable(HttpRequest_unittest blaze/net/http/tests/HttpRequest_unittest.cc)
-target_link_libraries(HttpRequest_unittest boost_unit_test_framework blaze_http blaze)
-add_test(NAME HttpRequest_unittest COMMAND HttpRequest_unittest)
-
-add_dependencies(HttpRequest_unittest blaze_http)
-
-add_executable(HttpServer_test blaze/net/http/tests/HttpServer_test.cc)
-target_link_libraries(HttpServer_test blaze_http blaze)
-add_dependencies(HttpServer_test blaze_http)
+add_library(blaze STATIC ${SOURCE_FILES})
+target_link_libraries(blaze pthread)
 
 install(FILES ${CONCURRENT_HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/concurrent)
 install(FILES ${LOG_HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/log)

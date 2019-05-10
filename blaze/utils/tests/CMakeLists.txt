@@ -1,0 +1,8 @@
+add_executable(Timestamp_test Timestamp_test.cc)
+target_link_libraries(Timestamp_test blaze)
+
+add_executable(Exception_test Exception_test.cc)
+target_link_libraries(Exception_test blaze)
+
+add_executable(Singleton_test Singleton_test.cc)
+target_link_libraries(Singleton_test blaze)

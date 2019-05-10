@@ -1,0 +1,12 @@
+add_executable(LogFile_test LogFile_test.cc)
+target_link_libraries(LogFile_test blaze)
+
+add_executable(LogStream_unittest LogStream_unittest.cc)
+target_link_libraries(LogStream_unittest blaze boost_unit_test_framework)
+add_test(NAME LogStream_unittest COMMAND LogStream_unittest)
+
+add_executable(Logging_test Logging_test.cc)
+target_link_libraries(Logging_test blaze)
+
+add_executable(AsyncLogging_test AsyncLogging_test.cc)
+target_link_libraries(AsyncLogging_test blaze)

@@ -1,0 +1,2 @@
+add_executable(daytime_server DaytimeServer.cc)
+target_link_libraries(daytime_server blaze)

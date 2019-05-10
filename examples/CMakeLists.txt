@@ -1,0 +1,2 @@
+add_executable(blaze_simple simple.cc)
+target_link_libraries(blaze_simple blaze)
