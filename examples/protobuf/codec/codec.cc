@@ -18,7 +18,7 @@ namespace
 int32_t AsInt32(const char* buf)
 {
     int32_t be32 = 0;
-    memcpy(&be32, buf, sizeof(be32));
+    ::memcpy(&be32, buf, sizeof(be32));
     return sockets::NetworkToHost32(be32);
 }
 
@@ -72,7 +72,7 @@ void ProtobufCodec::FillEmptyBuffer(Buffer* buf, const google::protobuf::Message
     assert((end - start) == byte_size);
     buf->HasWritten(byte_size);
     int32_t check_sum = static_cast<int32_t>(
-        adler32(1, reinterpret_cast<const Bytef*>(buf->Peek()), static_cast<int>(buf->ReadableBytes())));
+        ::adler32(1, reinterpret_cast<const Bytef*>(buf->Peek()), static_cast<int>(buf->ReadableBytes())));
     buf->AppendInt32(check_sum);
     assert(buf->ReadableBytes() == sizeof(name_len) + name_len + byte_size + sizeof(check_sum));
     int32_t len = sockets::HostToNetwork32(static_cast<int32_t>(buf->ReadableBytes()));
@@ -144,7 +144,8 @@ MessagePtr ProtobufCodec::Parse(const char* buf, int len, ProtobufCodec::ErrorCo
 {
     MessagePtr message;
     int32_t expect_checksum = AsInt32(buf + len - kCheckSumLen);
-    int32_t checksum = static_cast<int32_t>(adler32(1, reinterpret_cast<const Bytef*>(buf), static_cast<int>(len - kCheckSumLen)));
+    int32_t checksum = static_cast<int32_t>(
+        ::adler32(1, reinterpret_cast<const Bytef*>(buf), static_cast<int>(len - kCheckSumLen)));
     if (expect_checksum == checksum)
     {
         int32_t name_len = AsInt32(buf);
