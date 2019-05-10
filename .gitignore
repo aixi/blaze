@@ -107,3 +107,7 @@ target
 .classpath
 .project
 .settings
+
+# Generated protobuf files
+*.pb.cc
+*.pb.h
