@@ -19,5 +19,5 @@ message Answer
 
 message Empty
 {
-    optional int32 id = 1;
+    optional int64 id = 1;
 }
