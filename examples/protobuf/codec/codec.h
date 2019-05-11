@@ -16,10 +16,12 @@
 //{
 //    int32_t total_len;
 //    int32_t name_len;
-//    char name[name_len]; // end with \0
+//    char msg_name[name_len]; // end with \0
 //    char proto_binary_data[len - name - 8];
 //    int32_t check_sum; // adler32 of name_len, name, proto_binary_data
 //}
+
+
 
 using MessagePtr = std::shared_ptr<google::protobuf::Message>;
 
