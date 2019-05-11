@@ -101,7 +101,6 @@ inline To down_cast(From* f)
     {
         implicit_cast<From*, To>(0);
     }
-
 #if !defined(NDEBUG) && !defined(GOOGLE_PROTOBUF_NO_RTTI)
     assert(f == nullptr || dynamic_cast<To>(f) != nullptr);  // RTTI: debug mode only!
 #endif
@@ -143,13 +142,11 @@ template <typename T>
 class TypeDisplayer;
 
 // disable copy-ctor and copy-assign
-
 #define DISABLE_COPY_AND_ASSIGN(classname) \
     classname(const classname&) = delete; \
     classname& operator=(const classname&) = delete
 
 // disable move-ctor and move-assign
-
 #define DISABLE_MOVE_AND_ASSIGN(classname) \
     classname(classname&&) = delete; \
     classname& operator=(classname&&) = delete

@@ -17,3 +17,11 @@ target_link_libraries(query_proto protobuf pthread)
 add_executable(protobuf_codec_test codec_test.cc)
 set_target_properties(protobuf_codec_test PROPERTIES COMPILE_FLAGS "-Wno-error=shadow")
 target_link_libraries(protobuf_codec_test protobuf_codec query_proto)
+
+add_executable(protobuf_dispatcher_lite_test dispatcher_lite_test.cc)
+set_target_properties(protobuf_dispatcher_lite_test PROPERTIES COMPILE_FLAGS "-Wno-error=shadow")
+target_link_libraries(protobuf_dispatcher_lite_test query_proto)
+
+add_executable(protobuf_dispatcher_test dispatcher_test.cc)
+set_target_properties(protobuf_dispatcher_test PROPERTIES COMPILE_FLAGS "-Wno-error=shadow")
+target_link_libraries(protobuf_dispatcher_test query_proto)

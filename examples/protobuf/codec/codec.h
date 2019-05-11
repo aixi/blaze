@@ -21,8 +21,6 @@
 //    int32_t check_sum; // adler32 of name_len, name, proto_binary_data
 //}
 
-
-
 using MessagePtr = std::shared_ptr<google::protobuf::Message>;
 
 class ProtobufCodec
@@ -74,6 +72,7 @@ public:
     static MessagePtr Parse(const char* buf, int len, ErrorCode* error_code);
 
     DISABLE_COPY_AND_ASSIGN(ProtobufCodec);
+
 private:
     static void DefaultErrorCallback(const blaze::net::TcpConnectionPtr& conn,
                                      blaze::net::Buffer* buf,
