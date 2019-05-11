@@ -1,4 +1,4 @@
-add_library(blaze_http STATIC
+add_library(blaze_http
         HttpContext.cc
         HttpResponse.cc
         HttpRequest.cc

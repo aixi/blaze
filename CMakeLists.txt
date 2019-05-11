@@ -146,7 +146,7 @@ add_subdirectory(blaze/utils/tests)
 add_subdirectory(blaze/net/http)
 add_subdirectory(examples)
 
-add_library(blaze STATIC ${SOURCE_FILES})
+add_library(blaze ${SOURCE_FILES})
 target_link_libraries(blaze pthread)
 
 install(FILES ${CONCURRENT_HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/concurrent)

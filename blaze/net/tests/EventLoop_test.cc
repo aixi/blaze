@@ -30,7 +30,7 @@ void ThreadFunc()
     assert(EventLoop::GetEventLoopOfCurrentThread() == nullptr);
     EventLoop loop;
     assert(EventLoop::GetEventLoopOfCurrentThread() == &loop);
-    loop.RunAfter(1.0, CallbackBase);
+    loop.RunAfter(1.0, Callback);
     loop.Loop();
 }
 

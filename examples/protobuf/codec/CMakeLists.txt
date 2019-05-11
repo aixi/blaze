@@ -25,3 +25,18 @@ target_link_libraries(protobuf_dispatcher_lite_test query_proto)
 add_executable(protobuf_dispatcher_test dispatcher_test.cc)
 set_target_properties(protobuf_dispatcher_test PROPERTIES COMPILE_FLAGS "-Wno-error=shadow")
 target_link_libraries(protobuf_dispatcher_test query_proto)
+
+add_executable(protobuf_server server.cc)
+set_target_properties(protobuf_server PROPERTIES COMPILE_FLAGS "-Wno-error=shadow")
+target_link_libraries(protobuf_server protobuf_codec query_proto)
+
+add_executable(protobuf_client client.cc)
+set_target_properties(protobuf_client PROPERTIES COMPILE_FLAGS "-Wno-error=shadow")
+target_link_libraries(protobuf_client protobuf_codec query_proto)
+
+#add_custom_target(protobuf_codec_all DEPENDS
+#                                        protobuf_codec_test
+#                                        protobuf_dispatcher_lite_test
+#                                        protobuf_dispatcher_test
+#                                        protobuf_server
+#                                        protobuf_client)
