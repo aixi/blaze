@@ -11,6 +11,7 @@
 #include <blaze/net/Callbacks.h>
 
 using MessagePtr = std::shared_ptr<google::protobuf::Message>;
+
 class ProtobufDispatcherLite
 {
 public:

@@ -5,8 +5,8 @@
 #include <assert.h>
 #include <blaze/log/Logging.h>
 #include <blaze/net/Endian.h>
-#include <google/protobuf/descriptor.h>
 #include <zlib.h> // adler32
+#include <google/protobuf/descriptor.h>
 #include "codec.h"
 
 using namespace blaze;
@@ -43,7 +43,7 @@ std::string ProtobufCodec::ErrorCodeToString(ProtobufCodec::ErrorCode code)
         case ProtobufCodec::ErrorCode::kNoError:
             return "NoError";
         case ProtobufCodec::ErrorCode::kInvalidLength:
-            return "InvalidLenggh";
+            return "InvalidLength";
         case ProtobufCodec::ErrorCode::kCheckSumError:
             return "CheckSumError";
         case ProtobufCodec::ErrorCode::kInvalidNameLen:
@@ -122,6 +122,7 @@ void ProtobufCodec::Send(const TcpConnectionPtr& conn, const google::protobuf::M
 }
 
 // http://www.p-chao.com/2017-09-04/protobuf%E5%8F%8D%E5%B0%84%E8%AF%A6%E8%A7%A3/
+// NOTE: Make use of protobuf's reflection ability
 
 google::protobuf::Message* ProtobufCodec::CreateMessage(const std::string& type_name)
 {
@@ -143,10 +144,10 @@ google::protobuf::Message* ProtobufCodec::CreateMessage(const std::string& type_
 MessagePtr ProtobufCodec::Parse(const char* buf, int len, ProtobufCodec::ErrorCode* error_code)
 {
     MessagePtr message;
-    int32_t expect_checksum = AsInt32(buf + len - kCheckSumLen);
+    int32_t actual_checksum = AsInt32(buf + len - kCheckSumLen);
     int32_t checksum = static_cast<int32_t>(
         ::adler32(1, reinterpret_cast<const Bytef*>(buf), static_cast<int>(len - kCheckSumLen)));
-    if (expect_checksum == checksum)
+    if (actual_checksum == checksum)
     {
         int32_t name_len = AsInt32(buf);
         // equal 0 means empty protobuf binary message

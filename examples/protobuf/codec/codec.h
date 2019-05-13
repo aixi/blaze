@@ -62,8 +62,7 @@ public:
                    blaze::net::Buffer* buf,
                    blaze::Timestamp receive_time);
 
-    void Send(const blaze::net::TcpConnectionPtr& conn,
-              const google::protobuf::Message& message);
+    void Send(const blaze::net::TcpConnectionPtr& conn, const google::protobuf::Message& message);
 
     static std::string ErrorCodeToString(ErrorCode code);
     static void FillEmptyBuffer(blaze::net::Buffer* buf, const google::protobuf::Message& message);

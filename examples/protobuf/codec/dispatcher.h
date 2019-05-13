@@ -87,6 +87,8 @@ public:
         callbacks_[T::descriptor()] = pd;
     }
 
+    DISABLE_COPY_AND_ASSIGN(ProtobufDispatcher);
+
 private:
     using CallbackMap = std::map<const google::protobuf::Descriptor*, std::shared_ptr<CallbackBase>>;
     CallbackMap callbacks_;
