@@ -41,7 +41,7 @@ inline uint64_t NetworkToHost64(uint64_t x)
     return be64toh(x);
 }
 
-inline uint32_t NetworkToHost32(uint64_t x)
+inline uint32_t NetworkToHost32(uint32_t x)
 {
     return be32toh(x);
 }

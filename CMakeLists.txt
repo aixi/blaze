@@ -139,11 +139,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
-add_subdirectory(blaze/concurrent/tests)
-add_subdirectory(blaze/log/tests)
-add_subdirectory(blaze/net/tests)
-add_subdirectory(blaze/utils/tests)
-add_subdirectory(blaze/net/http)
+add_subdirectory(blaze)
 add_subdirectory(examples)
 
 add_library(blaze ${SOURCE_FILES})

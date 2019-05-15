@@ -2,14 +2,14 @@ add_library(protobuf_codec codec.cc)
 target_link_libraries(protobuf_codec protobuf blaze z)
 
 # FIXME: it could generate query.pb.cc query.pb.h but will trigger compiler
-#add_custom_command(OUTPUT query.pb.cc query.pb.h
-#        COMMAND protoc
-#        ARGS --cpp_out ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/query.proto -I${CMAKE_CURRENT_SOURCE_DIR}
-#        DEPENDS query.proto
-#        VERBATIM)
+add_custom_command(OUTPUT query.pb.cc query.pb.h
+        COMMAND protoc
+        ARGS --cpp_out . ${CMAKE_CURRENT_SOURCE_DIR}/query.proto -I${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS query.proto
+        VERBATIM)
 
 set_source_files_properties(query.pb.cc PROPERTIES COMPILE_FLAGS "-Wno-conversion -Wno-shadow")
-#include_directories(${PROJECT_BINARY_DIR})
+include_directories(${PROJECT_BINARY_DIR})
 
 add_library(query_proto query.pb.cc)
 target_link_libraries(query_proto protobuf pthread)

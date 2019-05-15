@@ -21,7 +21,7 @@ void OnUnknownMessageType(const TcpConnectionPtr& conn,
 void OnQuery(const TcpConnectionPtr& conn, const MessagePtr& message, Timestamp receive_time)
 {
     std::cout << "OnQuery: " << message->GetTypeName() << std::endl;
-    std::shared_ptr<Query> query(blaze::down_pointer_cast<Query>(message));
+    std::shared_ptr<Query> query(down_pointer_cast<Query>(message));
     assert(query != nullptr);
 }
 
