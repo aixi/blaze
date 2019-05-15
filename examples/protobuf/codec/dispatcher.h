@@ -45,7 +45,7 @@ public:
                    const MessagePtr& message,
                    blaze::Timestamp receive_time) const override
     {
-        std::shared_ptr<T> concrete(down_pointer_cast<T>(message));
+        std::shared_ptr<T> concrete(blaze::down_pointer_cast<T>(message));
         assert(concrete != nullptr);
         callback_(conn, concrete, receive_time);
     }

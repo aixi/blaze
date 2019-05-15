@@ -138,6 +138,8 @@ inline ::std::shared_ptr<To> down_pointer_cast(const ::std::shared_ptr<From>& f)
 
 } // namespace blaze
 
+// Note: #define is a preprocessor directive, so you can put a macro in namespace
+
 // disable copy-ctor and copy-assign
 #define DISABLE_COPY_AND_ASSIGN(classname) \
     classname(const classname&) = delete; \
