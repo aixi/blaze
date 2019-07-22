@@ -28,7 +28,7 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listen_addr, bool reuse_p
 {
     assert(idle_fd_ >= 0);
     listen_socket_.SetReuseAddr(true);
-    listen_socket_.SetReuseAddr(reuse_port);
+    listen_socket_.SetReusePort(reuse_port);
     listen_socket_.bindAddress(listen_addr);
     // FIXME: where is the Timestamp receive_time parameter ?
     listen_channel_.SetReadCallback(std::bind(&Acceptor::HandleRead, this));

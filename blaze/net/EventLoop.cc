@@ -71,7 +71,7 @@ EventLoop::EventLoop() :
     wakeup_channel_(new Channel(this, wakeup_fd_)),
     current_active_channel_(nullptr)
 {
-    LOG_TRACE << "EventLoop created " << this << " in thread " << thread_id_;
+    LOG_TRACE << "EventLoop " << this << " created " << "in thread " << thread_id_;
     if (t_loop_of_this_thread)
     {
         LOG_FATAL << "Another EventLoop " << t_loop_of_this_thread

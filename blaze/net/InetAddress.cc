@@ -99,7 +99,7 @@ InetAddress::InetAddress(uint16_t port, bool loopback_only, bool ipv6)
     }
 }
 
-InetAddress::InetAddress(const std::string_view& ip, uint16_t port, bool ipv6)
+InetAddress::InetAddress(std::string_view ip, uint16_t port, bool ipv6)
 {
     if (ipv6)
     {

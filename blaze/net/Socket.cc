@@ -18,10 +18,9 @@ namespace blaze
 namespace net
 {
 
-Socket::Socket(Socket&& rhs) noexcept :
-    sockfd_(rhs.sockfd_)
+Socket::Socket(Socket&& rhs) noexcept : sockfd_(rhs.sockfd_)
 {
-    rhs.sockfd_ = -1;
+    rhs.sockfd_ = -rhs.sockfd_ - 1;
 }
 
 Socket& Socket::operator=(Socket&& rhs) noexcept
@@ -29,7 +28,7 @@ Socket& Socket::operator=(Socket&& rhs) noexcept
     if (&rhs != this)
     {
         sockfd_ = rhs.sockfd_;
-        rhs.sockfd_ = -1;
+        rhs.sockfd_ = -rhs.sockfd_ - 1;
     }
     return *this;
 }

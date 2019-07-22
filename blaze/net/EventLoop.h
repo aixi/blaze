@@ -124,7 +124,7 @@ private:
 
 private:
 
-    int64_t iteration_;
+    int64_t iteration_; // the number of poll return
     bool looping_;
     std::atomic<bool> quit_;
     bool calling_pending_tasks_;

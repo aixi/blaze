@@ -37,7 +37,7 @@ public:
 
     // ip should be "1.2.3.4"
 
-    InetAddress(const std::string_view& ip, uint16_t port, bool ipv6 = false);
+    InetAddress(std::string_view ip, uint16_t port, bool ipv6 = false);
 
     // Mostly used when accepting new connections
     explicit InetAddress(const struct sockaddr_in& addr) :
@@ -79,7 +79,7 @@ public:
     // Resolve hostname to IP address, not change port or sin_family
     // return true on success
     // thread safe
-    // NOTE: it could block
+    // NOTE: it may block
     static bool Resolve(std::string_view hostname, InetAddress* /*out*/ address);
 
     // set IPv6 ScopeID

@@ -66,7 +66,7 @@ bool ZlibOutputStream::Finish()
 
 int ZlibOutputStream::Compress(int flush)
 {
-    output_->EnsureWritableBytes(buffer_size_);
+    output_->EnsureWritableSpace(buffer_size_);
     zstream_.next_out = reinterpret_cast<Bytef*>(output_->BeginWrite());
     zstream_.avail_out = static_cast<int>(output_->WritableBytes());
     int error = deflate(&zstream_, flush);

@@ -52,7 +52,7 @@ private:
     Socket listen_socket_;
     Channel listen_channel_;
     bool listening_;
-    int idle_fd_;
+    int idle_fd_; // in case of accept return EMFILE
     NewConnectionCallback new_connection_callback_;
 
 };

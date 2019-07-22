@@ -65,7 +65,7 @@ void ProtobufCodec::FillEmptyBuffer(Buffer* buf, const google::protobuf::Message
     buf->AppendInt32(name_len);
     buf->Append(type_name.c_str(), name_len);
     int byte_size = message.ByteSize();
-    buf->EnsureWritableBytes(byte_size);
+    buf->EnsureWritableSpace(byte_size);
     uint8_t* start = reinterpret_cast<uint8_t*>(buf->BeginWrite());
     uint8_t* end = message.SerializeWithCachedSizesToArray(start);
     UnusedVariable(end);

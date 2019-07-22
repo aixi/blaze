@@ -74,7 +74,9 @@ public:
     void SetKeepAlive(bool on);
 
     void StartRead();
+
     void StopRead();
+
     bool IsReading() const // NOT thread safe, may race with Start/StopReadInLoop
     {
         return reading_;

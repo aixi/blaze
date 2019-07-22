@@ -73,7 +73,7 @@ void TcpServer::NewConnection(int connfd, const InetAddress& peer_addr)
     InetAddress local_addr(sockets::GetLocalAddr(connfd));
     // FIXME: poll with zero timeout to double confirm the new connection
     TcpConnectionPtr conn(std::make_shared<TcpConnection>(io_loop, conn_name, connfd, local_addr, peer_addr));
-    connections_[conn_name] = conn;
+    connections_.insert(std::make_pair(conn_name, conn));
     conn->SetConnectionCallback(connection_callback_);
     conn->SetMessageCallback(message_callback_);
     conn->SetWriteCompleteCallback(write_complete_callback_);

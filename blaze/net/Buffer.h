@@ -166,7 +166,7 @@ public:
 
     void Append(const char* data, size_t size)
     {
-        EnsureWritableBytes(size);
+        EnsureWritableSpace(size);
         std::copy(data, data + size, BeginWrite());
         HasWritten(size);
     }
@@ -213,7 +213,7 @@ public:
         write_index_ -= size;
     }
 
-    void EnsureWritableBytes(size_t size)
+    void EnsureWritableSpace(size_t size)
     {
         if (size > WritableBytes())
         {
@@ -311,7 +311,7 @@ public:
     {
         // FIXME: std::vector::shrink_to_fit()
         Buffer other;
-        other.EnsureWritableBytes(ReadableBytes() + reserve);
+        other.EnsureWritableSpace(ReadableBytes() + reserve);
         other.Append(ToString());
         swap(other);
     }

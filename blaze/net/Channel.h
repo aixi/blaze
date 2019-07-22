@@ -35,7 +35,7 @@ public:
 
     // Tie this channel object to its owner object which is managed by shared_ptr
     // prevent the owner object being destroyed in HandleEvent(Timestamp when)
-    // std::shared_ptr<void> could hold all types like void*
+    // std::shared_ptr<void> could hold all types just like void*
     void Tie(const std::shared_ptr<void>& obj);
 
     void SetReadCallback(ReadEventCallback cb)
@@ -160,7 +160,7 @@ private:
     int revents_; // set by ::poll
     int index_; // used by poller
 
-    bool is_in_loop_;
+    bool is_in_loop_; // is watched by poller ?
     bool tied_;
     bool event_handling_;
 
