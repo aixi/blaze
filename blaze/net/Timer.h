@@ -26,7 +26,7 @@ public:
         expiration_(when),
         interval_(interval),
         repeat_(interval_ > 0.0),
-        sequence_(s_created_nums_.fetch_add(1))
+        sequence_(s_created_nums_.fetch_add(1)) // default std::memory_order_seq_cst
     {}
 
     void Run() const

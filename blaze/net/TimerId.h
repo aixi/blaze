@@ -17,8 +17,7 @@ class Timer;
 
 class TimerId : public copyable
 {
-
-    friend class TimerQueue;
+    friend class TimerQueue; // public private doest not affect friend
 
 public:
     TimerId() :

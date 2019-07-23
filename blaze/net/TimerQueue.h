@@ -67,7 +67,7 @@ private:
     EventLoop* loop_;
     const int timerfd_;
     Channel timerfd_channel_;
-    bool calling_expired_timers_; // for cancel()
+    bool calling_timer_callbacks_; // for cancel()
     ActiveTimerList active_timers_; // for cancel()
     ActiveTimerList canceling_timers_; // for cancel()
     TimerList timers_; // Timer list sorted by expiration

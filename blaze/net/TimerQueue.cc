@@ -77,7 +77,7 @@ TimerQueue::TimerQueue(EventLoop* loop) :
     loop_(loop),
     timerfd_(detail::CreateTimerfd()),
     timerfd_channel_(loop_, timerfd_),
-    calling_expired_timers_(false)
+    calling_timer_callbacks_(false)
 {
     timerfd_channel_.SetReadCallback(std::bind(&TimerQueue::HandleRead, this));
     timerfd_channel_.EnableReading();
@@ -110,8 +110,11 @@ void TimerQueue::CancelTimer(TimerId timerid)
 void TimerQueue::AddTimerInLoop(Timer* timer)
 {
     loop_->AssertInLoopThread();
-    bool earliest_changed = Insert(timer);
-    if (earliest_changed)
+    bool earliest_timeout = Insert(timer);
+    // We insert a timer into timer queue
+    // if the new timer timeout earlier than any other old timer
+    // we need to reset timer fd timeout
+    if (earliest_timeout)
     {
         detail::ResetTimerfd(timerfd_, timer->Expiration());
     }
@@ -131,7 +134,8 @@ void TimerQueue::CancelTimerInLoop(TimerId timerid)
         delete iter->first; // FIXME: use std::unique_ptr, no delete
         active_timers_.erase(iter);
     }
-    else if (calling_expired_timers_)
+    // in case of someone cancel timer in timer callback
+    else if (calling_timer_callbacks_)
     {
         canceling_timers_.insert(timer);
     }
@@ -144,14 +148,14 @@ void TimerQueue::HandleRead()
     Timestamp now(Timestamp::Now());
     detail::ReadTimerfd(timerfd_, now);
     std::vector<Entry> expired = GetExpired(now);
-    calling_expired_timers_ = true;
+    calling_timer_callbacks_ = true;
     canceling_timers_.clear();
     // safe to callback outside critical region
     for (const Entry& entry : expired)
     {
         entry.second->Run();
     }
-    calling_expired_timers_ = false;
+    calling_timer_callbacks_ = false;
     Reset(expired, now);
 }
 
@@ -207,12 +211,12 @@ bool TimerQueue::Insert(Timer* timer)
 {
     loop_->AssertInLoopThread();
     assert(timers_.size() == active_timers_.size());
-    bool earliest_changed = false;
+    bool earliest_timeout = false;
     Timestamp when = timer->Expiration();
     auto begin = timers_.begin();
     if (begin == timers_.end() || when < begin->first)
     {
-        earliest_changed = true;
+        earliest_timeout = true;
     }
     std::pair<TimerList::iterator, bool> result1 = timers_.insert(Entry(when, timer));
     assert(result1.second);
@@ -222,7 +226,7 @@ bool TimerQueue::Insert(Timer* timer)
     assert(result2.second);
     UnusedVariable(result2);
     assert(timers_.size() == active_timers_.size());
-    return earliest_changed;
+    return earliest_timeout;
 }
 
 } // namespace net
