@@ -20,7 +20,7 @@ public:
         detach
     };
 
-    // thread is movable, but not copyable, so as atomic
+    // thread is movable, but not copyable
 
     ThreadGuard(DtorAction action, std::thread&& thread);
 

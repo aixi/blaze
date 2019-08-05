@@ -18,8 +18,10 @@ class BoundedBlockingQueue
 {
 public:
 
-    explicit BoundedBlockingQueue(size_t max_size) :
-        max_size_(max_size)
+    explicit BoundedBlockingQueue(size_t max_size) : max_size_(max_size)
+    {}
+
+    BoundedBlockingQueue() : max_size_(5)
     {}
 
     void Put(const T& x)
