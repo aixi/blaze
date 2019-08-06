@@ -6,6 +6,7 @@
 #define BLAZE_POLLPOLLER_H
 
 #include <vector>
+#include <blaze/utils/Types.h>
 #include <blaze/net/Poller.h>
 
 struct pollfd;
@@ -35,6 +36,8 @@ public:
     void UpdateChannel(Channel* channel) override;
 
     void RemoveChannel(Channel* channel) override;
+
+    DISABLE_COPY_AND_ASSIGN(PollPoller);
 
 private:
 

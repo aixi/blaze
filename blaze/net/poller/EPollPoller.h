@@ -29,6 +29,8 @@ public:
 
     void RemoveChannel(Channel* channel) override;
 
+    DISABLE_COPY_AND_ASSIGN(EPollPoller);
+
 private:
     static const int kInitEventListSize;
 
