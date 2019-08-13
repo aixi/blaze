@@ -24,22 +24,22 @@ static const int kBufferSize = 1024 * 64;
 class ReadSmallFile
 {
 public:
-    explicit ReadSmallFile(const std::string& filename);
+    explicit ReadSmallFile(std::string_view filename);
 
     ~ReadSmallFile();
 
     //return errno
     template<typename String>
-    int ReadToString(int max_size, String *content,
-                                         int64_t *file_size,
-                                         int64_t *modify_time,
-                                         int64_t *create_time);
+    int ReadToString(int max_size, String* content,
+                                   int64_t* file_size,
+                                   int64_t* modify_time,
+                                   int64_t* create_time);
 
     //Read at most kBufferSize byte into buf_
     //return errno
     int ReadToBuffer(int *size);
 
-    const char *buffer() const
+    const char* buffer() const
     {
         return buf_;
     }

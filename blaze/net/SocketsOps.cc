@@ -150,8 +150,9 @@ void sockets::close(int sockfd)
 
 void sockets::shutdownWrite(int sockfd)
 {
-    // shall not write on this socket fd
+    // shall not write on this socket fd, send FIN segment to peer
     // OS will send all data in kernel's output buffer before the socket fd has been actually closed
+    // TCP linger option
     if (::shutdown(sockfd, SHUT_WR) < 0)
     {
         LOG_SYSERR << "sockets::shutdownWrite";

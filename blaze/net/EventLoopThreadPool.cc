@@ -87,5 +87,5 @@ std::vector<EventLoop*> EventLoopThreadPool::GetAllLoops()
     }
 }
 
-}
-}
+} // namespace net
+} // namespace blaze

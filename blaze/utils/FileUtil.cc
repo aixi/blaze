@@ -19,8 +19,8 @@ namespace blaze
 namespace FileUtil
 {
 
-ReadSmallFile::ReadSmallFile(const std::string& filename) :
-    fd_(::open(filename.c_str(), O_RDONLY | O_CLOEXEC)),
+ReadSmallFile::ReadSmallFile(std::string_view filename) :
+    fd_(::open(filename.data(), O_RDONLY | O_CLOEXEC)),
     err_(0)
 {
     buf_[0] = '\0';
