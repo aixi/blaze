@@ -164,6 +164,9 @@ void EPollPoller::RemoveChannel(Channel* channel)
     channel->set_index(kNew);
 }
 
+// FIXME: always use epoll_ctl(fd, EPOLL_CTL_MODE, ...) to update exists fd
+//        ignore returned EEXIST error code
+
 void EPollPoller::Update(int op, Channel* channel)
 {
     struct epoll_event event;
