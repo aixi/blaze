@@ -173,7 +173,7 @@ void TcpConnection::SendInLoop(const void* data, size_t len)
     {
         LOG_WARN << "disconnected, give up writing";
     }
-    // if no thing in output_buffer_, write directly
+    // if nothing in output_buffer_, write directly
     if (!channel_->IsWriting() && output_buffer_.ReadableBytes() == 0)
     {
         // NOTE: call ::write only once, not call ::write repeatedly until it returns EAGAIN
