@@ -8,8 +8,26 @@ blaze 是仿照 muduo[1] 实现的一个基于 Reactor 模式的多线程 C++ �
 - 原子操作使用 C++11 提供的 std::atomic。
 - 重新实现了 BlockingQueue、BoundedBlockingQueue、CountDownLatch 等线程安全容器
 - 新增了ThreadGuard类，防止joinable thread对象析构时调用 std::terminate
-## 示例
 
+## Requirements
+* C++17 (required 用到了std::any和std::string_view)
+* CMake (required)
+* Linux (required 如果你要使用epoll)
+* Google Protobuf 3.0 or newer (optional)
+
+## 需要什么预备知识
+* 理解网络编程的基础知识，了解TCP协议，了解 socket API
+* 了解多线程编程，至少能够正确地使用 mutex和condition_variable
+* 理解C++中的RAII资源管理手法以及智能指针
+
+## 推荐的书
+* Effective C++, C++沉思录, Effective Modern C++
+* Linux高性能服务器编程, Effective TCP/IP programming <br>
+unix网络编程和unix环境高级编程等书适合查阅，如果重头开始看很容易丧失兴趣
+* Linux多线程服务器端编程
+* 网络编程编程的关键不是socket API怎么用，而是理解网络背后的机制，到底发了什么包，接收了什么包 
+
+## 示例
 一个简单的echo服务器如下：
 
 ```C++
