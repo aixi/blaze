@@ -23,8 +23,8 @@ blaze 是仿照 muduo[1] 实现的一个基于 Reactor 模式的多线程 C++ �
 ## 推荐的书
 * Effective C++, C++沉思录, Effective Modern C++
 * Linux高性能服务器编程, Effective TCP/IP programming <br>
-unix网络编程和unix环境高级编程等书适合查阅，如果重头开始看很容易丧失兴趣
-* Linux多线程服务器端编程
+* unix网络编程和unix环境高级编程等书适合查阅，如果从头开始看很容易丧失兴趣
+* 陈硕的Linux多线程服务器端编程
 * 网络编程编程的关键不是socket API怎么用，而是理解网络背后的机制，到底发了什么包，接收了什么包 
 
 ## 示例
