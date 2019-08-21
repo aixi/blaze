@@ -70,7 +70,9 @@ void Acceptor::HandleRead()
         LOG_SYSERR << "in Acceptor::HandleRead";
         if (errno == EMFILE) // too many opened file, use ulimit -n to change a process's maximum open files number
         {
+            // FIXME: race condition in multi-thread environment
             ::close(idle_fd_);
+            // FIXME: how about anther thread open a file hold idle_fd_'s number, before accept(2)
             idle_fd_ = ::accept(listen_socket_.fd(), nullptr, nullptr);
             ::close(idle_fd_);
             idle_fd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
