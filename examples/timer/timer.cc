@@ -13,7 +13,7 @@ using namespace blaze::net;
 class Printer
 {
 public:
-    Printer(EventLoop* loop) :
+    explicit Printer(EventLoop* loop) :
         loop_(loop),
         count_(0)
     {
